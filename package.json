@@ -6,7 +6,10 @@
   "engines": {
     "vscode": "^1.70.0"
   },
-  "activationEvents": ["onLanguage:markdown", "onStartupFinished"],
+  "activationEvents": [
+    "onLanguage:markdown",
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
@@ -27,6 +30,8 @@
     }
   },
   "scripts": {
+    "start": "ts-node src/index.ts",
+     "serve-report": "npx serve ./report",
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./"
   },
@@ -34,5 +39,9 @@
     "@types/node": "^18.0.0",
     "@types/vscode": "^1.70.0",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0",
+    "ts-node": "^10.9.2"
   }
 }

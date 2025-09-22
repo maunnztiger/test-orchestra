@@ -39,24 +39,33 @@ export function parseMarkdownScenario(filePath: string): Step[][] {
     const trimmed = line.trim();
     if (!trimmed) continue;
 
+    // Tabellenzeilen sammeln
     if (trimmed.startsWith("|")) {
       tableBuffer.push(trimmed);
       insideTable = true;
-    } else {
-      // Vorherige Tabelle an letzten Step anhängen
-      if (insideTable && currentScenario.length) {
-        const lastStep = currentScenario[currentScenario.length - 1];
-        lastStep.table = flushTable();
-      }
-
-      // Scenario-Kennung oder Step
-      if (/^(Scenario|Szenario):/i.test(trimmed)) {
-        if (currentScenario.length) scenarios.push(currentScenario);
-        currentScenario = [];
-      } else {
-        currentScenario.push({ text: trimmed });
-      }
+      continue;
     }
+
+    // Vorherige Tabelle an letzten Step anhängen
+    if (insideTable && currentScenario.length) {
+      const lastStep = currentScenario[currentScenario.length - 1];
+      lastStep.table = flushTable();
+    }
+
+    // Markdown-Header (#, ##, ###) **ignorieren**
+    if (/^#{1,6}\s/.test(trimmed)) {
+      continue;
+    }
+
+    // Scenario-Kennung (optional, wird nicht als Step registriert)
+    if (/^(Scenario|Szenario):/i.test(trimmed)) {
+      if (currentScenario.length) scenarios.push(currentScenario);
+      currentScenario = [];
+      continue;
+    }
+
+    // Alles andere als Step behandeln
+    currentScenario.push({ text: trimmed });
   }
 
   // Letzte Tabelle anhängen
