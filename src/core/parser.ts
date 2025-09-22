@@ -1,25 +1,69 @@
-import { readFileSync } from "fs";
+import fs from "fs";
 
-export function parseMarkdownScenario(filePath: string): string[][] {
-  const content = readFileSync(filePath, "utf-8");
+export interface Step {
+  text: string;
+  table?: Record<string, string>[]; // Optional: DataTable
+}
 
-  const lines = content
-    .split("\n")
-    .map(l => l.trim())
-    // Filter nur Lines, die mit Given/When/Then/And/But starten (Markdown ** wird entfernt)
-    .filter(l => /^(?:\*\*)?(GEGEBEN|WENN|DANN|UND|ABER|ODER)/i.test(l));
+export function parseMarkdownScenario(filePath: string): Step[][] {
+  const content = fs.readFileSync(filePath, "utf-8");
+  const lines = content.split("\n");
 
-  const scenarios: string[][] = [];
-  let current: string[] = [];
+  const scenarios: Step[][] = [];
+  let currentScenario: Step[] = [];
+  let tableBuffer: string[] = [];
+  let insideTable = false;
 
+  const flushTable = (): Record<string, string>[] | undefined => {
+    if (!tableBuffer.length) return undefined;
+
+    const [headerLine, ...rows] = tableBuffer;
+    const headers = headerLine.split("|").map(h => h.trim()).filter(h => h);
+
+    const table = rows
+      .map(row => {
+        const cells = row.split("|").map(c => c.trim()).filter(c => c);
+        const obj: Record<string, string> = {};
+        headers.forEach((h, i) => {
+          obj[h] = cells[i] ?? "";
+        });
+        return obj;
+      });
+
+    tableBuffer = [];
+    insideTable = false;
+    return table;
+  };
 
   for (const line of lines) {
-    // Entferne Markdown-Fett ** und führendes Keyword
-    const step = line.replace(/\*\*/g, "").replace(/^(GEGEBEN|WENN|DANN|UND|ABER|ODER)\s+/i, "").trim();
-    current.push(step);
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    if (trimmed.startsWith("|")) {
+      tableBuffer.push(trimmed);
+      insideTable = true;
+    } else {
+      // Vorherige Tabelle an letzten Step anhängen
+      if (insideTable && currentScenario.length) {
+        const lastStep = currentScenario[currentScenario.length - 1];
+        lastStep.table = flushTable();
+      }
+
+      // Scenario-Kennung oder Step
+      if (/^(Scenario|Szenario):/i.test(trimmed)) {
+        if (currentScenario.length) scenarios.push(currentScenario);
+        currentScenario = [];
+      } else {
+        currentScenario.push({ text: trimmed });
+      }
+    }
   }
 
-  if (current.length > 0) scenarios.push(current);
+  // Letzte Tabelle anhängen
+  if (insideTable && currentScenario.length) {
+    currentScenario[currentScenario.length - 1].table = flushTable();
+  }
 
+  if (currentScenario.length) scenarios.push(currentScenario);
   return scenarios;
 }
