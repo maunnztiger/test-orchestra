@@ -1,16 +1,38 @@
 {
-  "name": "test-orchestra",
-  "version": "1.0.0",
+  "name": "test-orchestra-linter",
+  "displayName": "Test-Orchestra Step Linter",
+  "version": "0.0.1",
+  "publisher": "your-name",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "activationEvents": ["onLanguage:markdown", "onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Test-Orchestra",
+      "properties": {
+        "testOrchestra.stepDefinitionsPath": {
+          "type": "string",
+          "default": "src/step-definitions",
+          "description": "Pfad (relativ zum Workspace root) zu deinen Step-Definitions."
+        },
+        "testOrchestra.scenariosPath": {
+          "type": "string",
+          "default": "scenarios",
+          "description": "Pfad zu den Markdown-Szenarien."
+        }
+      }
+    }
+  },
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0",
-    "playwright": "^1.55.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "chalk": "^5.6.2"
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.70.0",
+    "typescript": "^5.3.3"
   }
 }

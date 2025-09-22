@@ -2,7 +2,8 @@
 
 ## Szenario: Erfolgreiches Login
 
-**Given** ich öffne die Startseite  
-**When** ich klicke auf Login  
-**And** warte 1 Sekunden  
-**Then** sehe ich das Dashboard
+**GEGRBEN** ich öffne die Startseite  
+**WENN** ich auf Login klicke
+**UND** warte 1 Sekunden  
+**DANN** sehe ich das Dashboard
+**UND** ich gehe nach Hause

@@ -18,8 +18,9 @@ export function registerStep(pattern: string, fn: StepFunction) {
   stepRegistry.push({ pattern: regex, fn });
 }
 
-export const Given = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const When  = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const Then  = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const And   = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const But   = (p: string, fn: StepFunction) => registerStep(p, fn);
+export const GEGEBEN = (p: string, fn: StepFunction) => registerStep(p, fn);
+export const WENN  = (p: string, fn: StepFunction) => registerStep(p, fn);
+export const DANN  = (p: string, fn: StepFunction) => registerStep(p, fn);
+export const UND   = (p: string, fn: StepFunction) => registerStep(p, fn);
+export const ABER   = (p: string, fn: StepFunction) => registerStep(p, fn);
+export const ODER   = (p: string, fn: StepFunction) => registerStep(p, fn);
