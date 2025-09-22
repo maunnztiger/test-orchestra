@@ -1,26 +1,30 @@
-import { WorldType } from "./world";
-
-export type StepFunction = (world: WorldType, ...args: any[]) => void | Promise<void>;
-
-interface StepEntry {
+// src/core/stepRegistry.ts
+export interface StepDefinition {
   pattern: RegExp;
-  fn: StepFunction;
+  fn: (...args: any[]) => Promise<void> | void;
 }
 
-export const stepRegistry: StepEntry[] = [];
-export function registerStep(pattern: string, fn: StepFunction) {
-  // Unicode-fähige Regex: \w ersetzt durch .+
-  const fullPattern = "^" + pattern.replace(/\{(\w+)\}/g, "(?<$1>.+)") + "$";
+export const stepRegistry: StepDefinition[] = [];
 
-  // 'u' Flag für Unicode, 'i' für Case-Insensitive
-  const regex = new RegExp(fullPattern, "iu");
-
-  stepRegistry.push({ pattern: regex, fn });
+function escapeRegex(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-export const GEGEBEN = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const WENN  = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const DANN  = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const UND   = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const ABER   = (p: string, fn: StepFunction) => registerStep(p, fn);
-export const ODER   = (p: string, fn: StepFunction) => registerStep(p, fn);
+function registerStep(keyword: string, text: string, fn: StepDefinition["fn"]) {
+  const pattern = new RegExp(`^\\*\\*${keyword.toUpperCase()}\\*\\*\\s+${escapeRegex(text)}$`, "i");
+  stepRegistry.push({ pattern, fn });
+}
+
+export const GEGEBEN = (text: string, fn: StepDefinition["fn"]) =>
+  registerStep("GEGEBEN", text, fn);
+export const WENN = (text: string, fn: StepDefinition["fn"]) =>
+  registerStep("WENN", text, fn);
+export const DANN = (text: string, fn: StepDefinition["fn"]) =>
+  registerStep("DANN", text, fn);
+export const UND = (text: string, fn: StepDefinition["fn"]) =>
+  registerStep("UND", text, fn);
+export const ABER = (text: string, fn: StepDefinition["fn"]) =>
+  registerStep("ABER", text, fn);
+export const ODER = (text: string, fn: StepDefinition["fn"]) =>
+  registerStep("ODER", text, fn);
+
