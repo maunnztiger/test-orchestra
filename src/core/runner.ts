@@ -1,99 +1,53 @@
-import { World } from "./world"; // importiere die Klasse
-import { parseMarkdownScenario } from "./parser";
 import { stepRegistry } from "./stepRegistry";
-import path from 'path'
-import fs from 'fs'
-import { generateHtmlReport} from './generateReportHTML'
-import { generateLogsHtml } from "./generateLogsHtml";
-
-function getTimestampFolder() {
-  const now = new Date();
-  const folderName = now
-    .toISOString()
-    .replace(/:/g, "-") // keine Doppelpunkte, sonst Windows-Problem
-    .replace(/\..+/, ""); // Millisekunden weg
-  return path.resolve("reports", folderName);
-}
+import { World } from "./world";
+import { parseMarkdownScenario, Step } from "./parser";
+import chalk from "chalk";
+import fs from "fs";
 
 export async function runMarkdownFile(filePath: string) {
+  console.log(`\n=== Szenario startet: ${filePath} ===`);
   const scenarios = parseMarkdownScenario(filePath);
-  const report: any[] = [];
-  const reportFolder = getTimestampFolder();
-  fs.mkdirSync(reportFolder, { recursive: true });
 
- for (const scenario of scenarios) {
-    console.log(`\n=== Szenario startet: ${filePath} ===`);
+  if (!scenarios.length) {
+    console.log("⚠️ Keine Steps gefunden!");
+    return;
+  }
+
+  for (const scenario of scenarios) {
     const world = new World();
     await world.initBrowser();
 
-    const scenarioResult = {
-      scenario: path.basename(filePath),
-      steps: [] as any[],
-    };
-
-    for (const stepText of scenario) {
+    for (const step of scenario) {
       let matched = false;
-      let stepStart = Date.now();
-
+      console.log(`\n→ Step: ${step.text}`);
       for (const { pattern, fn } of stepRegistry) {
-        const match = pattern.exec(stepText);
+        const match = pattern.exec(step.text);
         if (match) {
           matched = true;
           const args = match.groups ? Object.values(match.groups) : [];
-
           try {
-            await fn(world, ...args);
-            scenarioResult.steps.push({
-              text: stepText,
-              status: "passed",
-              durationMs: Date.now() - stepStart,
-            });
-            console.log(`✅ ${stepText}`);
-          } catch (err) {
-            const message = err instanceof Error ? err.message : String(err);
-            scenarioResult.steps.push({
-              text: stepText,
-              status: "failed",
-              error: message,
-              durationMs: Date.now() - stepStart,
-            });
-
-            // Optional Screenshot bei Fehler
-            try {
-              const screenshotPath = path.join(
-                reportFolder,
-                `screenshot-${Date.now()}.png`
-              );
-              await world.page.screenshot({ path: screenshotPath });
-              scenarioResult.steps[scenarioResult.steps.length - 1].screenshot =
-                screenshotPath;
-            } catch (_) {
-              // Screenshot fehlgeschlagen, kein Problem
+            if (step.table) {
+              await fn(world, step.table, ...args);
+            } else {
+              await fn(world, ...args);
             }
-
-            console.error(`❌ Fehler in Step "${stepText}": ${message}`);
+            console.log(chalk.green(`  ✅ erfolgreich`));
+          } catch (err: any) {
+            console.log(chalk.red(`  ❌ Fehler:`), err?.message ?? err);
           }
           break;
         }
       }
-
-      if (!matched) {
-        scenarioResult.steps.push({
-          text: stepText,
-          status: "undefined",
-        });
-        console.error(`⚠️ Step nicht gefunden: "${stepText}"`);
-      }
+      if (!matched) console.log(chalk.yellow(`  ⚠️ Step nicht gefunden!`));
     }
 
-    report.push(scenarioResult);
     await world.closeBrowser();
   }
+}
 
-  // JSON-Report in Timestamp-Ordner speichern
-  const reportPath = path.join(reportFolder, "report.json");
-  fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-  generateHtmlReport(reportPath)
-  generateLogsHtml(reportPath)
-  console.log(`📄 Report gespeichert: ${reportPath}`);
+export async function runAllScenarios(scenariosDir: string) {
+  const files = fs.readdirSync(scenariosDir).filter(f => f.endsWith(".md"));
+  for (const file of files) {
+    await runMarkdownFile(`${scenariosDir}/${file}`);
+  }
 }
