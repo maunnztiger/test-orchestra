@@ -6,3 +6,4 @@
 **WENN** ich auf Login klicke
 **UND** warte 1 Sekunden  
 **DANN** sehe ich das Dashboard
+**UND** ich gehe nach Hause
