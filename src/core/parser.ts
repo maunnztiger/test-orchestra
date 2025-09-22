@@ -7,7 +7,7 @@ export function parseMarkdownScenario(filePath: string): string[][] {
     .split("\n")
     .map(l => l.trim())
     // Filter nur Lines, die mit Given/When/Then/And/But starten (Markdown ** wird entfernt)
-    .filter(l => /^(?:\*\*)?(Given|When|Then|And|But)/i.test(l));
+    .filter(l => /^(?:\*\*)?(GEGEBEN|WENN|DANN|UND|ABER|ODER)/i.test(l));
 
   const scenarios: string[][] = [];
   let current: string[] = [];
@@ -15,7 +15,7 @@ export function parseMarkdownScenario(filePath: string): string[][] {
 
   for (const line of lines) {
     // Entferne Markdown-Fett ** und führendes Keyword
-    const step = line.replace(/\*\*/g, "").replace(/^(Given|When|Then|And|But)\s+/i, "").trim();
+    const step = line.replace(/\*\*/g, "").replace(/^(GEGEBEN|WENN|DANN|UND|ABER|ODER)\s+/i, "").trim();
     current.push(step);
   }
 
