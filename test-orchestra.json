@@ -1,5 +1,0 @@
-{
-  "scenarios": "./scenarios",           
-  "steps": "./src/step-definitions",    
-  "timeout": 30000                      
-}
