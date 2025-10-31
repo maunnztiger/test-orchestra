@@ -1,4 +1,11 @@
-import { runScenario } from "./runner.js";
+import { runScenario } from "./runner";
 
-const file = process.argv[2];
-await runScenario(file);
+(async () => {
+  const file = process.argv[2];
+  if (!file) {
+    console.error("❌ Kein Szenario angegeben.\n👉 Beispiel: npm run dev -- scenarios/login.md");
+    process.exit(1);
+  }
+
+  await runScenario(file);
+})();

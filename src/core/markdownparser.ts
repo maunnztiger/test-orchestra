@@ -1,25 +1,25 @@
+// src/core/markdownparser.ts
 import * as fs from "fs";
 
-export interface Step {
+export interface ParsedStep {
   keyword: string;
   text: string;
 }
 
-const keywords = ["GEGEBEN", "WENN", "DANN", "UND", "ABER"];
+export function parseMarkdownScenario(filePath: string): ParsedStep[] {
+  const content = fs.readFileSync(filePath, "utf8");
+  const lines = content.split("\n").map(l => l.trim()).filter(Boolean);
 
-export function parseMarkdownScenario(filePath: string): Step[] {
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const lines = raw.split("\n").map(l => l.trim()).filter(Boolean);
-
-  const steps: Step[] = [];
+  const steps: ParsedStep[] = [];
+  const keywords = ["GEGEBEN", "WENN", "DANN", "UND"];
 
   for (const line of lines) {
-    const match = new RegExp(`^\\*{0,2}\\s*(${keywords.join("|")})\\s+(.*)`, "i").exec(line);
+    // Nur Zeilen mit Step-Keyword verarbeiten
+    const match = line.match(/^\*\*(GEGEBEN|WENN|DANN|UND)\*\*\s*(.+)$/i);
     if (match) {
-      steps.push({
-        keyword: match[1].toUpperCase(),
-        text: match[2].trim()
-      });
+      const keyword = match[1].toUpperCase();
+      const text = match[2].trim();
+      steps.push({ keyword, text });
     }
   }
 
