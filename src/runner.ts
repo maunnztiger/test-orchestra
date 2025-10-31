@@ -4,14 +4,16 @@ import { StepRunner } from "./core/steprunner";
 import * as fs from "fs";
 import * as path from "path";
 
-function loadStepDefinitions() {
-  const stepsDir = path.resolve(__dirname, "steps");
-  const files = fs.readdirSync(stepsDir);
+function loadStepDefinitions(dir = path.resolve(__dirname, "steps")) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
 
-  for (const file of files) {
-    if (file.endsWith(".ts")) {
-      console.log(`🧩 Lade Step-Definition: ${file}`);
-      require(path.join(stepsDir, file));
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      loadStepDefinitions(fullPath); // 🔁 Rekursion
+    } else if (entry.isFile() && entry.name.endsWith(".ts")) {
+      console.log(`🧩 Lade Step-Definition: ${path.relative(process.cwd(), fullPath)}`);
+      require(fullPath);
     }
   }
 }

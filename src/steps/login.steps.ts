@@ -1,11 +1,12 @@
 import { GEGEBEN, WENN, DANN, UND } from "../core/stepregistry";
 import type { CustomWorld } from "../world/customworld"; 
-import { PageManager } from "./PageManager";
+import { PageManager } from "./pages/PageManager";
 
 
 GEGEBEN('der Nutzer öffnet die Startseite von Saucedemo', async(world: CustomWorld) => {
     const pm = new PageManager(world.page)
-    console.log('Startseite geöffnet')
+    await pm.navigateTo().sauceLabsStartPage()
+    await pm.navigateTo().waitForNumberOfSeconds(5000)
 })
 
 WENN('der Nutzer seinen Username in das LoginPrompt Username eingibt', async(world: CustomWorld) => {

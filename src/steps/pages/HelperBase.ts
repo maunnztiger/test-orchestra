@@ -8,7 +8,14 @@ export class HelperBase{
         this.page = page
     }
 
+    async waitForNumberOfSeconds(seconds: number) {
+        await this.page.waitForTimeout(seconds);
+    }
+    
+    
     async loginAsGeneralUser(){
         
     }
+
+
 }
