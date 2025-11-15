@@ -7,16 +7,14 @@
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-   
     "baseUrl": "src",
     "paths": {
       "@core/*": ["core/*"],
-      "@scenarios": ["scenarios/*"],
+      "@scenarios/*": ["scenarios/*"],
       "@steps/*": ["steps/*"],
       "@world/*": ["world/*"],
       "@pages/*": ["pages/*"]
-    },
-    "ignoreDeprecations": "6.0",
+    }
   },
   "include": ["src/**/*"]
 }

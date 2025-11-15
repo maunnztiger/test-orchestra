@@ -1,6 +1,7 @@
 # Feature
 
 ## Szenario: Überprüfen, ob Login funktioniert
+
 **GEGEBEN** der Nutzer öffnet die Startseite von Saucedemo
 
 **WENN** der Nutzer seinen Username in das LoginPrompt Username eingibt

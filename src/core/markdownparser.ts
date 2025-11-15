@@ -8,7 +8,10 @@ export interface ParsedStep {
 
 export function parseMarkdownScenario(filePath: string): ParsedStep[] {
   const content = fs.readFileSync(filePath, "utf8");
-  const lines = content.split("\n").map(l => l.trim()).filter(Boolean);
+  const lines = content
+    .split("\n")
+    .map(l => l.trim())
+    .filter(Boolean);
 
   const steps: ParsedStep[] = [];
   const keywords = ["GEGEBEN", "WENN", "DANN", "UND"];

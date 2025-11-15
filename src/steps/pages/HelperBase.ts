@@ -1,21 +1,15 @@
-import {Page, test} from '@playwright/test'
+import { Page, test } from "@playwright/test";
 
-export class HelperBase{  
+export class HelperBase {
+  protected readonly page: Page;
 
-    protected readonly page: Page
+  constructor(page: Page) {
+    this.page = page;
+  }
 
-    constructor(page: Page){
-        this.page = page
-    }
+  async waitForNumberOfSeconds(seconds: number) {
+    await this.page.waitForTimeout(seconds);
+  }
 
-    async waitForNumberOfSeconds(seconds: number) {
-        await this.page.waitForTimeout(seconds);
-    }
-    
-    
-    async loginAsGeneralUser(){
-        
-    }
-
-
+  async loginAsGeneralUser() {}
 }

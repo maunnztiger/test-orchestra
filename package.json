@@ -4,6 +4,8 @@
   "type": "commonjs",
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/index.ts",
+    "build": "tsc",
+    "test": "playwright test",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write ."
   },

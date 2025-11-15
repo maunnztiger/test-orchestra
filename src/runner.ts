@@ -26,7 +26,7 @@ export async function runScenario(filePath: string) {
     console.warn("⚠️ Keine Steps im Szenario gefunden!");
     return;
   }
-    console.log("🧾 Parsed Steps:");
+  console.log("🧾 Parsed Steps:");
   for (const s of steps) {
     console.log(`   keyword="${s.keyword}" | text="${s.text}"`);
   }

@@ -49,10 +49,11 @@ function compilePattern(pattern: string | RegExp): RegExp {
   if (pattern instanceof RegExp) return pattern;
 
   let src = pattern;
-  src = src.replace(/\{string\}/g, "<<STRING>>")
-           .replace(/\{int\}/g, "<<INT>>")
-           .replace(/\{float\}/g, "<<FLOAT>>")
-           .replace(/\{word\}/g, "<<WORD>>");
+  src = src
+    .replace(/\{string\}/g, "<<STRING>>")
+    .replace(/\{int\}/g, "<<INT>>")
+    .replace(/\{float\}/g, "<<FLOAT>>")
+    .replace(/\{word\}/g, "<<WORD>>");
 
   src = escapeRegExp(src)
     .replace(/<<STRING>>/g, '"([^"]+)"')
