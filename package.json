@@ -12,12 +12,13 @@
   "devDependencies": {
     "@playwright/test": "^1.49.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.8.2",
+    "@types/node": "^22.19.1",
     "@typescript-eslint/eslint-plugin": "^8.14.0",
     "@typescript-eslint/parser": "^8.14.0",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "playwright": "^1.56.1",
     "prettier": "^3.4.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
@@ -26,5 +27,18 @@
   "dependencies": {
     "js-yaml": "^4.1.0",
     "yaml": "^2.8.1"
-  }
+  },
+  "description": "**Ein Open-Source-Projekt für die Zukunft von Testarchitektur und Software-Qualität.**",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maunnztiger/test-orchestra.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maunnztiger/test-orchestra/issues"
+  },
+  "homepage": "https://github.com/maunnztiger/test-orchestra#readme"
 }

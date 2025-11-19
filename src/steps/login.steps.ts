@@ -1,4 +1,5 @@
-import { GEGEBEN, WENN, DANN, UND } from "../core/stepregistry";
+import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
+import { ParsedStep } from "@core/markdownparser";
 import type { CustomWorld } from "../world/customworld";
 import { PageManager } from "./pages/PageManager";
 
@@ -25,7 +26,18 @@ DANN("ist in dem Fenster die Produktseite geöffnet", async (world: CustomWorld)
 });
 UND(
   "links oben befindet sich die Überschrift {string}",
-  async (world: CustomWorld, title: String) => {
-    console.log("Titel gefunden: ", title);
+  async (world: CustomWorld, step: ParsedStep) => {
+    const title = step.params?.[0];
+    if (!title) {
+      throw new Error(`Kein Titel aus dem Step extrahiert. Text: "${step.text}"`);
+    }
+    console.log("Titel gefunden:", title);
+    
   }
 );
+
+UND(
+  "der User sieht eine Liste mit den Produkten", 
+  async(world: CustomWorld, step: ParsedStep) => {
+  console.log(step)
+})

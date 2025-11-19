@@ -1,0 +1,60 @@
+{
+  // --- TypeScript / Node Umgebung ---
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "shortest",
+
+  // Pfade auflösen (damit tsconfig-paths + absolute Imports funktionieren)
+  "path-intellisense.mappings": {
+    "@": "${workspaceRoot}/src"
+  },
+
+  // --- Editor ---
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+
+  // Formatierer für TS/JS → Prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // --- Prettier ---
+  "prettier.printWidth": 100,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "all",
+  "prettier.arrowParens": "avoid",
+
+  // --- Playwright Integration ---
+  "playwright.testing.autoRunTests": "off",
+  "playwright.reuseBrowser": true,
+  "playwright.trace.showAttachments": true,
+
+  // --- Explorer ---
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.cache": true
+  },
+
+  // --- Terminal in WSL ---
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.env.linux": {
+    "FORCE_COLOR": "1",
+    "NODE_ENV": "development"
+  },
+
+  // --- Jest/Testing (falls aktiviert) ---
+  "testing.automaticallyOpenPeekView": "never",
+
+  // --- IntelliSense / Vorschläge ---
+  "editor.suggestSelection": "first",
+  "editor.quickSuggestionsDelay": 0,
+
+  // --- Git ---
+  "git.autofetch": true,
+
+  // --- Arbeitsumgebung ---
+  "files.eol": "\n",
+  "files.encoding": "utf8"
+}

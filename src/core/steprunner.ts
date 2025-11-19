@@ -1,17 +1,7 @@
 import { StepRegistry } from "./stepregistry";
 import type { CustomWorld } from "../world/customworld";
+import type { ParsedStep } from "./markdownparser";
 
-/**
- * Ein einzelner Step (aus Markdown geparst)
- */
-export interface ParsedStep {
-  keyword: string;
-  text: string;
-}
-
-/**
- * Führt alle Steps in Reihenfolge aus.
- */
 export class StepRunner {
   constructor(private world: CustomWorld) {}
 
@@ -23,10 +13,7 @@ export class StepRunner {
     for (const step of steps) {
       console.log(`➡️  [${index}] ${step.keyword.toUpperCase()} ${step.text}`);
       try {
-        // StepRegistry.run() MUSS ein Promise<boolean> zurückgeben
-        const matched: boolean = await StepRegistry.run(this.world, step.text);
-
-        // Warnung nur, wenn KEIN Match gefunden wurde
+        const matched: boolean = await StepRegistry.run(this.world, step);
         if (!matched) {
           console.warn(`⚠️ Kein Step-Match für: "${step.text}"`);
         }
