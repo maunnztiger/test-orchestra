@@ -1,0 +1,56 @@
+[
+  {
+    "uri": "scenarios/login.md",
+    "name": "login",
+    "elements": [
+      {
+        "name": "login",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "name": "der Nutzer öffnet die Startseite von Saucedemo",
+            "status": "passed",
+            "duration": 5797057938
+          },
+          {
+            "keyword": "When ",
+            "name": "der Nutzer seinen Username in das LoginPrompt Username eingibt",
+            "status": "passed",
+            "duration": 68534
+          },
+          {
+            "keyword": "And ",
+            "name": "sein Passwort in das Feld Password eingibt",
+            "status": "passed",
+            "duration": 72000
+          },
+          {
+            "keyword": "And ",
+            "name": "den Login-Button drückt",
+            "status": "passed",
+            "duration": 62143
+          },
+          {
+            "keyword": "Then ",
+            "name": "ist in dem Fenster die Produktseite geöffnet",
+            "status": "passed",
+            "duration": 82530
+          },
+          {
+            "keyword": "And ",
+            "name": "links oben befindet sich die Überschrift \"Products\"",
+            "status": "passed",
+            "duration": 245155
+          },
+          {
+            "keyword": "And ",
+            "name": "der User sieht eine Liste mit den Produkten",
+            "status": "passed",
+            "duration": 507312
+          }
+        ]
+      }
+    ]
+  }
+]
