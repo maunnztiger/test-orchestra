@@ -8,66 +8,119 @@ export interface ParsedStep {
   params?: string[];    // <-- optional für {string} etc.
 }
 
+export interface  ParsedScenario {
+  name: string;
+  tags: string[];
+  steps: ParsedStep[];
+}
+const TAG_REGEX = /^(@[\w-]+(\s+@[\w-]+)*)$/;
+const SCENARIO_REGEX = /^##\s*(Szenario|Scenario)\s*:\s*(.+)$/i;
+
+
 const STEP_REGEX = /^\*\*(GEGEBEN|WENN|DANN|UND)\*\*\s*(.+)$/i;
 
-export function parseMarkdownScenario(filePath: string): ParsedStep[] {
+export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
   const content = fs.readFileSync(filePath, "utf8");
-
-  // wir trimmen nur Zeilen, filtern aber NICHT alles Leere weg
   const lines = content.split("\n").map(l => l.trim());
 
-  const steps: ParsedStep[] = [];
+  const scenarios: ParsedScenario[] = [];
 
-  for (let i = 0; i < lines.length; i++) {
+  let currentTags: string[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
     const line = lines[i];
 
-    const match = line.match(STEP_REGEX);
-    if (!match) continue;
-
-    const keyword = match[1].toUpperCase();
-    const text = match[2].trim();
-
-    const step: ParsedStep = { keyword, text };
-
-    // --- nachfolgende Tabellenzeilen einsammeln ---
-    const tableLines: string[] = [];
-    let j = i + 1;
-
-    while (j < lines.length) {
-      const nextLine = lines[j];
-
-      // leere Zeilen unterhalb des Steps ignorieren
-      if (nextLine === "") {
-        j++;
-        continue;
-      }
-
-      // nächste Step-Zeile → abbrechen
-      if (STEP_REGEX.test(nextLine)) {
-        break;
-      }
-
-      // Tabellenzeile?
-      if (isTableLine(nextLine)) {
-        tableLines.push(nextLine);
-        j++;
-        continue;
-      }
-
-      // weder Step, noch Tabelle → abbrechen
-      break;
+    // --- TAGS ---
+    if (TAG_REGEX.test(line)) {
+      currentTags = line
+        .split(/\s+/)
+        .filter(t => t.startsWith("@"))
+        .map(t => t.substring(1)); // ohne @ speichern
+      i++;
+      continue;
     }
 
-    if (tableLines.length > 0) {
-      step.table = parseTable(tableLines);
-      i = j - 1; // Tabellenzeilen überspringen
+    // --- SCENARIO ---
+    const scenarioMatch = line.match(SCENARIO_REGEX);
+    if (scenarioMatch) {
+      const scenarioName = scenarioMatch[2].trim();
+      const steps: ParsedStep[] = [];
+
+      i++;
+
+      while (i < lines.length) {
+        const stepLine = lines[i];
+
+        // nächstes Szenario oder neue Tags → abbrechen
+        if (
+          SCENARIO_REGEX.test(stepLine) ||
+          TAG_REGEX.test(stepLine)
+        ) {
+          break;
+        }
+
+        const stepMatch = stepLine.match(STEP_REGEX);
+        if (!stepMatch) {
+          i++;
+          continue;
+        }
+
+        const keyword = stepMatch[1].toUpperCase();
+        const text = stepMatch[2].trim();
+
+        const step: ParsedStep = { keyword, text };
+
+        // --- Tabellen sammeln (dein bestehender Code) ---
+        const tableLines: string[] = [];
+        let j = i + 1;
+
+        while (j < lines.length) {
+          const nextLine = lines[j];
+
+          if (nextLine === "") {
+            j++;
+            continue;
+          }
+
+          if (STEP_REGEX.test(nextLine)) break;
+          if (SCENARIO_REGEX.test(nextLine)) break;
+
+          if (isTableLine(nextLine)) {
+            tableLines.push(nextLine);
+            j++;
+            continue;
+          }
+
+          break;
+        }
+
+        if (tableLines.length > 0) {
+          step.table = parseTable(tableLines);
+          i = j - 1;
+        }
+
+        steps.push(step);
+        i++;
+      }
+
+      scenarios.push({
+        name: scenarioName,
+        tags: currentTags,
+        steps,
+      });
+
+      currentTags = []; // ⚠️ wichtig: Tags NICHT vererben
+      continue;
     }
 
-    steps.push(step);
+    i++;
   }
 
-  return steps;
+  return scenarios;
 }
+
+
 
 function isTableLine(line: string): boolean {
   // einfache Erkennung: beginnt und endet mit "|"
@@ -94,3 +147,20 @@ function isSeparatorRow(cells: string[]): boolean {
   // sehr simple Erkennung: nur - und :
   return cells.every(c => /^:?-+:?$/.test(c) || c === "");
 }
+
+export function matchesTagFilter(
+  scenarioTags: string[],
+  include: string[] = [],
+  exclude: string[] = []
+): boolean {
+  if (include.length && !include.some(t => scenarioTags.includes(t))) {
+    return false;
+  }
+
+  if (exclude.some(t => scenarioTags.includes(t))) {
+    return false;
+  }
+
+  return true;
+}
+

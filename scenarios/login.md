@@ -1,5 +1,6 @@
 # Feature
 
+@Login
 ## Szenario: Überprüfen, ob Login funktioniert
 
 **GEGEBEN** der Nutzer öffnet die Startseite von Saucedemo

@@ -16,7 +16,7 @@
   "editor.formatOnSave": true,
 
   // Formatierer für TS/JS → Prettier
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "vscode.json-language-features",
 
   // --- Prettier ---
   "prettier.printWidth": 100,
