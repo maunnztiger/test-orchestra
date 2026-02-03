@@ -1,23 +1,19 @@
 import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
 import { ParsedStep } from "@core/markdownparser";
 import type { CustomWorld } from "../world/customworld";
-import { PageManager } from "./pages/PageManager";
+
 
 GEGEBEN("der Nutzer öffnet die Startseite von Saucedemo", async (world: CustomWorld) => {
-  const pm = new PageManager(world.page);
-  await pm.navigateTo().sauceLabsStartPage();
-  await pm.navigateTo().waitForNumberOfSeconds(5000);
+  await world.pm.navigateTo().sauceLabsStartPage();
+  await world.pm.navigateTo().waitForNumberOfSeconds(5000);
 });
 
 WENN(
-  "der Nutzer seinen Username in das LoginPrompt Username eingibt",
+  "der Nutzer sich auf der Startseite einloggt",
   async (world: CustomWorld) => {
     console.log("benutzernamen eingegeben");
   }
 );
-UND("sein Passwort in das Feld Password eingibt", async (world: CustomWorld) => {
-  console.log("Passwort eingegeben");
-});
 UND("den Login-Button drückt", async (world: CustomWorld) => {
   console.log("Login Button geklickt");
 });

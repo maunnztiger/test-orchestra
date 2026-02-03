@@ -1,0 +1,74 @@
+[
+  {
+    "uri": "scenarios\\login.md",
+    "elements": [
+      {
+        "name": "Überprüfen, ob Login funktioniert",
+        "keyword": "Scenario",
+        "tags": [
+          {
+            "name": "@Login"
+          }
+        ],
+        "steps": [
+          {
+            "keyword": "GEGEBEN ",
+            "name": "der Nutzer öffnet die Startseite von Saucedemo",
+            "result": {
+              "status": "passed",
+              "duration": 5423064800
+            }
+          },
+          {
+            "keyword": "WENN ",
+            "name": "der Nutzer seinen Username in das LoginPrompt Username eingibt",
+            "result": {
+              "status": "passed",
+              "duration": 458200
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "sein Passwort in das Feld Password eingibt",
+            "result": {
+              "status": "passed",
+              "duration": 413400
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "den Login-Button drückt",
+            "result": {
+              "status": "passed",
+              "duration": 345200
+            }
+          },
+          {
+            "keyword": "DANN ",
+            "name": "ist in dem Fenster die Produktseite geöffnet",
+            "result": {
+              "status": "passed",
+              "duration": 343100
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "links oben befindet sich die Überschrift \"Products\"",
+            "result": {
+              "status": "passed",
+              "duration": 615700
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "der User sieht eine Liste mit den Produkten",
+            "result": {
+              "status": "passed",
+              "duration": 957400
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

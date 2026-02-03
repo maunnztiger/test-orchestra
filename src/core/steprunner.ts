@@ -2,10 +2,13 @@ import { StepRegistry } from "./stepregistry";
 import type { CustomWorld } from "../world/customworld";
 import type { ParsedStep } from "./markdownparser";
 import type { StepResult, StepStatus } from "./reportiing";
-import { resourceLimits } from "worker_threads";
+import { ReportCollector } from "reporting/reportCollector";
 
 export class StepRunner {
-  constructor(private world: CustomWorld) {}
+  constructor(
+    private world: CustomWorld,
+    private report: ReportCollector
+  ) {}
 
   async run(steps: ParsedStep[]): Promise<StepResult[]> {
     console.log(`\n🧪 Starte Step-Runner mit ${steps.length} Steps\n`);
@@ -13,38 +16,34 @@ export class StepRunner {
     let index = 1;
 
     for (const step of steps) {
-      console.log(`➡️  [${index}] ${step.keyword.toUpperCase()} ${step.text}`);
+
       const start = process.hrtime.bigint(); // hohe Auflösung
-      let status: StepStatus = "passed";
-      let error_message: string | undefined;
+      let status: "passed" | "failed" = "passed";
+      let error: string | undefined;
       try {
         const matched: boolean = await StepRegistry.run(this.world, step);
         if (!matched) {
-          console.warn(`⚠️ Kein Step-Match für: "${step.text}"`);
           status = "failed";
-          error_message = `No step definition found for "${step.text}"`
+          error = `No step definition found for "${step.text}"`
         }
       } catch (err: any) {
-        console.error(`❌ Fehler bei Step "${step.text}":`, err);
         status = "failed";
-        error_message = err?.stack || err?.message || String(err)
+        error = err?.stack || err?.message || String(err)
         throw err;
       }
       const end = process.hrtime.bigint();
       const durationNs = Number(end-start);
 
-      results.push({
-        keyword: this.mapKeyword(step.keyword),
-        name: step.text,
+      this.report.addStep({
+        keyword: step.keyword,
+        text: step.text,
         status,
-        duration: durationNs,
-        ...(error_message ? { error_message } : {})
-      });
+        durationNs,
+        error,
+      });   
 
       index++;
     }
-
-    console.log("\n✅ Alle Steps ausgeführt.\n");
     return results;
   }
 

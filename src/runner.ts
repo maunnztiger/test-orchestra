@@ -4,6 +4,10 @@ import { parseMarkdownScenarios } from "./core/markdownparser";
 import { matchesTagFilter } from "./core/markdownparser";
 import { StepRunner } from "./core/steprunner";
 import { CustomWorld } from "./world/customworld";
+import { ReportCollector } from "./reporting/reportCollector";
+import { toCucumberJson } from "reporting/cucumberWriter";
+
+const report = new ReportCollector();
 
 export async function runScenariosFromPath(
   inputPath: string,
@@ -20,7 +24,7 @@ export async function runScenariosFromPath(
   }
 
   for (const file of files) {
-    console.log(`\n📄 File: ${file}`);
+
     const scenarios = parseMarkdownScenarios(file);
 
     const selected = scenarios.filter(s =>
@@ -32,16 +36,23 @@ export async function runScenariosFromPath(
     );
 
     for (const scenario of selected) {
-      console.log(`\n▶ Scenario: ${scenario.name}`);
-      console.log(`🏷️  ${scenario.tags.join(", ") || "-"}`);
+      report.startScenario(scenario.name, scenario.tags);
 
       const world = new CustomWorld();
       await world.beforeAll();
 
-      const runner = new StepRunner(world);
+      const runner = new StepRunner(world, report);
       await runner.run(scenario.steps);
 
       await world.afterAll();
+      report.endScenario();
+
+      const feaure = report.buildFeature(file);
+      const cucumberJson = toCucumberJson(feaure);
+      fs.writeFileSync(
+        "cucumber-report.json",
+        JSON.stringify(cucumberJson, null, 2)
+      );
     }
   }
 }
