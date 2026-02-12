@@ -17,19 +17,29 @@ class StepRegistryClass {
   }
 
   async run(world: CustomWorld, step: ParsedStep): Promise<boolean> {
-  for (const entry of this.steps) {
+    for (const entry of this.steps) {
+      // STRING
+      if (typeof entry.pattern === "string") {
+        if (entry.pattern === step.text) {
+          await entry.handler(world, step);
+          return true;
+        }
 
-    // STRING
-    if (typeof entry.pattern === "string") {
-      if (entry.pattern === step.text) {
-        await entry.handler(world, step);
-        return true;
+        // {string} support
+        if (entry.pattern.includes("{string}")) {
+          const regex = this.buildRegex(entry.pattern);
+          const match = step.text.match(regex);
+          if (match) {
+            step.params = match.slice(1);
+            await entry.handler(world, step);
+            return true;
+          }
+        }
       }
 
-      // {string} support
-      if (entry.pattern.includes("{string}")) {
-        const regex = this.buildRegex(entry.pattern);
-        const match = step.text.match(regex);
+      // REGEX
+      if (entry.pattern instanceof RegExp) {
+        const match = step.text.match(entry.pattern);
         if (match) {
           step.params = match.slice(1);
           await entry.handler(world, step);
@@ -38,20 +48,8 @@ class StepRegistryClass {
       }
     }
 
-    // REGEX
-    if (entry.pattern instanceof RegExp) {
-      const match = step.text.match(entry.pattern);
-      if (match) {
-        step.params = match.slice(1);
-        await entry.handler(world, step);
-        return true;
-      }
-    }
+    return false;
   }
-
-  return false;
-}
-
 
   private buildRegex(pattern: string): RegExp {
     // Alle Regex-Sonderzeichen escapen

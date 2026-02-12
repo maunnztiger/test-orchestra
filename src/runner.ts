@@ -24,16 +24,13 @@ export async function runScenariosFromPath(
   }
 
   for (const file of files) {
-
     const scenarios = parseMarkdownScenarios(file);
 
     const selected = scenarios.filter(s =>
       matchesTagFilter(s.tags, opts.includeTags, opts.excludeTags)
     );
 
-    console.log(
-      `🎯 ${selected.length}/${scenarios.length} scenarios selected`
-    );
+    console.log(`🎯 ${selected.length}/${scenarios.length} scenarios selected`);
 
     for (const scenario of selected) {
       report.startScenario(scenario.name, scenario.tags);
@@ -49,10 +46,7 @@ export async function runScenariosFromPath(
 
       const feaure = report.buildFeature(file);
       const cucumberJson = toCucumberJson(feaure);
-      fs.writeFileSync(
-        "cucumber-report.json",
-        JSON.stringify(cucumberJson, null, 2)
-      );
+      fs.writeFileSync("cucumber-report.json", JSON.stringify(cucumberJson, null, 2));
     }
   }
 }
@@ -65,11 +59,7 @@ function collectMarkdownFiles(p: string): string[] {
   }
 
   if (stat.isDirectory()) {
-    return fs
-      .readdirSync(p)
-      .flatMap(entry =>
-        collectMarkdownFiles(path.join(p, entry))
-      );
+    return fs.readdirSync(p).flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
   }
 
   return [];

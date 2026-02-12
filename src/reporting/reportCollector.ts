@@ -10,7 +10,7 @@ export class ReportCollector {
       tags,
       steps: [],
       status: "passed",
-      durationNs: 0,
+      durationNs: 0
     };
   }
 
@@ -36,7 +36,7 @@ export class ReportCollector {
   buildFeature(uri: string) {
     return {
       uri,
-      scenarios: this.scenarios,
+      scenarios: this.scenarios
     };
   }
 }

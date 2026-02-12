@@ -10,10 +10,10 @@ export class CustomWorld {
   private static beforeAllHooks: HookFn[] = [];
   private static afterAllHooks: HookFn[] = [];
   private _pm?: PageManager;
-  
+
   get pm(): PageManager {
     if (!this._pm) {
-      if(!this.page)  {
+      if (!this.page) {
         throw new Error("Page is not initialized yet. Cannot create PageManager.");
       }
       this._pm = new PageManager(this.page);
@@ -41,7 +41,7 @@ export class CustomWorld {
     this.context = await this.browser.newContext();
     this.page = await this.context.newPage();
     this.resetPageManager();
-  
+
     // → Alle global registrierten BeforeAll-Hooks ausführen
     for (const fn of CustomWorld.beforeAllHooks) {
       await fn(this);

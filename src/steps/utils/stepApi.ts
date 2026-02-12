@@ -1,4 +1,3 @@
-
 import { StepRegistry, StepHandler } from "@core/stepregistry";
 
 export function GEGEBEN(pattern: string, handler: StepHandler) {

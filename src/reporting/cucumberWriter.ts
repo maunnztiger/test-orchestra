@@ -12,10 +12,10 @@ export function toCucumberJson(featureReport: any) {
           result: {
             status: step.status,
             duration: step.durationNs,
-            error_message: step.error,
-          },
-        })),
-      })),
-    },
+            error_message: step.error
+          }
+        }))
+      }))
+    }
   ];
 }

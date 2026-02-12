@@ -4,18 +4,17 @@ import * as fs from "fs";
 export interface ParsedStep {
   keyword: string;
   text: string;
-  table?: string[][];   // <-- Tabelle optional
-  params?: string[];    // <-- optional für {string} etc.
+  table?: string[][]; // <-- Tabelle optional
+  params?: string[]; // <-- optional für {string} etc.
 }
 
-export interface  ParsedScenario {
+export interface ParsedScenario {
   name: string;
   tags: string[];
   steps: ParsedStep[];
 }
 const TAG_REGEX = /^(@[\w-]+(\s+@[\w-]+)*)$/;
 const SCENARIO_REGEX = /^##\s*(Szenario|Scenario)\s*:\s*(.+)$/i;
-
 
 const STEP_REGEX = /^\*\*(GEGEBEN|WENN|DANN|UND)\*\*\s*(.+)$/i;
 
@@ -53,10 +52,7 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
         const stepLine = lines[i];
 
         // nächstes Szenario oder neue Tags → abbrechen
-        if (
-          SCENARIO_REGEX.test(stepLine) ||
-          TAG_REGEX.test(stepLine)
-        ) {
+        if (SCENARIO_REGEX.test(stepLine) || TAG_REGEX.test(stepLine)) {
           break;
         }
 
@@ -107,7 +103,7 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
       scenarios.push({
         name: scenarioName,
         tags: currentTags,
-        steps,
+        steps
       });
 
       currentTags = []; // ⚠️ wichtig: Tags NICHT vererben
@@ -120,8 +116,6 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
   return scenarios;
 }
 
-
-
 function isTableLine(line: string): boolean {
   // einfache Erkennung: beginnt und endet mit "|"
   return line.startsWith("|") && line.endsWith("|");
@@ -130,9 +124,7 @@ function isTableLine(line: string): boolean {
 function parseTable(lines: string[]): string[][] {
   const rows = lines.map(line => {
     const inside = line.substring(1, line.length - 1); // äußere Pipes abschneiden
-    return inside
-      .split("|")
-      .map(cell => cell.trim());
+    return inside.split("|").map(cell => cell.trim());
   });
 
   // zweite Zeile als Separator erkennen und rauswerfen (| --- | ---- |)
@@ -163,4 +155,3 @@ export function matchesTagFilter(
 
   return true;
 }
-

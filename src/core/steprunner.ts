@@ -12,11 +12,10 @@ export class StepRunner {
 
   async run(steps: ParsedStep[]): Promise<StepResult[]> {
     console.log(`\n🧪 Starte Step-Runner mit ${steps.length} Steps\n`);
-    const results: StepResult[] = []
+    const results: StepResult[] = [];
     let index = 1;
 
     for (const step of steps) {
-
       const start = process.hrtime.bigint(); // hohe Auflösung
       let status: "passed" | "failed" = "passed";
       let error: string | undefined;
@@ -24,23 +23,23 @@ export class StepRunner {
         const matched: boolean = await StepRegistry.run(this.world, step);
         if (!matched) {
           status = "failed";
-          error = `No step definition found for "${step.text}"`
+          error = `No step definition found for "${step.text}"`;
         }
       } catch (err: any) {
         status = "failed";
-        error = err?.stack || err?.message || String(err)
+        error = err?.stack || err?.message || String(err);
         throw err;
       }
       const end = process.hrtime.bigint();
-      const durationNs = Number(end-start);
+      const durationNs = Number(end - start);
 
       this.report.addStep({
         keyword: step.keyword,
         text: step.text,
         status,
         durationNs,
-        error,
-      });   
+        error
+      });
 
       index++;
     }
