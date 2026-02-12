@@ -1,6 +1,6 @@
 [
   {
-    "uri": "scenarios\\login.md",
+    "uri": "scenarios/login.md",
     "elements": [
       {
         "name": "Überprüfen, ob Login funktioniert",
@@ -16,23 +16,15 @@
             "name": "der Nutzer öffnet die Startseite von Saucedemo",
             "result": {
               "status": "passed",
-              "duration": 5423064800
+              "duration": 5654778596
             }
           },
           {
             "keyword": "WENN ",
-            "name": "der Nutzer seinen Username in das LoginPrompt Username eingibt",
+            "name": "der Nutzer sich auf der Startseite einloggt",
             "result": {
               "status": "passed",
-              "duration": 458200
-            }
-          },
-          {
-            "keyword": "UND ",
-            "name": "sein Passwort in das Feld Password eingibt",
-            "result": {
-              "status": "passed",
-              "duration": 413400
+              "duration": 362450
             }
           },
           {
@@ -40,7 +32,7 @@
             "name": "den Login-Button drückt",
             "result": {
               "status": "passed",
-              "duration": 345200
+              "duration": 235261
             }
           },
           {
@@ -48,7 +40,7 @@
             "name": "ist in dem Fenster die Produktseite geöffnet",
             "result": {
               "status": "passed",
-              "duration": 343100
+              "duration": 286751
             }
           },
           {
@@ -56,7 +48,7 @@
             "name": "links oben befindet sich die Überschrift \"Products\"",
             "result": {
               "status": "passed",
-              "duration": 615700
+              "duration": 843421
             }
           },
           {
@@ -64,7 +56,7 @@
             "name": "der User sieht eine Liste mit den Produkten",
             "result": {
               "status": "passed",
-              "duration": 957400
+              "duration": 896038
             }
           }
         ]

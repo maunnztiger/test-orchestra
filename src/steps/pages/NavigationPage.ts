@@ -1,15 +1,15 @@
 import { HelperBase } from "./HelperBase";
 import { Page } from "@playwright/test";
-import { loadConfigFile } from "@steps/utils/utils";
+import * as dotenv from "dotenv";
 
+dotenv.config();
 export class NavigationPage extends HelperBase {
   constructor(page: Page) {
     super(page);
   }
 
   async sauceLabsStartPage() {
-    const data = loadConfigFile();
-    const url = data.SAUCE_LABS_BASE_URL;
-    await this.page.goto(url);
+    const url = process.env.APP_URL;
+    await this.page.goto(url!);
   }
 }
