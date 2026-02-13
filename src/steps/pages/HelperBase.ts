@@ -21,10 +21,26 @@ export class HelperBase {
     await expect(selector).toBeHidden({ timeout: timeout });
   }
 
-  async clickAndWaitForResponse(clickTarget: Locator, url: string) {
+  async clickAndWaitForPost(clickTarget: Locator, url: string) {
     const [response] = await Promise.all([
       this.page.waitForResponse(
-        response => response.url().includes(url) && response.status() === 200,
+        res => res.url().includes(url) && 
+        res.request().method() === "POST" &&
+        res.status() === 200,
+        { timeout: 5000 }
+      ),
+      clickTarget.click()
+    ]);
+
+    return response;
+  }
+
+  async clickAndWaitForGet({ clickTarget, url }: { clickTarget: Locator; url: string; }) {
+    const [response] = await Promise.all([
+      this.page.waitForResponse(
+        (res) => res.url().includes(url) &&
+        res.request().method() === "GET" &&
+        res.status() === 200,
         { timeout: 5000 }
       ),
       clickTarget.click()
