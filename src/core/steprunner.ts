@@ -1,7 +1,7 @@
 import { StepRegistry } from "./stepregistry";
 import type { CustomWorld } from "../world/customworld";
 import type { ParsedStep } from "./markdownparser";
-import type { StepResult, StepStatus } from "./reportiing";
+import type { StepResult, StepStatus } from "./reporting";
 import { ReportCollector } from "reporting/reportCollector";
 
 export class StepRunner {
@@ -16,6 +16,7 @@ export class StepRunner {
     let index = 1;
 
     for (const step of steps) {
+      console.log(`➡️  [${index}] ${step.keyword} ${step.text}`);
       const start = process.hrtime.bigint(); // hohe Auflösung
       let status: "passed" | "failed" = "passed";
       let error: string | undefined;
@@ -43,6 +44,7 @@ export class StepRunner {
 
       index++;
     }
+    console.log("\n✅ Alle Steps ausgeführt.\n"); 
     return results;
   }
 

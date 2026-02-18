@@ -19,7 +19,6 @@ export function loadStepDefinitions(stepsDir = path.resolve(process.cwd(), "src/
     if (entry.isDirectory()) {
       loadStepDefinitions(fullPath);
     } else if (entry.isFile() && (entry.name.endsWith(".steps.ts") || entry.name.endsWith(".ts"))) {
-      console.log(`🧩 Lade Step-Definition: ${fullPath}`);
       require(fullPath);
     }
   }

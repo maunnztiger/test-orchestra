@@ -2,7 +2,10 @@
 import type { CustomWorld } from "../world/customworld";
 import type { ParsedStep } from "./markdownparser";
 
-export type StepHandler = (world: CustomWorld, step: ParsedStep) => Promise<void> | void;
+export type StepHandler = (
+  world: CustomWorld, 
+  ...args: any[]
+) => Promise<void> | void;
 
 interface RegisteredStep {
   pattern: string | RegExp;
@@ -21,7 +24,7 @@ class StepRegistryClass {
       // STRING
       if (typeof entry.pattern === "string") {
         if (entry.pattern === step.text) {
-          await entry.handler(world, step);
+          await entry.handler(world, (step.params ?? []));
           return true;
         }
 
@@ -31,7 +34,7 @@ class StepRegistryClass {
           const match = step.text.match(regex);
           if (match) {
             step.params = match.slice(1);
-            await entry.handler(world, step);
+            await entry.handler(world, (step.params?? []));
             return true;
           }
         }
@@ -42,7 +45,7 @@ class StepRegistryClass {
         const match = step.text.match(entry.pattern);
         if (match) {
           step.params = match.slice(1);
-          await entry.handler(world, step);
+          await entry.handler(world, (step.params?? []));
           return true;
         }
       }
@@ -52,11 +55,13 @@ class StepRegistryClass {
   }
 
   private buildRegex(pattern: string): RegExp {
-    // Alle Regex-Sonderzeichen escapen
     const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-    // {string} → (.+)
-    const withGroups = escaped.replace(/\\\{string\\\}/g, "(.+)");
+    // Statt (.+) → Quotes explizit behandeln
+    const withGroups = escaped.replace(
+      /\\\{string\\\}/g,
+      '"([^"]+)"'
+    );
 
     return new RegExp("^" + withGroups + "$");
   }

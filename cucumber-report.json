@@ -16,7 +16,7 @@
             "name": "der Nutzer öffnet die Startseite von Saucedemo",
             "result": {
               "status": "passed",
-              "duration": 465754894
+              "duration": 539422028
             }
           },
           {
@@ -24,7 +24,7 @@
             "name": "der Nutzer sich auf der Startseite einloggt",
             "result": {
               "status": "passed",
-              "duration": 118451292
+              "duration": 97974633
             }
           },
           {
@@ -32,7 +32,7 @@
             "name": "den Login-Button drückt",
             "result": {
               "status": "passed",
-              "duration": 103248812
+              "duration": 132852130
             }
           },
           {
@@ -40,7 +40,7 @@
             "name": "ist in dem Fenster die Produktseite geöffnet",
             "result": {
               "status": "passed",
-              "duration": 36466021
+              "duration": 19425382
             }
           },
           {
@@ -48,15 +48,7 @@
             "name": "links oben befindet sich die Überschrift \"Products\"",
             "result": {
               "status": "passed",
-              "duration": 749316
-            }
-          },
-          {
-            "keyword": "UND ",
-            "name": "der User sieht eine Liste mit den Produkten",
-            "result": {
-              "status": "passed",
-              "duration": 1558393
+              "duration": 12085665
             }
           }
         ]

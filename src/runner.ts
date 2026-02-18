@@ -30,7 +30,10 @@ export async function runScenariosFromPath(
       matchesTagFilter(s.tags, opts.includeTags, opts.excludeTags)
     );
 
-    console.log(`🎯 ${selected.length}/${scenarios.length} scenarios selected`);
+    if (scenarios.length > 0) {
+        console.log(`🎯 ${selected.length}/${scenarios.length} scenarios selected`);
+    }
+
 
     for (const scenario of selected) {
       report.startScenario(scenario.name, scenario.tags);

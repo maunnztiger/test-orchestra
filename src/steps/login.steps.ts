@@ -17,8 +17,7 @@ DANN("ist in dem Fenster die Produktseite geöffnet", async (world: CustomWorld)
 });
 UND(
   "links oben befindet sich die Überschrift {string}",
-  async (world: CustomWorld, step: ParsedStep) => {
-    const title = step.params ? step.params[0] : "";
-    await world.pm.makeloginAction().verifyProductPageTitle((title.trim()));
+  async (world: CustomWorld, title: string) => {
+  await world.pm.makeloginAction().verifyProductPageTitle((title));
   }
 );
