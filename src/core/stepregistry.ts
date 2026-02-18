@@ -3,7 +3,7 @@ import type { CustomWorld } from "../world/customworld";
 import type { ParsedStep } from "./markdownparser";
 
 export type StepHandler = (
-  world: CustomWorld, 
+  world: CustomWorld,
   ...args: any[]
 ) => Promise<void> | void;
 
@@ -16,48 +16,80 @@ class StepRegistryClass {
   private steps: RegisteredStep[] = [];
 
   register(pattern: string | RegExp, handler: StepHandler) {
+    // 🔒 Duplicate Pattern Protection
+    const exists = this.steps.some(
+      s => s.pattern.toString() === pattern.toString()
+    );
+
+    if (exists) {
+      throw new Error(
+        `Duplicate step definition detected: ${pattern.toString()}`
+      );
+    }
+
     this.steps.push({ pattern, handler });
   }
 
   async run(world: CustomWorld, step: ParsedStep): Promise<boolean> {
+    const matches: { entry: RegisteredStep; params: string[] }[] = [];
+
     for (const entry of this.steps) {
-      // STRING
+      let match: RegExpMatchArray | null = null;
+
+      // STRING PATTERN
       if (typeof entry.pattern === "string") {
+
+        // Exact match
         if (entry.pattern === step.text) {
-          await entry.handler(world, (step.params ?? []));
-          return true;
+          matches.push({ entry, params: [] });
+          continue;
         }
 
         // {string} support
         if (entry.pattern.includes("{string}")) {
           const regex = this.buildRegex(entry.pattern);
-          const match = step.text.match(regex);
-          if (match) {
-            step.params = match.slice(1);
-            await entry.handler(world, (step.params?? []));
-            return true;
-          }
+          match = step.text.match(regex);
         }
       }
 
-      // REGEX
+      // REGEX PATTERN
       if (entry.pattern instanceof RegExp) {
-        const match = step.text.match(entry.pattern);
-        if (match) {
-          step.params = match.slice(1);
-          await entry.handler(world, (step.params?? []));
-          return true;
-        }
+        match = step.text.match(entry.pattern);
+      }
+
+      if (match) {
+        matches.push({
+          entry,
+          params: match.slice(1)
+        });
       }
     }
 
-    return false;
+    // ❌ No match
+    if (matches.length === 0) {
+      return false;
+    }
+
+    // ❌ Ambiguous match
+    if (matches.length > 1) {
+      throw new Error(
+        `Ambiguous step definition for: "${step.text}"\n` +
+        `Matched patterns:\n` +
+        matches.map(m => ` - ${m.entry.pattern}`).join("\n")
+      );
+    }
+
+    const { entry, params } = matches[0];
+
+    await entry.handler(world, ...params);
+
+    return true;
   }
 
   private buildRegex(pattern: string): RegExp {
     const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-    // Statt (.+) → Quotes explizit behandeln
+    // {string} → "([^"]+)"
     const withGroups = escaped.replace(
       /\\\{string\\\}/g,
       '"([^"]+)"'
