@@ -1,13 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { parseMarkdownScenarios } from "./core/markdownparser";
-import { matchesTagFilter } from "./core/markdownparser";
+import { parseMarkdownScenarios, matchesTagFilter } from "./core/markdownparser";
 import { StepRunner } from "./core/steprunner";
 import { CustomWorld } from "./world/customworld";
-import { ReportCollector } from "./reporting/reportCollector";
-import { toCucumberJson } from "reporting/cucumberWriter";
-
-const report = new ReportCollector();
+import { ReportCollector } from "./reporting/collector";
+import { CucumberJsonExporter } from "./reporting/cucumberExporter"; // <-- neuer Exporter
 
 export async function runScenariosFromPath(
   inputPath: string,
@@ -16,6 +13,7 @@ export async function runScenariosFromPath(
     excludeTags: string[];
   }
 ) {
+  const collector = new ReportCollector(); // 🔥 pro Run neu
   const files = collectMarkdownFiles(inputPath);
 
   if (!files.length) {
@@ -31,27 +29,44 @@ export async function runScenariosFromPath(
     );
 
     if (scenarios.length > 0) {
-        console.log(`🎯 ${selected.length}/${scenarios.length} scenarios selected`);
+      console.log(
+        `🎯 ${selected.length}/${scenarios.length} scenarios selected`
+      );
     }
 
+    if (selected.length === 0) {
+      continue;
+    }
+
+    // 🔹 Feature starten
+    const featureName = path.basename(file, ".md");
+
+    collector.startFeature(featureName, file, []);
 
     for (const scenario of selected) {
-      report.startScenario(scenario.name, scenario.tags);
+      collector.startScenario(scenario.name, scenario.tags);
 
       const world = new CustomWorld();
       await world.beforeAll();
 
-      const runner = new StepRunner(world, report);
+      const runner = new StepRunner(world, collector);
       await runner.run(scenario.steps);
 
       await world.afterAll();
-      report.endScenario();
 
-      const feaure = report.buildFeature(file);
-      const cucumberJson = toCucumberJson(feaure);
-      fs.writeFileSync("cucumber-report.json", JSON.stringify(cucumberJson, null, 2));
+      collector.finishScenario();
     }
+
+    collector.finishFeature();
   }
+
+  collector.finishRun();
+
+  // 🔹 Export jetzt EINMAL am Ende
+  const run = collector.getRun();
+  console.log("📄 Cucumber report written to cucumber-report.json");
+
+  return collector.getRun();
 }
 
 function collectMarkdownFiles(p: string): string[] {
@@ -62,7 +77,9 @@ function collectMarkdownFiles(p: string): string[] {
   }
 
   if (stat.isDirectory()) {
-    return fs.readdirSync(p).flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
+    return fs
+      .readdirSync(p)
+      .flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
   }
 
   return [];

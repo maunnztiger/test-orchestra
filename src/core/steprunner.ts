@@ -2,66 +2,52 @@ import { StepRegistry } from "./stepregistry";
 import type { CustomWorld } from "../world/customworld";
 import type { ParsedStep } from "./markdownparser";
 import type { StepResult, StepStatus } from "./reporting";
-import { ReportCollector } from "reporting/reportCollector";
-
+import { ReportCollector } from "reporting/collector";
 export class StepRunner {
   constructor(
     private world: CustomWorld,
-    private report: ReportCollector
+    private collector: ReportCollector
   ) {}
 
-  async run(steps: ParsedStep[]): Promise<StepResult[]> {
-    console.log(`\n🧪 Starte Step-Runner mit ${steps.length} Steps\n`);
-    const results: StepResult[] = [];
+  async run(steps: ParsedStep[]) {
     let index = 1;
 
     for (const step of steps) {
-      console.log(`➡️  [${index}] ${step.keyword} ${step.text}`);
-      const start = process.hrtime.bigint(); // hohe Auflösung
+      console.log(
+        `➡️  [${index}] ${step.keyword} ${step.text}`
+      );
+
+      const start = Date.now();
       let status: "passed" | "failed" = "passed";
       let error: string | undefined;
+
       try {
-        const matched: boolean = await StepRegistry.run(this.world, step);
+        const matched = await StepRegistry.run(this.world, step);
+
         if (!matched) {
           status = "failed";
-          error = `No step definition found for "${step.text}"`;
+          error = `No step definition found for: ${step.text}`;
         }
       } catch (err: any) {
         status = "failed";
-        error = err?.stack || err?.message || String(err);
-        throw err;
+        error = err?.message ?? String(err);
       }
-      const end = process.hrtime.bigint();
-      const durationNs = Number(end - start);
 
-      this.report.addStep({
+      const durationMs = Date.now() - start;
+
+      this.collector.addStep({
         keyword: step.keyword,
         text: step.text,
         status,
-        durationNs,
-        error
+        durationMs,
+        error,
       });
 
-      index++;
-    }
-    console.log("\n✅ Alle Steps ausgeführt.\n"); 
-    return results;
-  }
+      if (status === "failed") {
+        break; // fail fast (optional)
+      }
 
-  private mapKeyword(keyword: string): string {
-    // Deine Keywords sind GEGEBEN/WENN/DANN/UND
-    // im Report wollen wir "Given ", "When ", "Then ", "And "
-    switch (keyword.toUpperCase()) {
-      case "GEGEBEN":
-        return "Given ";
-      case "WENN":
-        return "When ";
-      case "DANN":
-        return "Then ";
-      case "UND":
-        return "And ";
-      default:
-        return keyword + " ";
+      index++;
     }
   }
 }

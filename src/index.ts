@@ -2,6 +2,8 @@
 import { Command } from "commander";
 import { runScenariosFromPath } from "runner";
 import { loadStepDefinitions } from "@core/loadStepDefinitions";
+import { CucumberJsonExporter } from "reporting/cucumberExporter";
+import * as fs from 'fs'
 
 loadStepDefinitions();
 const program = new Command();
@@ -20,10 +22,21 @@ program
       ? options.exclude.split(",").map((t: string) => t.trim())
       : [];
 
-    await runScenariosFromPath(inputPath, {
+    const run = await runScenariosFromPath(inputPath, {
       includeTags,
       excludeTags
     });
+    if (!run) return;
+
+    const exporter = new CucumberJsonExporter();
+    const json = exporter.export(run);
+
+    fs.writeFileSync(
+    "cucumber-report.json",
+    JSON.stringify(json, null, 2)
+    );
+
+console.log("📄 Cucumber report written to cucumber-report.json");
   });
 
 program.parseAsync(process.argv);

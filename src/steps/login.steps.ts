@@ -1,5 +1,4 @@
 import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
-import { ParsedStep } from "@core/markdownparser";
 import type { CustomWorld } from "../world/customworld";
 
 GEGEBEN("der Nutzer öffnet die Startseite von Saucedemo", async (world: CustomWorld) => {
