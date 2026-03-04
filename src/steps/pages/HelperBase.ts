@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
+import { loadTestData } from "@steps/utils/utils";
 
 export class HelperBase {
   protected readonly page: Page;
@@ -7,20 +8,21 @@ export class HelperBase {
     this.page = page;
   }
 
+  protected testData = loadTestData();
   async waitForNumberOfSeconds(seconds: number) {
     await this.page.waitForTimeout(seconds);
   }
 
   async loginAsGeneralUser(): Promise<void> {
-    await this.page.fill("#user-name", process.env.STANDARD_USER || "standard_user");
-    await this.page.fill("#password", process.env.PASSWORD || "secret_sauce");
+    await this.page.fill("#user-name", process.env.STANDARD_USER!);
+    await this.page.fill("#password", process.env.PASSWORD!);
    }
 
-  async waitForAppearanceOfElement(selector: Locator, timeout: number = 5000): Promise<void> {
+  async waitForAppearance(selector: Locator, timeout: number = 5000): Promise<void> {
     await expect(selector).toBeVisible({ timeout: timeout });
   }
 
-  async waitForDisappearanceOfElement(selector: Locator, timeout: number = 5000): Promise<void> {
+  async waitForDisappearance(selector: Locator, timeout: number = 5000): Promise<void> {
     await expect(selector).toBeHidden({ timeout: timeout });
   }
 
