@@ -4,8 +4,8 @@ import * as fs from "fs";
 export interface ParsedStep {
   keyword: string;
   text: string;
-  table?: string[][];   // <-- Tabelle optional
-  params?: string[];    // <-- optional für {string} etc.
+  table?: string[][]; // <-- Tabelle optional
+  params?: string[]; // <-- optional für {string} etc.
 }
 
 const STEP_REGEX = /^\*\*(GEGEBEN|WENN|DANN|UND)\*\*\s*(.+)$/i;
@@ -77,9 +77,7 @@ function isTableLine(line: string): boolean {
 function parseTable(lines: string[]): string[][] {
   const rows = lines.map(line => {
     const inside = line.substring(1, line.length - 1); // äußere Pipes abschneiden
-    return inside
-      .split("|")
-      .map(cell => cell.trim());
+    return inside.split("|").map(cell => cell.trim());
   });
 
   // zweite Zeile als Separator erkennen und rauswerfen (| --- | ---- |)

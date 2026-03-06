@@ -1,4 +1,5 @@
 node_modules/
+
 # Logs
 logs
 *.log
@@ -138,3 +139,15 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# results
+test-results

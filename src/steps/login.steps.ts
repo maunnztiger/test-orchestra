@@ -32,12 +32,9 @@ UND(
       throw new Error(`Kein Titel aus dem Step extrahiert. Text: "${step.text}"`);
     }
     console.log("Titel gefunden:", title);
-    
   }
 );
 
-UND(
-  "der User sieht eine Liste mit den Produkten", 
-  async(world: CustomWorld, step: ParsedStep) => {
-  console.log(step)
-})
+UND("der User sieht eine Liste mit den Produkten", async (world: CustomWorld, step: ParsedStep) => {
+  console.log(step);
+});

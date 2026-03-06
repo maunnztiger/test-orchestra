@@ -1,9 +1,9 @@
-import { parseMarkdownScenario } from "./core/markdownparser";
-import { CustomWorld } from "./world/customworld";
-import { StepRunner } from "./core/steprunner";
+import { parseMarkdownScenario } from "@core/markdownparser";
+import { CustomWorld } from "@world/customworld";
+import { StepRunner } from "@core/steprunner";
 import * as fs from "fs";
 import * as path from "path";
-import { FeatureResult, ScenarioResult } from "@core/reportiing";
+import { FeatureResult, ScenarioResult } from "@core/reporting";
 
 function loadStepDefinitions(dir = path.resolve(__dirname, "steps")) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -49,7 +49,7 @@ export async function runScenario(filePath: string) {
 
   const featureResult: FeatureResult = {
     uri: filePath,
-    name: scenarioName,        // du kannst hier auch einen anderen Namen nehmen
+    name: scenarioName, // du kannst hier auch einen anderen Namen nehmen
     elements: [scenarioResult]
   };
 
