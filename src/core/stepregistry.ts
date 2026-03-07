@@ -2,15 +2,7 @@
 import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
 
-<<<<<<< HEAD
-export type StepHandler = (
-  world: CustomWorld,
-  ...args: any[]
-) => Promise<void> | void;
-=======
 export type StepHandler = (world: CustomWorld, ...args: any[]) => Promise<void> | void;
->>>>>>> main
-
 interface RegisteredStep {
   pattern: string | RegExp;
   handler: StepHandler;
@@ -21,21 +13,11 @@ class StepRegistryClass {
 
   register(pattern: string | RegExp, handler: StepHandler) {
     // 🔒 Duplicate Pattern Protection
-<<<<<<< HEAD
-    const exists = this.steps.some(
-      s => s.pattern.toString() === pattern.toString()
-    );
 
-    if (exists) {
-      throw new Error(
-        `Duplicate step definition detected: ${pattern.toString()}`
-      );
-=======
     const exists = this.steps.some(s => s.pattern.toString() === pattern.toString());
 
     if (exists) {
       throw new Error(`Duplicate step definition detected: ${pattern.toString()}`);
->>>>>>> main
     }
 
     this.steps.push({ pattern, handler });
@@ -49,11 +31,8 @@ class StepRegistryClass {
 
       // STRING PATTERN
       if (typeof entry.pattern === "string") {
-<<<<<<< HEAD
 
-=======
->>>>>>> main
-        // Exact match
+       // Exact match
         if (entry.pattern === step.text) {
           matches.push({ entry, params: [] });
           continue;
