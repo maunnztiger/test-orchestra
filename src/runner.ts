@@ -1,68 +1,86 @@
-import { parseMarkdownScenario } from "@core/markdownparser";
-import { CustomWorld } from "@world/customworld";
-import { StepRunner } from "@core/steprunner";
-import * as fs from "fs";
-import * as path from "path";
-import { FeatureResult, ScenarioResult } from "@core/reporting";
+import fs from "fs";
+import path from "path";
+import { parseMarkdownScenarios, matchesTagFilter } from "./core/markdownparser";
+import { StepRunner } from "./core/steprunner";
+import { CustomWorld } from "./world/customworld";
+import { ReportCollector } from "./reporting/collector";
 
-function loadStepDefinitions(dir = path.resolve(__dirname, "steps")) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      loadStepDefinitions(fullPath); // 🔁 Rekursion
-    } else if (entry.isFile() && entry.name.endsWith(".ts")) {
-      console.log(`🧩 Lade Step-Definition: ${path.relative(process.cwd(), fullPath)}`);
-      require(fullPath);
-    }
+export async function runScenariosFromPath(
+  inputPath: string,
+  opts: {
+    includeTags: string[];
+    excludeTags: string[];
   }
-}
+) {
+  const collector = new ReportCollector(); // 🔥 pro Run neu
+  const files = collectMarkdownFiles(inputPath);
 
-export async function runScenario(filePath: string) {
-  loadStepDefinitions();
-  const steps = parseMarkdownScenario(filePath);
-
-  if (!steps.length) {
-    console.warn("⚠️ Keine Steps im Szenario gefunden!");
+  if (!files.length) {
+    console.warn("⚠️ No markdown scenarios found");
     return;
   }
-  console.log("🧾 Parsed Steps:");
-  for (const s of steps) {
-    console.log(`   keyword="${s.keyword}" | text="${s.text}"`);
+
+  for (const file of files) {
+    const scenarios = parseMarkdownScenarios(file);
+
+    const selected = scenarios.filter(s =>
+      matchesTagFilter(s.tags, opts.includeTags, opts.excludeTags)
+    );
+
+    if (scenarios.length > 0) {
+      console.log(
+        `🎯 ${selected.length}/${scenarios.length} scenarios selected`
+      );
+    }
+
+    if (selected.length === 0) {
+      continue;
+    }
+
+
+    // 🔹 Feature starten
+    const featureName = path.basename(file, ".md");
+
+    collector.startFeature(featureName, file, []);
+
+    for (const scenario of selected) {
+      collector.startScenario(scenario.name, scenario.tags);
+
+      const world = new CustomWorld();
+      await world.beforeAll();
+
+      const runner = new StepRunner(world, collector);
+      await runner.run(scenario.steps);
+
+      await world.afterAll();
+
+      collector.finishScenario();
+    }
+
+    collector.finishFeature();
   }
-  const world = new CustomWorld();
-  await world.beforeAll();
 
-  const runner = new StepRunner(world);
-  const stepResults = await runner.run(steps);
+  collector.finishRun();
 
-  await world.afterAll();
-  console.log("✅ Szenario abgeschlossen!");
+  // 🔹 Export jetzt EINMAL am Ende
+  const run = collector.getRun();
+  console.log("📄 Cucumber report written to cucumber-report.json");
 
-  const scenarioName = path.basename(filePath, path.extname(filePath));
-  const scenarioResult: ScenarioResult = {
-    name: scenarioName,
-    keyword: "Scenario",
-    steps: stepResults
-  };
+  return collector.getRun();
+}
 
-  const featureResult: FeatureResult = {
-    uri: filePath,
-    name: scenarioName, // du kannst hier auch einen anderen Namen nehmen
-    elements: [scenarioResult]
-  };
+function collectMarkdownFiles(p: string): string[] {
+  const stat = fs.statSync(p);
 
-  const cucumberJson = [featureResult]; // Cucumber-Report ist ein Array von Features
-
-  // --- report.json schreiben ---
-  const reportDir = path.resolve(process.cwd(), "reports");
-  if (!fs.existsSync(reportDir)) {
-    fs.mkdirSync(reportDir, { recursive: true });
+  if (stat.isFile() && p.endsWith(".md")) {
+    return [p];
   }
 
-  const outputPath = path.join(reportDir, "report.json");
-  fs.writeFileSync(outputPath, JSON.stringify(cucumberJson, null, 2), "utf-8");
+  if (stat.isDirectory()) {
+    return fs
+      .readdirSync(p)
+      .flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
+  }
 
-  console.log(`📄 Cucumber-Style Report geschrieben nach: ${outputPath}`);
+  return [];
 }
