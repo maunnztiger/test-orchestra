@@ -1,16 +1,6 @@
 // src/reporting/collector.ts
 
-<<<<<<< HEAD
-import {
-  TestRun,
-  FeatureResult,
-  ScenarioResult,
-  StepResult,
-  StepStatus,
-} from "./domian";
-=======
 import { TestRun, FeatureResult, ScenarioResult, StepResult, StepStatus } from "./domian";
->>>>>>> main
 
 export class ReportCollector {
   private run: TestRun;
