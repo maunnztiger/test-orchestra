@@ -1,5 +1,5 @@
 // src/core/stepregistry.ts
-import type { CustomWorld } from "../world/customworld";
+import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
 
 export type StepHandler = (

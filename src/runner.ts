@@ -4,7 +4,6 @@ import { parseMarkdownScenarios, matchesTagFilter } from "./core/markdownparser"
 import { StepRunner } from "./core/steprunner";
 import { CustomWorld } from "./world/customworld";
 import { ReportCollector } from "./reporting/collector";
-import { CucumberJsonExporter } from "./reporting/cucumberExporter"; // <-- neuer Exporter
 
 export async function runScenariosFromPath(
   inputPath: string,
@@ -37,6 +36,7 @@ export async function runScenariosFromPath(
     if (selected.length === 0) {
       continue;
     }
+
 
     // 🔹 Feature starten
     const featureName = path.basename(file, ".md");
