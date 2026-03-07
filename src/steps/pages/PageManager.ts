@@ -13,6 +13,7 @@ export class PageManager {
     this.page = page;
     this.loginAction = new LoginActionPage(this.page);
     this.navigationAction = new NavigationPage(this.page);
+
     this.filtersAction = new FiltersActionPage(this.page);
   }
 

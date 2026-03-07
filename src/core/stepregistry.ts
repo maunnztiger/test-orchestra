@@ -3,7 +3,6 @@ import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
 
 export type StepHandler = (world: CustomWorld, ...args: any[]) => Promise<void> | void;
-
 interface RegisteredStep {
   pattern: string | RegExp;
   handler: StepHandler;
@@ -14,6 +13,7 @@ class StepRegistryClass {
 
   register(pattern: string | RegExp, handler: StepHandler) {
     // 🔒 Duplicate Pattern Protection
+
     const exists = this.steps.some(s => s.pattern.toString() === pattern.toString());
 
     if (exists) {
@@ -31,7 +31,8 @@ class StepRegistryClass {
 
       // STRING PATTERN
       if (typeof entry.pattern === "string") {
-        // Exact match
+
+       // Exact match
         if (entry.pattern === step.text) {
           matches.push({ entry, params: [] });
           continue;
@@ -83,7 +84,6 @@ class StepRegistryClass {
 
     // {string} → "([^"]+)"
     const withGroups = escaped.replace(/\\\{string\\\}/g, '"([^"]+)"');
-
     return new RegExp("^" + withGroups + "$");
   }
 }

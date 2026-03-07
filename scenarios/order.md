@@ -1,7 +1,6 @@
 # Feature
 
 @Order
-
 ## Szenario: Überprüfen, ob der Bestellvorgang funktioniert
 
 **GEGEBEN** der Nutzer öffnet die Swag-Labs-Login-Page

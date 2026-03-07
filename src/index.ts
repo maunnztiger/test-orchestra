@@ -4,6 +4,7 @@ import { runScenariosFromPath } from "runner";
 import { loadStepDefinitions } from "@core/loadStepDefinitions";
 import { createExporter } from "reporting/exporterFactory";
 
+
 loadStepDefinitions();
 const program = new Command();
 
