@@ -61,8 +61,6 @@ export async function runScenariosFromPath(
 
   // 🔹 Export jetzt EINMAL am Ende
   const run = collector.getRun();
-  console.log("📄 Cucumber report written to cucumber-report.json");
-
   return collector.getRun();
 }
 
