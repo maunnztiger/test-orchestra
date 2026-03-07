@@ -1,26 +1,17 @@
 // src/reporting/cucumberExporter.ts
 
-import {
-  TestRun,
-  FeatureResult,
-  ScenarioResult,
-  StepResult,
-} from "./domian";
+import { TestRun, FeatureResult, ScenarioResult, StepResult } from "./domian";
 
 export class CucumberJsonExporter {
   export(run: TestRun): any[] {
-    return run.features.map(feature =>
-      this.mapFeature(feature)
-    );
+    return run.features.map(feature => this.mapFeature(feature));
   }
 
   private mapFeature(feature: FeatureResult) {
     return {
       uri: feature.uri,
       name: feature.name,
-      elements: feature.scenarios.map(s =>
-        this.mapScenario(s)
-      ),
+      elements: feature.scenarios.map(s => this.mapScenario(s))
     };
   }
 
@@ -29,11 +20,9 @@ export class CucumberJsonExporter {
       name: scenario.name,
       keyword: "Scenario",
       tags: scenario.tags.map(tag => ({
-        name: tag.startsWith("@") ? tag : `@${tag}`,
+        name: tag.startsWith("@") ? tag : `@${tag}`
       })),
-      steps: scenario.steps.map(step =>
-        this.mapStep(step)
-      ),
+      steps: scenario.steps.map(step => this.mapStep(step))
     };
   }
 
@@ -43,10 +32,11 @@ export class CucumberJsonExporter {
       name: step.text,
       result: {
         status: step.status,
-        duration: step.durationMs * 1_000_000, 
+        duration: step.durationMs * 1_000_000,
         // Cucumber erwartet Nanosekunden
-        error_message: step.error,
-      },
+        error_message: step.error
+      }
     };
   }
 }
+

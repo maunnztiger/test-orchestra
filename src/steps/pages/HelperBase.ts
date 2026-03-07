@@ -14,7 +14,7 @@ export class HelperBase {
   async loginAsGeneralUser(): Promise<void> {
     await this.page.fill("#user-name", process.env.USER_NAME!);
     await this.page.fill("#password", process.env.USER_PASSWD!);
-   }
+  }
 
   async waitForAppearance(selector: Locator, timeout: number = 5000): Promise<void> {
     await expect(selector).toBeVisible({ timeout: timeout });

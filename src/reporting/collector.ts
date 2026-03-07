@@ -1,5 +1,6 @@
 // src/reporting/collector.ts
 
+<<<<<<< HEAD
 import {
   TestRun,
   FeatureResult,
@@ -7,6 +8,9 @@ import {
   StepResult,
   StepStatus,
 } from "./domian";
+=======
+import { TestRun, FeatureResult, ScenarioResult, StepResult, StepStatus } from "./domian";
+>>>>>>> main
 
 export class ReportCollector {
   private run: TestRun;
@@ -16,7 +20,7 @@ export class ReportCollector {
   constructor() {
     this.run = {
       startedAt: new Date(),
-      features: [],
+      features: []
     };
   }
 
@@ -24,8 +28,7 @@ export class ReportCollector {
 
   finishRun() {
     this.run.finishedAt = new Date();
-    this.run.durationMs =
-      this.run.finishedAt.getTime() - this.run.startedAt.getTime();
+    this.run.durationMs = this.run.finishedAt.getTime() - this.run.startedAt.getTime();
   }
 
   getRun(): TestRun {
@@ -41,7 +44,7 @@ export class ReportCollector {
       tags,
       status: "passed",
       durationMs: 0,
-      scenarios: [],
+      scenarios: []
     };
 
     this.run.features.push(this.currentFeature);
@@ -63,7 +66,7 @@ export class ReportCollector {
       tags,
       status: "passed",
       durationMs: 0,
-      steps: [],
+      steps: []
     };
 
     this.currentFeature.scenarios.push(this.currentScenario);
@@ -90,7 +93,7 @@ export class ReportCollector {
     }
 
     const stepResult: StepResult = {
-      ...step,
+      ...step
     };
 
     this.currentScenario.steps.push(stepResult);
@@ -102,3 +105,4 @@ export class ReportCollector {
     }
   }
 }
+

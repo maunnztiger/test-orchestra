@@ -4,8 +4,8 @@
 
 ## Szenario: Überprüfen, ob der Bestellvorgang funktioniert
 
-**GEGEBEN** der Nutzer öffnet die Startseite Saucedemo 
-**UND**  loggt sich als current user ein
+**GEGEBEN** der Nutzer öffnet die Startseite Saucedemo
+**UND** loggt sich als current user ein
 **UND** es öffnet sich die Produktseite von "Swag Labs"
 
 **WENN** der User auf das Filter-Symbol rechts oben klickt
@@ -16,3 +16,4 @@
 **WENN** der User den Filter dann auf "Name (A to Z)" setzt
 **DANN** tauschen sich die Artikel Rucksack an der Spitze
 **UND** das Tester-T-Shirt steht am Fuß der Liste
+

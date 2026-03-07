@@ -2,10 +2,14 @@
 import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
 
+<<<<<<< HEAD
 export type StepHandler = (
   world: CustomWorld,
   ...args: any[]
 ) => Promise<void> | void;
+=======
+export type StepHandler = (world: CustomWorld, ...args: any[]) => Promise<void> | void;
+>>>>>>> main
 
 interface RegisteredStep {
   pattern: string | RegExp;
@@ -17,6 +21,7 @@ class StepRegistryClass {
 
   register(pattern: string | RegExp, handler: StepHandler) {
     // 🔒 Duplicate Pattern Protection
+<<<<<<< HEAD
     const exists = this.steps.some(
       s => s.pattern.toString() === pattern.toString()
     );
@@ -25,6 +30,12 @@ class StepRegistryClass {
       throw new Error(
         `Duplicate step definition detected: ${pattern.toString()}`
       );
+=======
+    const exists = this.steps.some(s => s.pattern.toString() === pattern.toString());
+
+    if (exists) {
+      throw new Error(`Duplicate step definition detected: ${pattern.toString()}`);
+>>>>>>> main
     }
 
     this.steps.push({ pattern, handler });
@@ -38,7 +49,10 @@ class StepRegistryClass {
 
       // STRING PATTERN
       if (typeof entry.pattern === "string") {
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
         // Exact match
         if (entry.pattern === step.text) {
           matches.push({ entry, params: [] });
@@ -74,8 +88,8 @@ class StepRegistryClass {
     if (matches.length > 1) {
       throw new Error(
         `Ambiguous step definition for: "${step.text}"\n` +
-        `Matched patterns:\n` +
-        matches.map(m => ` - ${m.entry.pattern}`).join("\n")
+          `Matched patterns:\n` +
+          matches.map(m => ` - ${m.entry.pattern}`).join("\n")
       );
     }
 
@@ -90,11 +104,7 @@ class StepRegistryClass {
     const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     // {string} → "([^"]+)"
-    const withGroups = escaped.replace(
-      /\\\{string\\\}/g,
-      '"([^"]+)"'
-    );
-
+    const withGroups = escaped.replace(/\\\{string\\\}/g, '"([^"]+)"');
     return new RegExp("^" + withGroups + "$");
   }
 }

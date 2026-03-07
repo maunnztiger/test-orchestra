@@ -28,19 +28,15 @@ export async function runScenariosFromPath(
     );
 
     if (scenarios.length > 0) {
-      console.log(
-        `🎯 ${selected.length}/${scenarios.length} scenarios selected`
-      );
+      console.log(`🎯 ${selected.length}/${scenarios.length} scenarios selected`);
     }
 
     if (selected.length === 0) {
       continue;
     }
 
-
     // 🔹 Feature starten
     const featureName = path.basename(file, ".md");
-
     collector.startFeature(featureName, file, []);
 
     for (const scenario of selected) {
@@ -64,10 +60,22 @@ export async function runScenariosFromPath(
 
   // 🔹 Export jetzt EINMAL am Ende
   const run = collector.getRun();
-  console.log("📄 Cucumber report written to cucumber-report.json");
-
   return collector.getRun();
 }
+
+function collectMarkdownFiles(p: string): string[] {
+  const stat = fs.statSync(p);
+
+  if (stat.isFile() && p.endsWith(".md")) {
+    return [p];
+  }
+
+  if (stat.isDirectory()) {
+    return fs.readdirSync(p).flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
+  }
+
+  return [];
+
 
 function collectMarkdownFiles(p: string): string[] {
   const stat = fs.statSync(p);
@@ -83,4 +91,5 @@ function collectMarkdownFiles(p: string): string[] {
   }
 
   return [];
+}
 }

@@ -2,8 +2,8 @@
 import { Command } from "commander";
 import { runScenariosFromPath } from "runner";
 import { loadStepDefinitions } from "@core/loadStepDefinitions";
-import { PostgresExporter } from "reporting/postgresExporter";{}
-import * as fs from 'fs'
+import { createExporter } from "reporting/exporterFactory";
+
 
 loadStepDefinitions();
 const program = new Command();
@@ -15,6 +15,7 @@ program
   .argument("<path>", "markdown file or directory")
   .option("--tags <tags>", "include tags (comma separated)")
   .option("--exclude <tags>", "exclude tags (comma separated)")
+  .option("--report <type>", "report type (json|db)", "json")
   .action(async (inputPath, options) => {
     const includeTags = options.tags ? options.tags.split(",").map((t: string) => t.trim()) : [];
 
@@ -28,10 +29,9 @@ program
     });
     if (!run) return;
 
-    const exporter = new PostgresExporter(process.env.DB_URL!);
-    await exporter.export(run)
+    const exporter = createExporter(options.report, {dbURL: process.env.DB_URL});
+    await exporter.export(run);
 
-console.log("📄 Report written to `testorchestra_results`-database");
   });
 
 program.parseAsync(process.argv);

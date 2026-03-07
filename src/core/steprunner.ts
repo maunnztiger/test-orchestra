@@ -13,10 +13,7 @@ export class StepRunner {
     let index = 1;
 
     for (const step of steps) {
-      console.log(
-        `➡️  [${index}] ${step.keyword} ${step.text}`
-      );
-
+      console.log(`➡️  [${index}] ${step.keyword} ${step.text}`);
       const start = Date.now();
       let status: "passed" | "failed" = "passed";
       let error: string | undefined;
@@ -28,7 +25,7 @@ export class StepRunner {
           status = "failed";
           error = `No step definition found for: ${step.text}`;
 
-        }
+       }
       } catch (err: any) {
         status = "failed";
         error = err?.message ?? String(err);
@@ -41,7 +38,7 @@ export class StepRunner {
         text: step.text,
         status,
         durationMs,
-        error,
+        error
       });
 
       if (status === "failed") {
