@@ -4,7 +4,6 @@ import { runScenariosFromPath } from "runner";
 import { loadStepDefinitions } from "@core/loadStepDefinitions";
 import { createExporter } from "reporting/exporterFactory";
 
-
 loadStepDefinitions();
 const program = new Command();
 
@@ -29,9 +28,8 @@ program
     });
     if (!run) return;
 
-    const exporter = createExporter(options.report, {dbURL: process.env.DB_URL});
+    const exporter = createExporter(options.report, { dbURL: process.env.DB_URL });
     await exporter.export(run);
-
   });
 
 program.parseAsync(process.argv);

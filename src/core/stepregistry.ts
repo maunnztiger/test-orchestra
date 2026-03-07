@@ -31,8 +31,7 @@ class StepRegistryClass {
 
       // STRING PATTERN
       if (typeof entry.pattern === "string") {
-
-       // Exact match
+        // Exact match
         if (entry.pattern === step.text) {
           matches.push({ entry, params: [] });
           continue;

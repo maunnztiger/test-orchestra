@@ -32,7 +32,6 @@ export class PostgresExporter implements ReportExporter {
         }
       }
       console.log("📄 Report written to `testorchestra_results`-database");
-
     } finally {
       await this.client.end();
     }
@@ -42,7 +41,8 @@ export class PostgresExporter implements ReportExporter {
     const db = new QueryBuilder(this.client);
     try {
       await this.client.query("BEGIN");
-      await db.insert("test_runs")
+      await db
+        .insert("test_runs")
         .values({
           id: runId,
           started_at: run.startedAt,
@@ -61,7 +61,8 @@ export class PostgresExporter implements ReportExporter {
     const db = new QueryBuilder(this.client);
     try {
       await this.client.query("BEGIN");
-      await db.insert("features")
+      await db
+        .insert("features")
         .values({
           id: featureId,
           test_run_id: runId,
@@ -82,7 +83,8 @@ export class PostgresExporter implements ReportExporter {
     const db = new QueryBuilder(this.client);
     try {
       await this.client.query("BEGIN");
-      await db.insert("scenarios")
+      await db
+        .insert("scenarios")
         .values({
           id: scenarioId,
           feature_id: featureId,
@@ -111,7 +113,8 @@ export class PostgresExporter implements ReportExporter {
     const db = new QueryBuilder(this.client);
     try {
       await this.client.query("BEGIN");
-      await db.insert("steps")
+      await db
+        .insert("steps")
         .values({
           id: stepId,
           scenario_id: scenarioId,
@@ -127,6 +130,5 @@ export class PostgresExporter implements ReportExporter {
       await this.client.query("ROLLBACK");
       throw err;
     }
-
   }
 }
