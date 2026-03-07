@@ -1,7 +1,8 @@
+// src/core/steprunner.ts
 import { StepRegistry } from "./stepregistry";
-import type { CustomWorld } from "../world/customworld";
+import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
-import type { StepResult, StepStatus } from "./reportiing";
+import type { StepResult, StepStatus } from "./reporting";
 import { resourceLimits } from "worker_threads";
 
 export class StepRunner {
@@ -9,7 +10,7 @@ export class StepRunner {
 
   async run(steps: ParsedStep[]): Promise<StepResult[]> {
     console.log(`\n🧪 Starte Step-Runner mit ${steps.length} Steps\n`);
-    const results: StepResult[] = []
+    const results: StepResult[] = [];
     let index = 1;
 
     for (const step of steps) {
@@ -22,16 +23,16 @@ export class StepRunner {
         if (!matched) {
           console.warn(`⚠️ Kein Step-Match für: "${step.text}"`);
           status = "failed";
-          error_message = `No step definition found for "${step.text}"`
+          error_message = `No step definition found for "${step.text}"`;
         }
       } catch (err: any) {
         console.error(`❌ Fehler bei Step "${step.text}":`, err);
         status = "failed";
-        error_message = err?.stack || err?.message || String(err)
+        error_message = err?.stack || err?.message || String(err);
         throw err;
       }
       const end = process.hrtime.bigint();
-      const durationNs = Number(end-start);
+      const durationNs = Number(end - start);
 
       results.push({
         keyword: this.mapKeyword(step.keyword),
