@@ -81,7 +81,7 @@ class StepRegistryClass {
 
     const { entry, params } = matches[0];
 
-    await entry.handler(world, ...params);
+    await entry.handler(world, ...params, step.table);
 
     return true;
   }

@@ -18,7 +18,7 @@ import { runScenariosFromPath } from "runner";
 
   async export(run: TestRun) {
     await this.client.connect();
-
+    await this.client.query("BEGIN")
     try{
       const runId = uuidv4();
       await this.insertRun(runId, run);
@@ -37,7 +37,9 @@ import { runScenariosFromPath } from "runner";
           }
         }
       }
+      await this.client.query("COMMIT")
     } finally {
+      await this.client.query("ROLLBACK")
       await this.client.end();
     }
     

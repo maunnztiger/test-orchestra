@@ -9,7 +9,7 @@
 **WENN** der User auf ein Produkt klickt
 **DANN** öffnet sich eine Detailansicht des Produkts
 
-**WENN** der User nun auf den Button "Add to Cadrd" klickt
+**WENN** der User auf den Button "Add to Card" klickt
 **DANN** landet das Produkt in seinem Warenkorb
 **UND** an dem Symbol für seinen Warenkorb ist eine kleine 1 angezeigt
 

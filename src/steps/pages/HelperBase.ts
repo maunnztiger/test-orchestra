@@ -1,5 +1,4 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { loadTestData } from "@steps/utils/utils";
 
 export class HelperBase {
   protected readonly page: Page;
@@ -8,14 +7,13 @@ export class HelperBase {
     this.page = page;
   }
 
-  protected testData = loadTestData();
   async waitForNumberOfSeconds(seconds: number) {
     await this.page.waitForTimeout(seconds);
   }
 
   async loginAsGeneralUser(): Promise<void> {
-    await this.page.fill("#user-name", process.env.STANDARD_USER!);
-    await this.page.fill("#password", process.env.PASSWORD!);
+    await this.page.fill("#user-name", process.env.USER_NAME!);
+    await this.page.fill("#password", process.env.USER_PASSWD!);
    }
 
   async waitForAppearance(selector: Locator, timeout: number = 5000): Promise<void> {
