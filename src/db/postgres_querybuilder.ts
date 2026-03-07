@@ -29,9 +29,7 @@ class InsertQuery {
     const columns = Object.keys(this.data);
     const values = Object.values(this.data);
 
-    const placeholders = columns.map(
-      (_, i) => `$${i + 1}`
-    );
+    const placeholders = columns.map((_, i) => `$${i + 1}`);
 
     const sql = `
       INSERT INTO ${this.table}
@@ -68,10 +66,7 @@ class SelectQuery {
   }
 
   async execute() {
-    const cols =
-      typeof this.columns === "string"
-        ? this.columns
-        : this.columns.join(", ");
+    const cols = typeof this.columns === "string" ? this.columns : this.columns.join(", ");
 
     let sql = `SELECT ${cols} FROM ${this.table}`;
 

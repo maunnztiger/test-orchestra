@@ -26,7 +26,7 @@ export interface FeatureResult {
   status: FeatureStatus;
   durationMs: number;
   scenarios: ScenarioResult[];
-  tags: string[]
+  tags: string[];
 }
 
 export interface TestRun {

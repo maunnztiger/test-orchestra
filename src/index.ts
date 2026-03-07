@@ -2,8 +2,10 @@
 import { Command } from "commander";
 import { runScenariosFromPath } from "runner";
 import { loadStepDefinitions } from "@core/loadStepDefinitions";
-import { PostgresExporter } from "reporting/postgresExporter";{}
-import * as fs from 'fs'
+import { PostgresExporter } from "reporting/postgresExporter";
+{
+}
+import * as fs from "fs";
 
 loadStepDefinitions();
 const program = new Command();
@@ -29,9 +31,9 @@ program
     if (!run) return;
 
     const exporter = new PostgresExporter(process.env.DB_URL!);
-    await exporter.export(run)
+    await exporter.export(run);
 
-console.log("📄 Report written to `testorchestra_results`-database");
+    console.log("📄 Report written to `testorchestra_results`-database");
   });
 
 program.parseAsync(process.argv);

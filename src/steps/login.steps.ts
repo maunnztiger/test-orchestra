@@ -18,9 +18,12 @@ DANN("ist in dem Fenster die Produktseite geöffnet", async (world: CustomWorld)
 UND(
   "links oben befindet sich die Überschrift {string}",
   async (world: CustomWorld, title: string) => {
-  await world.pm.makeloginAction().verifyProductPageTitle((title));
+    await world.pm.makeloginAction().verifyProductPageTitle(title);
   }
-)
-UND("der User sieht eine Liste mit den Produkten", async (world: CustomWorld, table: string[][]) => {
-  console.log(table);
-});
+);
+UND(
+  "der User sieht eine Liste mit den Produkten",
+  async (world: CustomWorld, table: string[][]) => {
+    console.log(table);
+  }
+);

@@ -8,7 +8,7 @@ export class LoginActionPage extends HelperBase {
   constructor(page: Page) {
     super(page);
   }
-  
+
   async submitLogin() {
     await this.page.click("#login-button");
   }
@@ -20,6 +20,5 @@ export class LoginActionPage extends HelperBase {
   async verifyProductPageTitle(expectedTitle: string) {
     const productTitle = this.page.locator(".title");
     await this.checkTextContent(productTitle, expectedTitle);
-    
   }
 }

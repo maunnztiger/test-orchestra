@@ -1,10 +1,11 @@
 # Feature
 
 @Order
+
 ## Szenario: Überprüfen, ob der Bestellvorgang funktioniert
 
-**GEGEBEN** der Nutzer öffnet die Swag-Labs-Login-Page 
-**UND**  loggt sich als Standard User ein
+**GEGEBEN** der Nutzer öffnet die Swag-Labs-Login-Page
+**UND** loggt sich als Standard User ein
 
 **WENN** der User auf ein Produkt klickt
 **DANN** öffnet sich eine Detailansicht des Produkts
@@ -16,7 +17,7 @@
 **WENN** der User auf den kleinen Einkaufswagen mit der 1 klickt
 **DANN** erscheint eine Einzelansicht der aktuellen Bestellung
 **UND** es ist ein Button "Remove" auf der rechten Seite der Bestellung
-**UND** es ist ein grüner Button "Checkout" auf der rechten Seite 
+**UND** es ist ein grüner Button "Checkout" auf der rechten Seite
 **UND** es ist ein Button "Continue Shopping" auf der linken Seite der Bestellung
 
 **WENN** der User nun auf den Button "Remove" klickt
