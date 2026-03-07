@@ -2,7 +2,7 @@
 import { Command } from "commander";
 import { runScenariosFromPath } from "runner";
 import { loadStepDefinitions } from "@core/loadStepDefinitions";
-import { CucumberJsonExporter } from "reporting/cucumberExporter";
+import { PostgresExporter } from "reporting/postgresExporter";{}
 import * as fs from 'fs'
 
 loadStepDefinitions();
@@ -28,15 +28,10 @@ program
     });
     if (!run) return;
 
-    const exporter = new CucumberJsonExporter();
-    const json = exporter.export(run);
+    const exporter = new PostgresExporter(process.env.DB_URL!);
+    await exporter.export(run)
 
-    fs.writeFileSync(
-    "cucumber-report.json",
-    JSON.stringify(json, null, 2)
-    );
-
-console.log("📄 Cucumber report written to cucumber-report.json");
+console.log("📄 Report written to `testorchestra_results`-database");
   });
 
 program.parseAsync(process.argv);
