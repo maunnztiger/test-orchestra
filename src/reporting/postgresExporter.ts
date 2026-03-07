@@ -1,4 +1,5 @@
 import { Client } from "pg";
+import { QueryBuilder } from "db/postgres_querybuilder";
 import { v4 as uuidv4 } from 'uuid';
 
 import { 
@@ -15,10 +16,9 @@ import { runScenariosFromPath } from "runner";
   constructor(connectionString: string) {
     this.client = new Client({connectionString});
   }
-
-  async export(run: TestRun) {
+    async export(run: TestRun) {
     await this.client.connect();
-    await this.client.query("BEGIN")
+  
     try{
       const runId = uuidv4();
       await this.insertRun(runId, run);
@@ -37,27 +37,31 @@ import { runScenariosFromPath } from "runner";
           }
         }
       }
-      await this.client.query("COMMIT")
+      
     } finally {
-      await this.client.query("ROLLBACK")
       await this.client.end();
     }
     
   }
 
    private async insertRun(runId: string, run: TestRun) {
-    await this.client.query(
-      `
-      INSERT INTO test_runs (id, started_at, finished_at, duration_ms)
-      VALUES ($1, $2, $3, $4)
-      `,
-      [
-        runId,
-        run.startedAt,
-        run.finishedAt,
-        run.durationMs
-      ]
-    );
+    const db = new QueryBuilder(this.client)
+    try {
+        await this.client.query("BEGIN")
+        db.insert("test_runs")
+        .values({
+        id: runId,       
+        started_at: run.startedAt, 
+        finished_at: run.finishedAt, 
+        duration_ms: run.durationMs
+        })
+        .execute()
+        await this.client.query("COMMIT")
+    } catch (err) {
+      await this.client.query("ROLLBACK")
+      throw err
+    }
+    
   }
 
   private async insertFeature(
@@ -65,20 +69,26 @@ import { runScenariosFromPath } from "runner";
     runId: string,
     feature: FeatureResult
   ) {
-      await this.client.query(
-      `
-      INSERT INTO features (id, test_run_id, name, uri, status, duration_ms)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      `,
-      [
-        featureId,
-        runId,
-        feature.name,
-        feature.uri,
-        feature.status,
-        feature.durationMs
-      ]
-    );
+       const db = new QueryBuilder(this.client)
+      try {
+       await this.client.query("BEGIN")
+       db.insert("features")
+       .values({
+        id: featureId, 
+        test_run_id: runId, 
+        name: feature.name, 
+        uri: feature.uri, 
+        status: feature.status, 
+        duration_ms: feature.durationMs
+       })
+       .execute()
+       await this.client.query("COMMIT")
+    } catch (err) {
+      await this.client.query("ROLLBACK")
+      throw err
+    }
+      
+       
   }
 
   private async insertScenario(
@@ -86,28 +96,31 @@ import { runScenariosFromPath } from "runner";
     featureId: string,
     scenario: ScenarioResult
   ) {
-    await this.client.query(
-      `
-      INSERT INTO scenarios (id, feature_id, name, status, duration_ms)
-      VALUES ($1, $2, $3, $4, $5)
-      `,
-      [
-        scenarioId,
-        featureId,
-        scenario.name,
-        scenario.status,
-        scenario.durationMs
-      ]
-    );
-
+    const db = new QueryBuilder(this.client)
+       try {
+        await this.client.query("BEGIN")
+        db.insert("scenarios")
+        .values({
+        id: scenarioId, 
+        feature_id: featureId, 
+        name: scenario.name, 
+        status: scenario.status, 
+        duration_ms:  scenario.durationMs
+       })
+       .execute()
+    
     for (const tag of scenario.tags) {
-      await this.client.query(
-        `
-        INSERT INTO scenario_tags (scenario_id, tag)
-        VALUES ($1, $2)
-        `,
-        [scenarioId, tag]
-      );
+      db.insert("scenario_tags")
+      .values({
+        scenario_id: scenarioId,
+        tag: tag
+       })
+       .execute()
+    }
+      await this.client.query("COMMIT")
+    } catch (err) {
+      await this.client.query("ROLLBACK")
+      throw err
     }
   }
 
@@ -116,20 +129,23 @@ import { runScenariosFromPath } from "runner";
     scenarioId: string,
     step: StepResult
   ) {
-    await this.client.query(
-      `
-      INSERT INTO steps (id, scenario_id, keyword, text, status, duration_ms, error)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `,
-      [
-        stepId,
-        scenarioId,
-        step.keyword,
-        step.text,
-        step.status,
-        step.durationMs,
-        step.error ?? null
-      ]
-    );
+    const db = new QueryBuilder(this.client)
+    try {
+        await this.client.query("BEGIN")
+        db.insert("steps")
+        .values({
+        id: stepId,
+        scenario_id: scenarioId, 
+        keyword: step.keyword,
+        text: step.text, 
+        status: step.status, 
+        duration_ms: step.durationMs, 
+        error: step.error ?? null, 
+       }).execute()
+      await this.client.query("COMMIT")
+    } catch (err) {
+      await this.client.query("ROLLBACK")
+      throw err
+    }
   }
  }
