@@ -3,6 +3,10 @@ import { Command } from "commander";
 import { runScenariosFromPath } from "runner";
 import { loadStepDefinitions } from "@core/loadStepDefinitions";
 import { createExporter } from "reporting/exporterFactory";
+import { printRunSummary } from "reporting/runSummary";
+import { Client } from "pg";
+import { connect } from "http2";
+import { detectFlakyScenarios } from "analytics/flakyDetector";
 
 loadStepDefinitions();
 const program = new Command();
@@ -30,6 +34,24 @@ program
 
     const exporter = createExporter(options.report, { dbURL: process.env.DB_URL });
     await exporter.export(run);
+    printRunSummary(run)
   });
+program
+.command("detect-flaky")
+.description("Detect flaky tests")
+.action(async() => {
+  const client = new Client({
+    connectionString: process.env.DB_URL
+  })
+  await client.connect()
+  const flaky = await detectFlakyScenarios(client)
+  console.log("\nFlaky Tests\n")
+  flaky.forEach(test => {
+     console.log(
+        `${test.name} | passed: ${test.passed} | failed: ${test.failed}`
+      )
+  })
+  await client.end()
+})
 
 program.parseAsync(process.argv);

@@ -36,7 +36,6 @@ export class CustomWorld {
 
   // === Lifecycle ===
   async beforeAll() {
-    console.log("🚀 Starte Browser und Test-Context");
     this.browser = await chromium.launch({ headless: false });
     this.context = await this.browser.newContext();
     this.page = await this.context.newPage();
@@ -53,8 +52,6 @@ export class CustomWorld {
     for (const fn of CustomWorld.afterAllHooks) {
       await fn(this);
     }
-
-    console.log("🧹 Browser wird geschlossen");
     await this.context?.close();
     await this.browser?.close();
     this.resetPageManager();
@@ -62,9 +59,7 @@ export class CustomWorld {
 }
 
 CustomWorld.registerBeforeAll(async world => {
-  console.log("⚙️ [Hook] BeforeAll läuft");
 });
 
 CustomWorld.registerAfterAll(async world => {
-  console.log("⚙️ [Hook] AfterAll läuft");
 });

@@ -28,7 +28,6 @@ export async function runScenariosFromPath(
     );
 
     if (scenarios.length > 0) {
-      console.log(`🎯 ${selected.length}/${scenarios.length} scenarios selected`);
     }
 
     if (selected.length === 0) {
@@ -75,18 +74,4 @@ function collectMarkdownFiles(p: string): string[] {
   }
 
   return [];
-
-  function collectMarkdownFiles(p: string): string[] {
-    const stat = fs.statSync(p);
-
-    if (stat.isFile() && p.endsWith(".md")) {
-      return [p];
-    }
-
-    if (stat.isDirectory()) {
-      return fs.readdirSync(p).flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
-    }
-
-    return [];
-  }
 }
