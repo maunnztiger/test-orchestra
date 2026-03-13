@@ -24,7 +24,8 @@ export class StepRunner {
         if (!matched) {
           status = "failed";
           error = `No step definition found for: ${step.text}`;
-        }
+
+       }
       } catch (err: any) {
         status = "failed";
         error = err?.message ?? String(err);

@@ -74,4 +74,21 @@ function collectMarkdownFiles(p: string): string[] {
   }
 
   return [];
+
+
+function collectMarkdownFiles(p: string): string[] {
+  const stat = fs.statSync(p);
+
+  if (stat.isFile() && p.endsWith(".md")) {
+    return [p];
+  }
+
+  if (stat.isDirectory()) {
+    return fs
+      .readdirSync(p)
+      .flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
+  }
+
+  return [];
+}
 }

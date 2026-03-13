@@ -8,6 +8,7 @@ import { Client } from "pg";
 import { connect } from "http2";
 import { detectFlakyScenarios } from "analytics/flakyDetector";
 
+
 loadStepDefinitions();
 const program = new Command();
 
