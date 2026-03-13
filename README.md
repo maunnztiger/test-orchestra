@@ -97,5 +97,5 @@ Ein Orchester, das nie aufhört zu spielen. 🎶
 ### lokale Entwicklung
 
 - Libs installieren `npm install`
-- Tests starten `npm run test`
+- Tests starten `npm run testorchestra`
 - Code formattieren `npm run format`

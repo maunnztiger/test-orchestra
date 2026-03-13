@@ -28,7 +28,6 @@ export async function runScenariosFromPath(
     );
 
     if (scenarios.length > 0) {
-      console.log(`🎯 ${selected.length}/${scenarios.length} scenarios selected`);
     }
 
     if (selected.length === 0) {

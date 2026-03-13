@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
+    "testorchestra": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "tsc",
     "test": "playwright test",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login"
+    "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
+    "login_results_db": "npm run login -- --report db",
+    "login_results_json":"npm run login -- --report json"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",
