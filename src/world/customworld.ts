@@ -1,5 +1,5 @@
 import { chromium, Browser, BrowserContext, Page } from "@playwright/test";
-import { PageManager } from "../steps/pages/PageManager";
+import { PageManager } from "@steps/pages/PageManager";
 type HookFn = (world: CustomWorld) => Promise<void>;
 
 export class CustomWorld {
@@ -58,8 +58,6 @@ export class CustomWorld {
   }
 }
 
-CustomWorld.registerBeforeAll(async world => {
-});
+CustomWorld.registerBeforeAll(async world => {});
 
-CustomWorld.registerAfterAll(async world => {
-});
+CustomWorld.registerAfterAll(async world => {});

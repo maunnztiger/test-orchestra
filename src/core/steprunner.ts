@@ -2,13 +2,13 @@
 import { StepRegistry } from "./stepregistry";
 import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
-import type { StepResult, StepStatus } from "./reporting";
 import { ReportCollector } from "reporting/collector";
 export class StepRunner {
   constructor(
     private world: CustomWorld,
     private collector: ReportCollector
   ) {}
+
   async run(steps: ParsedStep[]) {
     let index = 1;
 
@@ -24,8 +24,7 @@ export class StepRunner {
         if (!matched) {
           status = "failed";
           error = `No step definition found for: ${step.text}`;
-
-       }
+        }
       } catch (err: any) {
         status = "failed";
         error = err?.message ?? String(err);

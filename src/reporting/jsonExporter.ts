@@ -1,10 +1,14 @@
 import fs from "fs";
-import { TestRun } from "./domian";
+import path from "path";
+import { TestRun } from "./domain";
 import { CucumberJsonExporter } from "./cucumberExporter";
 import { ReportExporter } from "./exporter";
 
 export class JsonExporter implements ReportExporter {
-  constructor(private file = "./reports/cucumber-report.json") {}
+  constructor(private file = "./reports/cucumber-report.json") {
+    const dir = path.dirname(this.file);
+    fs.mkdirSync(dir, { recursive: true });
+  }
 
   async export(run: TestRun) {
     const cucumberExporter = new CucumberJsonExporter();

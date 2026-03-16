@@ -96,6 +96,8 @@ Ein Orchester, das nie aufhört zu spielen. 🎶
 
 ### lokale Entwicklung
 
-- Libs installieren `npm install`
-- Tests starten `npm run testorchestra`
-- Code formattieren `npm run format`
+1. Postgres DB starten (z.b. über `docker compose up -d`)
+2. .env Datei mit DB URL hinterlegen `postgresql://postgres:postgres@localhost:5432/test-orchestra`
+3. NPM Libs installieren `npm install`
+4. Tests starten `npm run testorchestra`
+5. Nach Änderungen bitte Code formattieren `npm run format`

@@ -1,6 +1,6 @@
 // src/reporting/cucumberExporter.ts
 
-import { TestRun, FeatureResult, ScenarioResult, StepResult } from "./domian";
+import { TestRun, FeatureResult, ScenarioResult, StepResult } from "./domain";
 
 export class CucumberJsonExporter {
   export(run: TestRun): any[] {
@@ -39,4 +39,3 @@ export class CucumberJsonExporter {
     };
   }
 }
-

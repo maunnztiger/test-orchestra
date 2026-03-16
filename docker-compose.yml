@@ -1,0 +1,13 @@
+services:
+  test-orchestra-postgres:
+    image: postgres:18.3
+    container_name: test-orchestra-postgres
+    hostname: test-orchestra-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"

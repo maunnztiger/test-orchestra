@@ -1,4 +1,4 @@
-import { Client } from "pg";
+import { Client, QueryResultRow } from "pg";
 
 export class QueryBuilder {
   constructor(private client: Client) {}
@@ -14,6 +14,7 @@ export class QueryBuilder {
 
 class InsertQuery {
   private data: Record<string, any> = {};
+  private returningColumn?: string;
 
   constructor(
     private client: Client,
@@ -25,19 +26,26 @@ class InsertQuery {
     return this;
   }
 
-  async execute() {
+  async execute(): Promise<void>;
+  async execute<T extends QueryResultRow>(returning: string): Promise<T>;
+  async execute<T extends QueryResultRow>(returning?: string): Promise<T | void> {
     const columns = Object.keys(this.data);
     const values = Object.values(this.data);
-
     const placeholders = columns.map((_, i) => `$${i + 1}`);
 
-    const sql = `
-      INSERT INTO ${this.table}
-      (${columns.join(", ")})
-      VALUES (${placeholders.join(", ")})
-    `;
+    let sql = `
+    INSERT INTO ${this.table} (${columns.join(", ")})
+    VALUES (${placeholders.join(", ")})
+  `;
 
-    return this.client.query(sql, values);
+    if (returning) {
+      sql += ` RETURNING ${returning}`;
+      const result = await this.client.query<T>(sql, values);
+      if (!result.rows[0]) throw new Error(`INSERT into ${this.table} returned no rows`);
+      return result.rows[0];
+    }
+
+    await this.client.query(sql, values);
   }
 }
 
