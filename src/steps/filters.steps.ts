@@ -2,9 +2,16 @@ import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
 import { CustomWorld } from "../world/customworld";
 
 
-GEGEBEN("der Nutzer öffnet die Startseite Saucedemo", async (world: CustomWorld) => {});
-UND(" loggt sich als current user ein", async (world: CustomWorld) => {});
-UND("es öffnet sich die Produktseite von {string}", async (world: CustomWorld) => {});
+GEGEBEN("der Nutzer öffnet die Startseite Saucedemo", async (world: CustomWorld) => {
+    await world.pm.navigateTo().sauceLabsStartPage();
+});
+UND("loggt sich als current user ein", async (world: CustomWorld) => {
+  await world.pm.makeloginAction().loginAsGeneralUser();
+  await world.pm.makeloginAction().submitLogin()
+});
+UND("es öffnet sich die Produktseite von {string}", async (world: CustomWorld, headerName: string) => {
+  await world.pm.makeFiltersAction().verifyProductPageHeader(headerName)
+});
 
 WENN("der User auf das Filter-Symbol rechts oben klickt", async (world: CustomWorld) => {});
 DANN("öffnet sich ein Menü mit Filtern", async (world: CustomWorld) => {});

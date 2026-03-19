@@ -9,8 +9,10 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
+    "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters",
     "login_results_db": "npm run login -- --report db",
-    "login_results_json":"npm run login -- --report json"
+    "login_results_json":"npm run login -- --report json",
+    "filters_result_json": "npm run filters -- --report json"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",

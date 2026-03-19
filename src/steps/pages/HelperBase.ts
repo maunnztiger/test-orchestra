@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
+import { Table } from "@core/table";
 
 export class HelperBase {
   protected readonly page: Page;

@@ -1,5 +1,7 @@
+import { Table } from "@core/table";
 import { Page, expect } from "@playwright/test";
 import { HelperBase } from "@steps/pages/HelperBase";
+
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -20,5 +22,14 @@ export class LoginActionPage extends HelperBase {
   async verifyProductPageTitle(expectedTitle: string) {
     const productTitle = this.page.locator(".title");
     await this.checkTextContent(productTitle, expectedTitle);
+ }
+
+ async verifyProductCards(table: Table) {
+  const products = this.page.locator(".inventory_item_name");
+  const texts = await products.allTextContents()
+  const expected = table.asList();
+  expect(texts).toEqual(expected);
+
+
  }
 }

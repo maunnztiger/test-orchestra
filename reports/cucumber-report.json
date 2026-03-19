@@ -1,0 +1,107 @@
+[
+  {
+    "uri": "scenarios/filters.md",
+    "name": "filters",
+    "elements": [
+      {
+        "name": "Überprüfen, ob der Bestellvorgang funktioniert",
+        "keyword": "Scenario",
+        "tags": [
+          {
+            "name": "@Filters"
+          }
+        ],
+        "steps": [
+          {
+            "keyword": "GEGEBEN ",
+            "name": "der Nutzer öffnet die Startseite Saucedemo",
+            "result": {
+              "status": "passed",
+              "duration": 534000000
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "loggt sich als current user ein",
+            "result": {
+              "status": "passed",
+              "duration": 252000000
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "es öffnet sich die Produktseite von \"Swag Labs\"",
+            "result": {
+              "status": "passed",
+              "duration": 25000000
+            }
+          },
+          {
+            "keyword": "WENN ",
+            "name": "der User auf das Filter-Symbol rechts oben klickt",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "DANN ",
+            "name": "öffnet sich ein Menü mit Filtern",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "WENN ",
+            "name": "der User den Filter \"Name (Z to A)\" anklickt",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "DANN ",
+            "name": "erscheint der folgende Artikel \"Test.allTheThings() T-Shirt (Red)\" an der Spitze der Liste",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "der Artikel \"Sauce Labs Backpack\" am Fuß der Liste",
+            "result": {
+              "status": "passed",
+              "duration": 1000000
+            }
+          },
+          {
+            "keyword": "WENN ",
+            "name": "der User den Filter dann auf \"Name (A to Z)\" setzt",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "DANN ",
+            "name": "tauschen sich die Artikel Rucksack an der Spitze",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "UND ",
+            "name": "das Tester-T-Shirt steht am Fuß der Liste",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

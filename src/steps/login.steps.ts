@@ -1,6 +1,7 @@
 import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
 import type { CustomWorld } from "../world/customworld";
 import { ParsedStep } from "@core/markdownparser";
+import { Table } from "@core/table";
 
 GEGEBEN("der Nutzer öffnet die Startseite von Saucedemo", async (world: CustomWorld) => {
   await world.pm.navigateTo().sauceLabsStartPage();
@@ -23,7 +24,7 @@ UND(
 );
 UND(
   "der User sieht eine Liste mit den Produkten",
-  async (world: CustomWorld, table: string[][]) => {
-    console.log(table);
+  async (world: CustomWorld, table: Table) => {
+    await world.pm.makeloginAction().verifyProductCards(table)
   }
 );
