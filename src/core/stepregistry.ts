@@ -2,7 +2,7 @@
 import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
 
-export type StepHandler = (world: CustomWorld, ...args: any[]) => Promise<void> | void;
+export type StepHandler = (this: CustomWorld, ...args: any[]) => Promise<void> | void;
 interface RegisteredStep {
   pattern: string | RegExp;
   handler: StepHandler;
@@ -31,8 +31,7 @@ class StepRegistryClass {
 
       // STRING PATTERN
       if (typeof entry.pattern === "string") {
-
-       // Exact match
+        // Exact match
         if (entry.pattern === step.text) {
           matches.push({ entry, params: [] });
           continue;
@@ -74,7 +73,7 @@ class StepRegistryClass {
 
     const { entry, params } = matches[0];
 
-    await entry.handler(world, ...params, step.table);
+    await entry.handler.call(world, ...params, step.table);
 
     return true;
   }

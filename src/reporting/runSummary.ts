@@ -1,8 +1,7 @@
 import { TestRun } from "./domian";
 
 export function printRunSummary(run: TestRun) {
-
-  let featureCount = run.features.length;
+  const featureCount = run.features.length;
   let scenarioCount = 0;
   let stepCount = 0;
 
@@ -11,19 +10,15 @@ export function printRunSummary(run: TestRun) {
   let skipped = 0;
 
   for (const feature of run.features) {
-
     scenarioCount += feature.scenarios.length;
 
     for (const scenario of feature.scenarios) {
-
       stepCount += scenario.steps.length;
 
       for (const step of scenario.steps) {
-
         if (step.status === "passed") passed++;
         if (step.status === "failed") failed++;
         if (step.status === "skipped") skipped++;
-
       }
     }
   }
@@ -52,5 +47,4 @@ export function printRunSummary(run: TestRun) {
     console.log("✅ ALL TESTS PASSED");
     console.log("======================================");
   }
-
 }

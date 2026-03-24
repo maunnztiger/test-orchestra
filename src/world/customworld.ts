@@ -1,6 +1,6 @@
 import { chromium, Browser, BrowserContext, Page } from "@playwright/test";
 import { PageManager } from "../steps/pages/PageManager";
-type HookFn = (world: CustomWorld) => Promise<void>;
+type HookFn = (this: CustomWorld) => Promise<void>;
 
 export class CustomWorld {
   browser!: Browser;
@@ -9,6 +9,8 @@ export class CustomWorld {
 
   private static beforeAllHooks: HookFn[] = [];
   private static afterAllHooks: HookFn[] = [];
+  private static beforeHooks: HookFn[] = [];
+  private static afterHooks: HookFn[] = [];
   private _pm?: PageManager;
 
   get pm(): PageManager {
@@ -34,32 +36,48 @@ export class CustomWorld {
     CustomWorld.afterAllHooks.push(fn);
   }
 
+  static registerBefore(fn: HookFn) {
+    CustomWorld.beforeHooks.push(fn);
+  }
+
+  static registerAfter(fn: HookFn) {
+    CustomWorld.afterHooks.push(fn);
+  }
+
   // === Lifecycle ===
-  async beforeAll() {
+  async beforeAll(this: CustomWorld) {
+    // → Alle global registrierten BeforeAll-Hooks ausführen
+    for (const fn of CustomWorld.beforeAllHooks) {
+      await fn.call(this);
+    }
     this.browser = await chromium.launch({ headless: false });
+  }
+
+  async beforeScenario(this: CustomWorld) {
     this.context = await this.browser.newContext();
     this.page = await this.context.newPage();
     this.resetPageManager();
-
-    // → Alle global registrierten BeforeAll-Hooks ausführen
-    for (const fn of CustomWorld.beforeAllHooks) {
-      await fn(this);
+    for (const fn of CustomWorld.beforeHooks) {
+      await fn.call(this);
     }
   }
-
-  async afterAll() {
-    // → Erst Hooks ausführen
-    for (const fn of CustomWorld.afterAllHooks) {
-      await fn(this);
+  async afterScenario(this: CustomWorld) {
+    for (const fn of CustomWorld.afterHooks) {
+      await fn.call(this);
     }
     await this.context?.close();
     await this.browser?.close();
     this.resetPageManager();
   }
+
+  async afterAll() {
+    // → Erst Hooks ausführen
+    for (const fn of CustomWorld.afterAllHooks) {
+      await fn.call(this);
+    }
+  }
 }
 
-CustomWorld.registerBeforeAll(async world => {
-});
+CustomWorld.registerBeforeAll(async function () {});
 
-CustomWorld.registerAfterAll(async world => {
-});
+CustomWorld.registerAfterAll(async function () {});

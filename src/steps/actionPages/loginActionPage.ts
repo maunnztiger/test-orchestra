@@ -11,7 +11,7 @@ export class LoginActionPage extends HelperBase {
     super(page);
   }
 
- async submitLogin() {
+  async submitLogin() {
     await this.page.click("#login-button");
   }
 
@@ -22,14 +22,12 @@ export class LoginActionPage extends HelperBase {
   async verifyProductPageTitle(expectedTitle: string) {
     const productTitle = this.page.locator(".title");
     await this.checkTextContent(productTitle, expectedTitle);
- }
+  }
 
- async verifyProductCards(table: Table) {
-  const products = this.page.locator(".inventory_item_name");
-  const texts = await products.allTextContents()
-  const expected = table.asList();
-  expect(texts).toEqual(expected);
-
-
- }
+  async verifyProductCards(table: Table) {
+    const products = this.page.locator(".inventory_item_name");
+    const texts = await products.allTextContents();
+    const expected = table.asList();
+    expect(texts).toEqual(expected);
+  }
 }

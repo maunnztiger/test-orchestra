@@ -1,5 +1,4 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { Table } from "@core/table";
 
 export class HelperBase {
   protected readonly page: Page;
@@ -17,7 +16,7 @@ export class HelperBase {
     await this.page.fill("#password", process.env.USER_PASSWD!);
   }
 
-  async waitForAppearance(selector: Locator, timeout: number = 5000): Promise<void> {
+  async waitForAppearance(selector: Locator, timeout: number): Promise<void> {
     await expect(selector).toBeVisible({ timeout: timeout });
   }
 

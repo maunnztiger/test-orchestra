@@ -1,6 +1,4 @@
 // src/core/reporting.ts
-import type { ParsedStep } from "./markdownparser";
-
 export type StepStatus = "passed" | "failed" | "skipped";
 
 export interface StepResult {
