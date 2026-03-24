@@ -1,7 +1,6 @@
 import { Client } from "pg";
 
 export async function detectFlakyScenarios(client: Client) {
-
   const result = await client.query(`
     SELECT
         name,
@@ -13,8 +12,7 @@ export async function detectFlakyScenarios(client: Client) {
     HAVING COUNT(*) FILTER (WHERE status='passed') > 0
     AND COUNT(*) FILTER (WHERE status='failed') > 0
     ORDER BY failed DESC
-  `)
+  `);
 
-  return result.rows
+  return result.rows;
 }
-

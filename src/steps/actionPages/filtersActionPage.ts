@@ -1,4 +1,4 @@
-import { Page, expect } from "@playwright/test";
+import { Page } from "@playwright/test";
 import { HelperBase } from "@steps/pages/HelperBase";
 import * as dotenv from "dotenv";
 dotenv.config();

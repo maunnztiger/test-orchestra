@@ -1,134 +1,100 @@
 import { Client } from "pg";
 import { QueryBuilder } from "db/postgres_querybuilder";
 import { ReportExporter } from "./exporter";
-import { v4 as uuidv4 } from "uuid";
-
-import { TestRun, FeatureResult, ScenarioResult, StepResult } from "./domian";
+import { TestRun, FeatureResult, ScenarioResult, StepResult } from "./domain";
 
 export class PostgresExporter implements ReportExporter {
-  private client: Client;
+  private readonly client: Client;
+  private readonly db: QueryBuilder;
 
   constructor(connectionString: string) {
     this.client = new Client({ connectionString });
+    this.db = new QueryBuilder(this.client);
   }
+
   async export(run: TestRun) {
     await this.client.connect();
 
     try {
-      const runId = uuidv4();
-      await this.insertRun(runId, run);
+      await this.client.query("BEGIN");
+
+      const { id: runId } = await this.insertRun(run);
 
       for (const feature of run.features) {
-        const featureId = uuidv4();
-        await this.insertFeature(featureId, runId, feature);
+        const { id: featureId } = await this.insertFeature(runId, feature);
 
         for (const scenario of feature.scenarios) {
-          const scenarioId = uuidv4();
-          await this.insertScenario(scenarioId, featureId, scenario);
+          const { id: scenarioId } = await this.insertScenario(featureId, scenario);
 
           for (const step of scenario.steps) {
-            await this.insertStep(uuidv4(), scenarioId, step);
+            await this.insertStep(scenarioId, step);
           }
         }
       }
+
+      await this.client.query("COMMIT");
       console.log("📄 Report written to `testorchestra_results`-database");
+    } catch (err) {
+      await this.client.query("ROLLBACK");
+      throw err;
     } finally {
       await this.client.end();
     }
   }
 
-  private async insertRun(runId: string, run: TestRun) {
-    const db = new QueryBuilder(this.client);
-    try {
-      await this.client.query("BEGIN");
-      await db
-        .insert("test_runs")
-        .values({
-          id: runId,
-          started_at: run.startedAt,
-          finished_at: run.finishedAt,
-          duration_ms: run.durationMs
-        })
-        .execute();
-      await this.client.query("COMMIT");
-    } catch (err) {
-      await this.client.query("ROLLBACK");
-      throw err;
-    }
+  private async insertRun(run: TestRun) {
+    return this.db
+      .insert("test_runs")
+      .values({
+        started_at: run.startedAt,
+        finished_at: run.finishedAt,
+        duration_ms: run.durationMs
+      })
+      .execute<{ id: number }>("id");
   }
 
-  private async insertFeature(featureId: string, runId: string, feature: FeatureResult) {
-    const db = new QueryBuilder(this.client);
-    try {
-      await this.client.query("BEGIN");
-      await db
-        .insert("features")
-        .values({
-          id: featureId,
-          test_run_id: runId,
-          name: feature.name,
-          uri: feature.uri,
-          status: feature.status,
-          duration_ms: feature.durationMs
-        })
-        .execute();
-      await this.client.query("COMMIT");
-    } catch (err) {
-      await this.client.query("ROLLBACK");
-      throw err;
-    }
+  private async insertFeature(runId: number, feature: FeatureResult) {
+    return this.db
+      .insert("features")
+      .values({
+        test_run_id: runId,
+        name: feature.name,
+        uri: feature.uri,
+        status: feature.status,
+        duration_ms: feature.durationMs
+      })
+      .execute<{ id: number }>("id");
   }
 
-  private async insertScenario(scenarioId: string, featureId: string, scenario: ScenarioResult) {
-    const db = new QueryBuilder(this.client);
-    try {
-      await this.client.query("BEGIN");
-      await db
-        .insert("scenarios")
-        .values({
-          id: scenarioId,
-          feature_id: featureId,
-          name: scenario.name,
-          status: scenario.status,
-          duration_ms: scenario.durationMs
-        })
-        .execute();
+  private async insertScenario(featureId: number, scenario: ScenarioResult) {
+    const { id: scenarioId } = await this.db
+      .insert("scenarios")
+      .values({
+        feature_id: featureId,
+        name: scenario.name,
+        status: scenario.status,
+        duration_ms: scenario.durationMs
+      })
+      .execute<{ id: number }>("id");
 
-      for (const tag of scenario.tags) {
-        db.insert("scenario_tags")
-          .values({
-            scenario_id: scenarioId,
-            tag: tag
-          })
-          .execute();
-      }
-      await this.client.query("COMMIT");
-    } catch (err) {
-      await this.client.query("ROLLBACK");
-      throw err;
+    for (const tag of scenario.tags) {
+      await this.db.insert("scenario_tags").values({ scenario_id: scenarioId, tag }).execute();
     }
+
+    return { id: scenarioId };
   }
 
-  private async insertStep(stepId: string, scenarioId: string, step: StepResult) {
-    const db = new QueryBuilder(this.client);
-    try {
-      await this.client.query("BEGIN");
-      await db
-        .insert("steps")
-        .values({
-          id: stepId,
-          scenario_id: scenarioId,
-          keyword: step.keyword,
-          text: step.text,
-          status: step.status,
-          duration_ms: step.durationMs,
-          error: step.error ?? null
-        })
-        .execute();
-      await this.client.query("COMMIT");
-    } catch (err) {
-      await this.client.query("ROLLBACK");
-      throw err;
-    }
+  private async insertStep(scenarioId: number, step: StepResult) {
+    return this.db
+      .insert("steps")
+      .values({
+        scenario_id: scenarioId,
+        keyword: step.keyword,
+        text: step.text,
+        status: step.status,
+        duration_ms: step.durationMs,
+        error: step.error ?? null
+      })
+      .execute();
   }
 }

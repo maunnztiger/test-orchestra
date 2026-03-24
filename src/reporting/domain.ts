@@ -35,4 +35,3 @@ export interface TestRun {
   durationMs?: number;
   features: FeatureResult[];
 }
-
