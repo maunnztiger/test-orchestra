@@ -8,6 +8,7 @@ export class StepRunner {
     private world: CustomWorld,
     private collector: ReportCollector
   ) {}
+
   async run(steps: ParsedStep[]) {
     await this.world.beforeScenario();
     let index = 1;

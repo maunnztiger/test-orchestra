@@ -2,6 +2,7 @@ import { chromium, Browser, BrowserContext, Page } from "@playwright/test";
 import { PageManager } from "../steps/pages/PageManager";
 type HookFn = (this: CustomWorld) => Promise<void>;
 
+
 export class CustomWorld {
   browser!: Browser;
   context!: BrowserContext;
@@ -45,11 +46,7 @@ export class CustomWorld {
   }
 
   // === Lifecycle ===
-  async beforeAll(this: CustomWorld) {
-    // → Alle global registrierten BeforeAll-Hooks ausführen
-    for (const fn of CustomWorld.beforeAllHooks) {
-      await fn.call(this);
-    }
+  async beforeAll() {
     this.browser = await chromium.launch({ headless: false });
   }
 

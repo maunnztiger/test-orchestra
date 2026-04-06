@@ -1,4 +1,3 @@
-// src/core/reporting.ts
 export type StepStatus = "passed" | "failed" | "skipped";
 
 export interface StepResult {

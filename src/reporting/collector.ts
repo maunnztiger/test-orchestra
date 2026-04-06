@@ -1,9 +1,9 @@
 // src/reporting/collector.ts
 
-import { TestRun, FeatureResult, ScenarioResult, StepResult, StepStatus } from "./domian";
+import { TestRun, FeatureResult, ScenarioResult, StepResult, StepStatus } from "./domain";
 
 export class ReportCollector {
-  private run: TestRun;
+  private readonly run: TestRun;
   private currentFeature?: FeatureResult;
   private currentScenario?: ScenarioResult;
 

@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import { Table } from "@core/table";
 import { Page, expect } from "@playwright/test";
+=======
+import { Page } from "@playwright/test";
+>>>>>>> main
 import { HelperBase } from "@steps/pages/HelperBase";
 
 import * as dotenv from "dotenv";

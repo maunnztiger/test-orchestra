@@ -1,5 +1,5 @@
 import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
-import { CustomWorld } from "../world/customworld";
+import { CustomWorld } from "@world/customworld";
 
 GEGEBEN("der Nutzer öffnet die Swag-Labs-Login-Page ", async function (this: CustomWorld) {});
 UND("loggt sich als Standard User ein", async function (this: CustomWorld) {});

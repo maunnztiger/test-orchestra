@@ -1,7 +1,7 @@
-import { TestRun } from "./domian";
+import { TestRun } from "./domain";
 
 export function printRunSummary(run: TestRun) {
-  const featureCount = run.features.length;
+  let featureCount = run.features.length;
   let scenarioCount = 0;
   let stepCount = 0;
 

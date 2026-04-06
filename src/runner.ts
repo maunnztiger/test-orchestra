@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { parseMarkdownScenarios, matchesTagFilter } from "./core/markdownparser";
-import { StepRunner } from "./core/steprunner";
-import { CustomWorld } from "./world/customworld";
+import { parseMarkdownScenarios, matchesTagFilter } from "@core/markdownparser";
+import { StepRunner } from "@core/steprunner";
+import { CustomWorld } from "@world/customworld";
 import { ReportCollector } from "./reporting/collector";
 
 export async function runScenariosFromPath(
@@ -32,6 +32,7 @@ export async function runScenariosFromPath(
 
     if (scenarios.length > 0) {
       // intentionally empty
+
     }
 
     if (selected.length === 0) {
@@ -74,4 +75,18 @@ function collectMarkdownFiles(p: string): string[] {
   }
 
   return [];
+
+  function collectMarkdownFiles(p: string): string[] {
+    const stat = fs.statSync(p);
+
+    if (stat.isFile() && p.endsWith(".md")) {
+      return [p];
+    }
+
+    if (stat.isDirectory()) {
+      return fs.readdirSync(p).flatMap(entry => collectMarkdownFiles(path.join(p, entry)));
+    }
+
+    return [];
+  }
 }
