@@ -83,18 +83,17 @@ export class PostgresExporter implements ReportExporter {
     return { id: scenarioId };
   }
 
-
   private async insertStep(scenarioId: number, step: StepResult) {
-  return this.db
-    .insert("steps")
-    .values({
-      scenario_id: scenarioId,
-      keyword: step.keyword,
-      text: step.text,
-      status: step.status,
-      duration_ms: step.durationMs,
-      error: step.error ?? null
-    })
-    .execute();
-}
+    return this.db
+      .insert("steps")
+      .values({
+        scenario_id: scenarioId,
+        keyword: step.keyword,
+        text: step.text,
+        status: step.status,
+        duration_ms: step.durationMs,
+        error: step.error ?? null
+      })
+      .execute();
+  }
 }

@@ -2,7 +2,6 @@ import { chromium, Browser, BrowserContext, Page } from "@playwright/test";
 import { PageManager } from "../steps/pages/PageManager";
 type HookFn = (this: CustomWorld) => Promise<void>;
 
-
 export class CustomWorld {
   browser!: Browser;
   context!: BrowserContext;

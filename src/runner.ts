@@ -32,7 +32,6 @@ export async function runScenariosFromPath(
 
     if (scenarios.length > 0) {
       // intentionally empty
-
     }
 
     if (selected.length === 0) {

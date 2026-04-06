@@ -16,7 +16,7 @@
     "filters_result_json": "npm run filters -- --report json"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "9.39.4",
     "@playwright/test": "^1.58.1",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.19.1",

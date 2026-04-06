@@ -32,4 +32,3 @@ UND("der Artikel {string} am Fuß der Liste", async function (this: CustomWorld)
 WENN("der User den Filter dann auf {string} setzt", async function (this: CustomWorld) {});
 DANN("tauschen sich die Artikel Rucksack an der Spitze", async function (this: CustomWorld) {});
 UND("das Tester-T-Shirt steht am Fuß der Liste", async function (this: CustomWorld) {});
-
