@@ -1,7 +1,7 @@
 import * as yaml from "js-yaml";
 import * as fs from "fs";
 
-export function loadTestData<T = any>() {
+export function loadTestData<T = string | number | Record<string, unknown>>() {
   const fileContents = fs.readFileSync("./resources/test_data.yaml", "utf-8");
   const data = yaml.load(fileContents);
   if (!data) {

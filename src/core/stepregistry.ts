@@ -1,8 +1,11 @@
 // src/core/stepregistry.ts
 import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
+import { Table } from "./table";
 
-export type StepHandler = (this: CustomWorld, ...args: any[]) => Promise<void> | void;
+export type StepArg = string | Table;
+
+export type StepHandler = (this: CustomWorld, ...args: StepArg[]) => Promise<void> | void;
 interface RegisteredStep {
   pattern: string | RegExp;
   handler: StepHandler;
@@ -72,8 +75,8 @@ class StepRegistryClass {
     }
 
     const { entry, params } = matches[0];
-
-    await entry.handler.call(world, ...params, step.table);
+    const args = [...params, step.table].filter(v => v !== undefined);
+    await entry.handler.apply(world, args);
 
     return true;
   }

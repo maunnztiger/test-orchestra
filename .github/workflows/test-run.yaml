@@ -12,6 +12,11 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
 
+    env:
+      APP_URL: ${{ secrets.APP_URL }}
+      USER_NAME: ${{ secrets.USER_NAME }}
+      USER_PASSWD: ${{ secrets.USER_PASSWD }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4

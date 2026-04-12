@@ -18,17 +18,16 @@ export class PostgresExporter implements ReportExporter {
     try {
       await this.client.query("BEGIN");
 
-      const { id: runId } = await this.insertRun(run);
+      const runId = await this.insertRun(run);
 
       for (const feature of run.features) {
-        const { id: featureId } = await this.insertFeature(runId, feature);
+        const featureId = await this.insertFeature(runId, feature);
 
         for (const scenario of feature.scenarios) {
-          const { id: scenarioId } = await this.insertScenario(featureId, scenario);
+          const scenarioId = await this.insertScenario(featureId, scenario);
 
-          for (const step of scenario.steps) {
-            await this.insertStep(scenarioId, step);
-          }
+          // 🔥 Batch Steps
+          await this.insertStepsBulk(scenarioId, scenario.steps);
         }
       }
 
@@ -41,59 +40,118 @@ export class PostgresExporter implements ReportExporter {
       await this.client.end();
     }
   }
-  private async insertRun(run: TestRun) {
-    return this.db
-      .insert("test_runs")
+
+  // ========================
+  // INSERTS
+  // ========================
+
+  private async insertRun(run: TestRun): Promise<number> {
+    const result = await this.db
+      .insert<{
+        started_at: Date;
+        finished_at: Date | null;
+        duration_ms: number;
+      }>("test_runs")
       .values({
         started_at: run.startedAt,
-        finished_at: run.finishedAt,
-        duration_ms: run.durationMs
+        finished_at: run.finishedAt ?? null,
+        duration_ms: run.durationMs ?? 0
       })
       .execute<{ id: number }>("id");
+
+    return result.id;
   }
 
-  private async insertFeature(runId: number, feature: FeatureResult) {
-    return this.db
-      .insert("features")
+  private async insertFeature(runId: number, feature: FeatureResult): Promise<number> {
+    const result = await this.db
+      .insert<{
+        test_run_id: number;
+        name: string;
+        uri: string;
+        status: string;
+        duration_ms: number;
+      }>("features")
       .values({
         test_run_id: runId,
         name: feature.name,
         uri: feature.uri,
         status: feature.status,
-        duration_ms: feature.durationMs
+        duration_ms: feature.durationMs ?? 0
       })
       .execute<{ id: number }>("id");
+
+    return result.id;
   }
 
-  private async insertScenario(featureId: number, scenario: ScenarioResult) {
-    const { id: scenarioId } = await this.db
-      .insert("scenarios")
+  private async insertScenario(featureId: number, scenario: ScenarioResult): Promise<number> {
+    const result = await this.db
+      .insert<{
+        feature_id: number;
+        name: string;
+        status: string;
+        duration_ms: number;
+      }>("scenarios")
       .values({
         feature_id: featureId,
         name: scenario.name,
         status: scenario.status,
-        duration_ms: scenario.durationMs
+        duration_ms: scenario.durationMs ?? 0
       })
       .execute<{ id: number }>("id");
 
-    for (const tag of scenario.tags) {
-      await this.db.insert("scenario_tags").values({ scenario_id: scenarioId, tag }).execute();
+    const scenarioId = result.id;
+
+    // 🔥 Tags batch
+    if (scenario.tags.length > 0) {
+      for (const tag of scenario.tags) {
+        await this.db
+          .insert<{ scenario_id: number; tag: string }>("scenario_tags")
+          .values({ scenario_id: scenarioId, tag })
+          .execute();
+      }
     }
 
-    return { id: scenarioId };
+    return scenarioId;
   }
 
-  private async insertStep(scenarioId: number, step: StepResult) {
-    return this.db
-      .insert("steps")
-      .values({
-        scenario_id: scenarioId,
-        keyword: step.keyword,
-        text: step.text,
-        status: step.status,
-        duration_ms: step.durationMs,
-        error: step.error ?? null
-      })
-      .execute();
+  /**
+   * 🔥 BULK INSERT für Steps (Performance!)
+   */
+  private async insertStepsBulk(scenarioId: number, steps: StepResult[]) {
+    if (steps.length === 0) return;
+
+    const columns = ["scenario_id", "keyword", "text", "status", "duration_ms", "error"];
+
+    const values: unknown[] = [];
+    const placeholders: string[] = [];
+
+    let paramIndex = 1;
+
+    for (const step of steps) {
+      const rowPlaceholders: string[] = [];
+
+      const row = [
+        scenarioId,
+        step.keyword,
+        step.text,
+        step.status,
+        step.durationMs,
+        step.error ?? null
+      ];
+
+      for (const value of row) {
+        values.push(value);
+        rowPlaceholders.push(`$${paramIndex++}`);
+      }
+
+      placeholders.push(`(${rowPlaceholders.join(", ")})`);
+    }
+
+    const sql = `
+      INSERT INTO steps (${columns.join(", ")})
+      VALUES ${placeholders.join(", ")}
+    `;
+
+    await this.client.query(sql, values);
   }
 }

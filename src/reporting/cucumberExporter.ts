@@ -2,12 +2,43 @@
 
 import { TestRun, FeatureResult, ScenarioResult, StepResult } from "./domain";
 
+// 🔥 Cucumber Types
+
+interface CucumberTag {
+  name: string;
+}
+
+interface CucumberStepResult {
+  status: "passed" | "failed" | "skipped";
+  duration: number;
+  error_message?: string;
+}
+
+interface CucumberStep {
+  keyword: string;
+  name: string;
+  result: CucumberStepResult;
+}
+
+interface CucumberScenario {
+  name: string;
+  keyword: "Scenario";
+  tags: CucumberTag[];
+  steps: CucumberStep[];
+}
+
+interface CucumberFeature {
+  uri: string;
+  name: string;
+  elements: CucumberScenario[];
+}
+
 export class CucumberJsonExporter {
-  export(run: TestRun): any[] {
-    return run.features.map(feature => this.mapFeature(feature));
+  export(run: TestRun): CucumberFeature[] {
+    return run.features.map(f => this.mapFeature(f));
   }
 
-  private mapFeature(feature: FeatureResult) {
+  private mapFeature(feature: FeatureResult): CucumberFeature {
     return {
       uri: feature.uri,
       name: feature.name,
@@ -15,7 +46,7 @@ export class CucumberJsonExporter {
     };
   }
 
-  private mapScenario(scenario: ScenarioResult) {
+  private mapScenario(scenario: ScenarioResult): CucumberScenario {
     return {
       name: scenario.name,
       keyword: "Scenario",
@@ -26,16 +57,24 @@ export class CucumberJsonExporter {
     };
   }
 
-  private mapStep(step: StepResult) {
+  private mapStep(step: StepResult): CucumberStep {
     return {
       keyword: step.keyword + " ",
       name: step.text,
       result: {
-        status: step.status,
-        duration: step.durationMs * 1_000_000,
-        // Cucumber erwartet Nanosekunden
-        error_message: step.error
+        status: this.normalizeStatus(step.status),
+        duration: (step.durationMs ?? 0) * 1_000_000,
+        error_message: step.error || undefined
       }
     };
+  }
+
+  /**
+   * 🔥 sorgt dafür, dass wir cucumber-kompatibel bleiben
+   */
+  private normalizeStatus(status: StepResult["status"]): "passed" | "failed" | "skipped" {
+    if (status === "passed") return "passed";
+    if (status === "failed") return "failed";
+    return "skipped";
   }
 }

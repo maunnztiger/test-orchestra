@@ -25,7 +25,9 @@ DANN("öffnet sich ein Menü mit Filtern", async function (this: CustomWorld) {
 WENN("der User den Filter {string} anklickt", async function (this: CustomWorld) {});
 DANN(
   "erscheint der folgende Artikel {string} an der Spitze der Liste",
-  async function (this: CustomWorld) {}
+  async function (this: CustomWorld, article: string) {
+    console.log(article);
+  }
 );
 UND("der Artikel {string} am Fuß der Liste", async function (this: CustomWorld) {});
 

@@ -1,47 +1,52 @@
-import { Client, QueryResultRow } from "pg";
+import { Client, QueryResult, QueryResultRow } from "pg";
 
 export class QueryBuilder {
   constructor(private client: Client) {}
 
-  insert(table: string) {
-    return new InsertQuery(this.client, table);
+  insert<T extends Record<string, unknown>>(table: string) {
+    return new InsertQuery<T>(this.client, table);
   }
 
-  select(columns: string | string[]) {
-    return new SelectQuery(this.client, columns);
+  select<T extends QueryResultRow = QueryResultRow>(columns: string | string[]) {
+    return new SelectQuery<T>(this.client, columns);
   }
 }
 
-class InsertQuery {
-  private data: Record<string, any> = {};
-  private returningColumn?: string;
+class InsertQuery<T extends Record<string, unknown>> {
+  private data!: T;
 
   constructor(
     private client: Client,
     private table: string
   ) {}
 
-  values(data: Record<string, any>) {
+  values(data: T) {
     this.data = data;
     return this;
   }
 
   async execute(): Promise<void>;
-  async execute<T extends QueryResultRow>(returning: string): Promise<T>;
-  async execute<T extends QueryResultRow>(returning?: string): Promise<T | void> {
+  async execute<R extends QueryResultRow>(returning: string): Promise<R>;
+
+  async execute<R extends QueryResultRow>(returning?: string): Promise<R | void> {
     const columns = Object.keys(this.data);
     const values = Object.values(this.data);
+
     const placeholders = columns.map((_, i) => `$${i + 1}`);
 
     let sql = `
-    INSERT INTO ${this.table} (${columns.join(", ")})
-    VALUES (${placeholders.join(", ")})
-  `;
+      INSERT INTO ${this.table} (${columns.join(", ")})
+      VALUES (${placeholders.join(", ")})
+    `;
 
     if (returning) {
       sql += ` RETURNING ${returning}`;
-      const result = await this.client.query<T>(sql, values);
-      if (!result.rows[0]) throw new Error(`INSERT into ${this.table} returned no rows`);
+      const result = await this.client.query<R>(sql, values);
+
+      if (!result.rows[0]) {
+        throw new Error(`INSERT into ${this.table} returned no rows`);
+      }
+
       return result.rows[0];
     }
 
@@ -49,10 +54,10 @@ class InsertQuery {
   }
 }
 
-class SelectQuery {
+class SelectQuery<T extends QueryResultRow> {
   private table!: string;
   private conditions: string[] = [];
-  private params: any[] = [];
+  private params: unknown[] = [];
 
   constructor(
     private client: Client,
@@ -64,7 +69,7 @@ class SelectQuery {
     return this;
   }
 
-  where(column: string, value: any) {
+  where(column: string, value: unknown) {
     const index = this.params.length + 1;
 
     this.conditions.push(`${column} = $${index}`);
@@ -73,7 +78,7 @@ class SelectQuery {
     return this;
   }
 
-  async execute() {
+  async execute(): Promise<QueryResult<T>> {
     const cols = typeof this.columns === "string" ? this.columns : this.columns.join(", ");
 
     let sql = `SELECT ${cols} FROM ${this.table}`;
@@ -82,6 +87,6 @@ class SelectQuery {
       sql += ` WHERE ${this.conditions.join(" AND ")}`;
     }
 
-    return this.client.query(sql, this.params);
+    return this.client.query<T>(sql, this.params);
   }
 }

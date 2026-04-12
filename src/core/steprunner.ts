@@ -26,9 +26,9 @@ export class StepRunner {
           status = "failed";
           error = `No step definition found for: ${step.text}`;
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         status = "failed";
-        error = err?.message ?? String(err);
+        error = err instanceof Error ? err.message : String(err);
       }
 
       const durationMs = Date.now() - start;
