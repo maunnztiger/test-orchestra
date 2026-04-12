@@ -24,10 +24,7 @@ jobs:
 
       - name: Check formatting
         run: npm run format:check
-      - name: Debug ENV
-        run: |
-          echo "APP_URL=$APP_URL"
-          echo "USER_NAME=$USER_NAME"
+
   test:
     needs: lint-and-format
     uses: ./.github/workflows/test-run.yaml

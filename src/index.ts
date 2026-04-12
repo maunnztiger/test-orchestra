@@ -34,7 +34,19 @@ async function main() {
 
       const exporter = createExporter(options.report, { dbURL: process.env.DB_URL });
       await exporter.export(run);
+
       printRunSummary(run);
+
+      // 🔥 HIER REIN (direkt danach)
+      const hasFailed = run.features.some(f => f.scenarios.some(s => s.status === "failed"));
+
+      if (hasFailed) {
+        console.log("❌ TEST RUN FAILED");
+        process.exit(1); // ← DAS MACHT DIE CI ROT
+      } else {
+        console.log("✅ TEST RUN PASSED");
+        process.exit(0);
+      }
     });
   program
     .command("detect-flaky")
