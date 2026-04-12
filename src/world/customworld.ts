@@ -45,8 +45,13 @@ export class CustomWorld {
   }
 
   // === Lifecycle ===
+
   async beforeAll() {
-    this.browser = await chromium.launch({ headless: false });
+    const isCI = process.env.CI === "true";
+
+    this.browser = await chromium.launch({
+      headless: isCI
+    });
   }
 
   async beforeScenario(this: CustomWorld) {
