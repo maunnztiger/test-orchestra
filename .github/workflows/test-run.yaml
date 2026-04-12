@@ -7,7 +7,13 @@ on:
         required: false
         type: string
         default: "json"
-
+  secrets:
+    APP_URL:
+      required: true
+    USER_NAME:
+      required: true
+    USER_PASSWD:
+      required: true    
 jobs:
   run-tests:
     runs-on: ubuntu-latest
