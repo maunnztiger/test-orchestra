@@ -40,10 +40,10 @@ jobs:
 
       - name: Run TestOrchestra
         run: |
-          npm run login -- --report ${{ inputs.report }}
+          CI=true npm run login -- --report ${{ inputs.report }}
 
       - name: Upload report (JSON)
-        if: inputs.report == 'json'
+        if: ${{ inputs.report == 'json' }}
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-report
