@@ -1,13 +1,23 @@
 services:
-  test-orchestra-postgres:
-    image: postgres:18.3
-    container_name: test-orchestra-postgres
-    hostname: test-orchestra-postgres
+  postgres:
+    image: postgres:16
+    ports:
+      - "5433:5432"
     restart: unless-stopped
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=testorchestra_results
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/startup.sql:/docker-entrypoint-initdb.d/startup.sql
+
+  grafana:
+    image: grafana/grafana:10.4.2
     ports:
-      - "5432:5432"
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

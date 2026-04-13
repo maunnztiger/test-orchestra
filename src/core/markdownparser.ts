@@ -1,10 +1,11 @@
 // src/core/markdownparser.ts
 import * as fs from "fs";
+import { Table } from "./table";
 
 export interface ParsedStep {
   keyword: string;
   text: string;
-  table?: string[][]; // <-- Tabelle optional
+  table?: Table; // <-- Tabelle optional
   params?: string[]; // <-- optional für {string} etc.
 }
 
@@ -92,7 +93,7 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
         }
 
         if (tableLines.length > 0) {
-          step.table = parseTable(tableLines);
+          step.table = new Table(parseTable(tableLines));
           i = j - 1;
         }
 

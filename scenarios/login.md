@@ -12,9 +12,10 @@
 **UND** links oben befindet sich die Überschrift "Products"
 **UND** der User sieht eine Liste mit den Produkten
 | Products |
-| ---------|
-| Package |
-| Gucci Bag |
-| Jeans |
-| Rucksack |
-| Smartphonecase |
+|----------|
+| Sauce Labs Backpack |
+| Sauce Labs Bike Light |
+| Sauce Labs Bolt T-Shirt |
+| Sauce Labs Fleece Jacket |
+| Sauce Labs Onesie |
+| Test.allTheThings() T-Shirt (Red) |

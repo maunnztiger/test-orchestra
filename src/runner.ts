@@ -20,6 +20,9 @@ export async function runScenariosFromPath(
     return;
   }
 
+  const world = new CustomWorld();
+  await world.beforeAll();
+
   for (const file of files) {
     const scenarios = parseMarkdownScenarios(file);
 
@@ -28,6 +31,7 @@ export async function runScenariosFromPath(
     );
 
     if (scenarios.length > 0) {
+      // intentionally empty
     }
 
     if (selected.length === 0) {
@@ -41,9 +45,6 @@ export async function runScenariosFromPath(
     for (const scenario of selected) {
       collector.startScenario(scenario.name, scenario.tags);
 
-      const world = new CustomWorld();
-      await world.beforeAll();
-
       const runner = new StepRunner(world, collector);
       await runner.run(scenario.steps);
 
@@ -55,10 +56,9 @@ export async function runScenariosFromPath(
     collector.finishFeature();
   }
 
-  collector.finishRun();
+  await world.afterAll();
 
-  // 🔹 Export jetzt EINMAL am Ende
-  const run = collector.getRun();
+  collector.finishRun();
   return collector.getRun();
 }
 

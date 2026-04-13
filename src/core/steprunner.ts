@@ -10,6 +10,7 @@ export class StepRunner {
   ) {}
 
   async run(steps: ParsedStep[]) {
+    await this.world.beforeScenario();
     let index = 1;
 
     for (const step of steps) {
@@ -25,9 +26,9 @@ export class StepRunner {
           status = "failed";
           error = `No step definition found for: ${step.text}`;
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         status = "failed";
-        error = err?.message ?? String(err);
+        error = err instanceof Error ? err.message : String(err);
       }
 
       const durationMs = Date.now() - start;
@@ -46,5 +47,6 @@ export class StepRunner {
 
       index++;
     }
+    await this.world.afterScenario();
   }
 }

@@ -5,7 +5,7 @@ import path from "path";
  * Lädt rekursiv alle *.steps.ts (oder *.ts) Dateien
  * damit StepRegistry.register() ausgeführt wird
  */
-export function loadStepDefinitions(stepsDir = path.resolve(process.cwd(), "src/steps")) {
+export async function loadStepDefinitions(stepsDir = path.resolve(process.cwd(), "src/steps")) {
   if (!fs.existsSync(stepsDir)) {
     console.warn(`⚠️ Steps-Verzeichnis nicht gefunden: ${stepsDir}`);
     return;
@@ -19,7 +19,7 @@ export function loadStepDefinitions(stepsDir = path.resolve(process.cwd(), "src/
     if (entry.isDirectory()) {
       loadStepDefinitions(fullPath);
     } else if (entry.isFile() && (entry.name.endsWith(".steps.ts") || entry.name.endsWith(".ts"))) {
-      require(fullPath);
+      await import(fullPath);
     }
   }
 }
