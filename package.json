@@ -5,7 +5,7 @@
   "scripts": {
     "testorchestra": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "tsc",
-    "test": "playwright test",
+    "tests": "vitest run --reporter=verbose",
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
@@ -30,7 +30,8 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.2"
+    "typescript-eslint": "^8.57.2",
+    "vitest": "^4.1.4"
   },
   "dependencies": {
     "commander": "^14.0.3",
