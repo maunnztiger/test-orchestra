@@ -8,12 +8,12 @@ export class PostgresExporter implements ReportExporter {
   private readonly db: QueryBuilder;
 
   constructor(connectionString: string) {
-   const config: any = {
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false
-  },
-}
+    const config: any = {
+      connectionString,
+      ssl: {
+        rejectUnauthorized: false
+      }
+    };
 
     this.client = new Client(config);
     this.db = new QueryBuilder(this.client);

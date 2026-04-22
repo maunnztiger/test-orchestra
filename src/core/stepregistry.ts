@@ -30,44 +30,46 @@ class StepRegistryClass {
     const matches: { entry: RegisteredStep; params: string[] }[] = [];
 
     for (const entry of this.steps) {
-  let match: RegExpMatchArray | null = null;
+      let match: RegExpMatchArray | null = null;
 
-  if (typeof entry.pattern === "string") {
-    // exact match
-    if (entry.pattern === step.text) {
-      matches.push({ entry, params: [] });
-      continue;
-    }
+      if (typeof entry.pattern === "string") {
+        // exact match
+        if (entry.pattern === step.text) {
+          matches.push({ entry, params: [] });
+          continue;
+        }
 
-    // string pattern
-    if (entry.pattern.includes("{string}")) {
-      
-      const regex = this.buildRegex(entry.pattern);
-      match = step.text.match(regex);
+        // string pattern
+        if (entry.pattern.includes("{string}")) {
+          const regex = this.buildRegex(entry.pattern);
+          match = step.text.match(regex);
 
-      if (match) {
-        matches.push({
-          entry,
-          params: match.slice(1)
-        });
-        continue; // 🔥 WICHTIG
+          if (match) {
+            matches.push({
+              entry,
+              params: match.slice(1)
+            });
+            continue; // 🔥 WICHTIG
+          }
+        }
+      }
+
+      if (entry.pattern instanceof RegExp) {
+        match = step.text.match(entry.pattern);
+
+        if (match) {
+          matches.push({
+            entry,
+            params: match.slice(1)
+          });
+          continue;
+        }
       }
     }
-  }
-
-  if (entry.pattern instanceof RegExp) {
-    match = step.text.match(entry.pattern);
-
-    if (match) {
-      matches.push({
-        entry,
-        params: match.slice(1)
-      });
-      continue;
-    }
-  }
-}
-  console.log("REGISTERED STEPS:", this.steps.map(s => s.pattern));
+    console.log(
+      "REGISTERED STEPS:",
+      this.steps.map(s => s.pattern)
+    );
     // ❌ No match
     if (matches.length === 0) {
       return false;
@@ -83,28 +85,25 @@ class StepRegistryClass {
     }
 
     const { entry, params } = matches[0];
-    const args: StepArg[] = [
-      ...(params ?? []),
-      ...(step.table ? [step.table] : [])
-      ];
+    const args: StepArg[] = [...(params ?? []), ...(step.table ? [step.table] : [])];
 
-      await entry.handler.apply(world, args);
+    await entry.handler.apply(world, args);
 
     return true;
   }
 
- private buildRegex(pattern: string): RegExp {
-  // 1. alles escapen
-  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  private buildRegex(pattern: string): RegExp {
+    // 1. alles escapen
+    const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  // 2. danach {string} ersetzen
-  const final = escaped.replace(/\\\{string\\\}/g, '([^"]+)');
+    // 2. danach {string} ersetzen
+    const final = escaped.replace(/\\\{string\\\}/g, '([^"]+)');
 
-  return new RegExp("^" + final + "$");
-}
-reset() {
-  this.steps = [];
-}
+    return new RegExp("^" + final + "$");
+  }
+  reset() {
+    this.steps = [];
+  }
 }
 
 export const StepRegistry = new StepRegistryClass();

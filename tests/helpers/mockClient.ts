@@ -1,7 +1,7 @@
-import  { vi } from "vitest";
+import { vi } from "vitest";
 
 export function mockClient() {
   return {
-    query: vi.fn().mockResolvedValue({rows: []})
-  }
+    query: vi.fn().mockResolvedValue({ rows: [] })
+  };
 }
