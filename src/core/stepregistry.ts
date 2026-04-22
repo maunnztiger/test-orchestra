@@ -43,11 +43,6 @@ class StepRegistryClass {
     if (entry.pattern.includes("{string}")) {
       
       const regex = this.buildRegex(entry.pattern);
-
-console.log("PATTERN:", entry.pattern);
-console.log("TEXT:", step.text);
-console.log("REGEX:", regex);
-console.log("TEST MATCH:", step.text.match(regex));
       match = step.text.match(regex);
 
       if (match) {
