@@ -11,22 +11,22 @@ export class PostgresExporter implements ReportExporter {
   }
 
   async export(run: TestRun) {
-  await this.client.connect(); // 🔥 DAS FEHLT
+    await this.client.connect(); // 🔥 DAS FEHLT
 
-  try {
-    await this.client.query("BEGIN");
+    try {
+      await this.client.query("BEGIN");
 
-    await this.service.save(run);
+      await this.service.save(run);
 
-    await this.client.query("COMMIT");
+      await this.client.query("COMMIT");
 
-    console.log("📄 Report written to `testorchestra_results`-database");
-  } catch (err) {
-    await this.client.query("ROLLBACK");
-    console.error("EXPORT ERROR:", err); // 👈 WICHTIG fürs Debugging
-    throw err;
-  } finally {
-    await this.client.end(); // 🔥 sauber schließen
+      console.log("📄 Report written to `testorchestra_results`-database");
+    } catch (err) {
+      await this.client.query("ROLLBACK");
+      console.error("EXPORT ERROR:", err); // 👈 WICHTIG fürs Debugging
+      throw err;
+    } finally {
+      await this.client.end(); // 🔥 sauber schließen
+    }
   }
-}
 }

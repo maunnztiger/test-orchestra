@@ -68,13 +68,9 @@ describe("PostgresExporter", () => {
 
     const calls = client.query.mock.calls.map(c => c[0]);
 
-    const runInsertIndex = calls.findIndex(sql =>
-      sql.includes("INSERT INTO test_runs")
-    );
+    const runInsertIndex = calls.findIndex(sql => sql.includes("INSERT INTO test_runs"));
 
-    const featureInsertIndex = calls.findIndex(sql =>
-      sql.includes("INSERT INTO features")
-    );
+    const featureInsertIndex = calls.findIndex(sql => sql.includes("INSERT INTO features"));
 
     expect(runInsertIndex).toBeGreaterThan(-1);
     expect(featureInsertIndex).toBeGreaterThan(-1);

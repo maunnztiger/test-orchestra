@@ -43,13 +43,13 @@ class StepRegistryClass {
         if (entry.pattern.includes("{string}")) {
           const regex = this.buildRegex(entry.pattern);
           console.log("PATTERN:", entry.pattern);
-        console.log("REGEX:", regex);
-        console.log("TEXT:", step.text);
+          console.log("REGEX:", regex);
+          console.log("TEXT:", step.text);
 
           match = step.text.match(regex);
 
           if (match) {
-              console.log("MATCH:", match);
+            console.log("MATCH:", match);
             matches.push({
               entry,
               params: match.slice(1)
@@ -94,19 +94,19 @@ class StepRegistryClass {
   }
 
   private buildRegex(pattern: string): RegExp {
-  // 1. Placeholder temporär ersetzen
-  const placeholder = "___STRING___";
+    // 1. Placeholder temporär ersetzen
+    const placeholder = "___STRING___";
 
-  let temp = pattern.replace(/\{string\}/g, placeholder);
+    let temp = pattern.replace(/\{string\}/g, placeholder);
 
-  // 2. Alles escapen
-  temp = temp.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // 2. Alles escapen
+    temp = temp.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  // 3. Placeholder durch echten Regex ersetzen
-  temp = temp.replace(new RegExp(placeholder, "g"), '"([^"]+)"');
+    // 3. Placeholder durch echten Regex ersetzen
+    temp = temp.replace(new RegExp(placeholder, "g"), '"([^"]+)"');
 
-  return new RegExp("^" + temp + "$");
-}
+    return new RegExp("^" + temp + "$");
+  }
   reset() {
     this.steps = [];
   }

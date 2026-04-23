@@ -30,7 +30,7 @@ describe("StepRegistry", () => {
     const world = {} as CustomWorld;
     let received: string | null = null;
 
-    StepRegistry.register('say {string}', async function (msg: string) {
+    StepRegistry.register("say {string}", async function (msg: string) {
       received = msg;
     });
 

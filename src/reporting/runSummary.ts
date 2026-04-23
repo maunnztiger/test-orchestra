@@ -43,27 +43,26 @@ export function printRunSummary(run: TestRun): boolean {
     console.log("❌ TEST RUN FAILED");
     console.log("\n======================================");
     for (const feature of run.features) {
-    for (const scenario of feature.scenarios) {
-      for (const step of scenario.steps) {
-        if (step.status === "failed") {
-          console.log(`❌ ${step.keyword} ${step.text}`);
+      for (const scenario of feature.scenarios) {
+        for (const step of scenario.steps) {
+          if (step.status === "failed") {
+            console.log(`❌ ${step.keyword} ${step.text}`);
 
-          if (step.error) {
-            console.log(`   ↳ ${step.error}`);
+            if (step.error) {
+              console.log(`   ↳ ${step.error}`);
+            }
+
+            console.log("");
           }
-
-          console.log("");
         }
       }
+
+      console.log("======================================");
     }
-
-  console.log("======================================");
-}
-
   } else {
     console.log("\n======================================");
     console.log("✅ ALL TESTS PASSED");
     console.log("======================================");
   }
-   return failed > 0;
+  return failed > 0;
 }

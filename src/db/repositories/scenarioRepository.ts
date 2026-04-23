@@ -21,10 +21,7 @@ export class ScenarioRepository extends Repository<ScenarioRow> {
 
     // 🔥 Tags direkt hier kapseln
     for (const tag of scenario.tags) {
-      await this.db
-        .insert("scenario_tags")
-        .values({ scenario_id: scenarioId, tag })
-        .execute();
+      await this.db.insert("scenario_tags").values({ scenario_id: scenarioId, tag }).execute();
     }
 
     return scenarioId;
