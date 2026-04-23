@@ -3,7 +3,6 @@ import { StepRegistry } from "../src/core/stepregistry";
 import { CustomWorld } from "../src/world/customworld";
 import { beforeEach } from "vitest";
 import { Table } from "../src/core/table";
-import { table } from "console";
 
 beforeEach(() => {
   StepRegistry.reset();
@@ -31,7 +30,7 @@ describe("StepRegistry", () => {
     const world = {} as CustomWorld;
     let received: string | null = null;
 
-    StepRegistry.register('say "{string}"', async function (msg: string) {
+    StepRegistry.register('say {string}', async function (msg: string) {
       received = msg;
     });
 

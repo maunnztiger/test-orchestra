@@ -9,7 +9,7 @@ export interface StepResult {
   text: string;
   status: StepStatus;
   durationMs: number;
-  error?: string;
+  error?: string | null;
 }
 
 export interface ScenarioResult {
@@ -31,7 +31,7 @@ export interface FeatureResult {
 
 export interface TestRun {
   startedAt: Date;
-  finishedAt?: Date;
+  finishedAt?: Date | null;
   durationMs?: number;
   features: FeatureResult[];
 }

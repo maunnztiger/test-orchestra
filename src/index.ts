@@ -10,7 +10,7 @@ import { detectFlakyScenarios } from "analytics/flakyDetector";
 async function main() {
   await loadStepDefinitions();
   const program = new Command();
-
+  console.log("ARGV RAW:", process.argv);
   program.name("testorchestra").description("BDD-style test runner").version("0.1.0");
 
   program
@@ -21,7 +21,7 @@ async function main() {
     .option("--report <type>", "report type (json|db)", "json")
     .action(async (inputPath, options) => {
       const includeTags = options.tags ? options.tags.split(",").map((t: string) => t.trim()) : [];
-
+ console.log("OPTIONS:", options);
       const excludeTags = options.exclude
         ? options.exclude.split(",").map((t: string) => t.trim())
         : [];
@@ -35,23 +35,14 @@ async function main() {
       const exporter = createExporter(options.report, { dbURL: process.env.DB_URL });
       await exporter.export(run);
 
-      printRunSummary(run);
-
-      // 🔥 HIER REIN (direkt danach)
-      const hasFailed = run.features.some(f => f.scenarios.some(s => s.status === "failed"));
-
-      if (hasFailed) {
-        console.log("❌ TEST RUN FAILED");
-        process.exit(1); // ← DAS MACHT DIE CI ROT
-      } else {
-        console.log("✅ TEST RUN PASSED");
-        process.exit(0);
-      }
-    });
+      const hasFailed =  printRunSummary(run);
+      process.exit(hasFailed ? 1 : 0);
+      });
   program
     .command("detect-flaky")
     .description("Detect flaky tests")
     .action(async () => {
+     
       const client = new Client({
         connectionString: process.env.DB_URL
       });
@@ -64,6 +55,6 @@ async function main() {
       await client.end();
     });
 
-  program.parseAsync(process.argv);
+  await program.parseAsync(process.argv);
 }
 main();

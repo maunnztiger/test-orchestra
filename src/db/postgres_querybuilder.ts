@@ -1,7 +1,9 @@
 import { Client, QueryResult, QueryResultRow } from "pg";
 
 export class QueryBuilder {
-  constructor(private client: Client) {}
+  constructor(private client: Client) {
+    
+  }
 
   insert<T extends Record<string, unknown>>(table: string) {
     return new InsertQuery<T>(this.client, table);

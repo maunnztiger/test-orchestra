@@ -42,9 +42,14 @@ class StepRegistryClass {
         // string pattern
         if (entry.pattern.includes("{string}")) {
           const regex = this.buildRegex(entry.pattern);
+          console.log("PATTERN:", entry.pattern);
+        console.log("REGEX:", regex);
+        console.log("TEXT:", step.text);
+
           match = step.text.match(regex);
 
           if (match) {
+              console.log("MATCH:", match);
             matches.push({
               entry,
               params: match.slice(1)
@@ -66,10 +71,6 @@ class StepRegistryClass {
         }
       }
     }
-    console.log(
-      "REGISTERED STEPS:",
-      this.steps.map(s => s.pattern)
-    );
     // ❌ No match
     if (matches.length === 0) {
       return false;
@@ -93,14 +94,19 @@ class StepRegistryClass {
   }
 
   private buildRegex(pattern: string): RegExp {
-    // 1. alles escapen
-    const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // 1. Placeholder temporär ersetzen
+  const placeholder = "___STRING___";
 
-    // 2. danach {string} ersetzen
-    const final = escaped.replace(/\\\{string\\\}/g, '([^"]+)');
+  let temp = pattern.replace(/\{string\}/g, placeholder);
 
-    return new RegExp("^" + final + "$");
-  }
+  // 2. Alles escapen
+  temp = temp.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  // 3. Placeholder durch echten Regex ersetzen
+  temp = temp.replace(new RegExp(placeholder, "g"), '"([^"]+)"');
+
+  return new RegExp("^" + temp + "$");
+}
   reset() {
     this.steps = [];
   }
