@@ -63,4 +63,81 @@ describe("StepRegistry", () => {
     expect(received).not.toBeNull();
     expect((received as Table).asList()).toEqual(["Shirt", "Jeans"]);
   });
+
+  it("should parse {int} from pattern", async () => {
+    const world = {} as CustomWorld;
+    let received: number | null = null;
+
+    StepRegistry.register("ich kaufe {int} Produkte", async function (count: number) {
+      received = count;
+    });
+
+    await StepRegistry.run(world, {
+      keyword: "WENN",
+      text: "ich kaufe 5 Produkte",
+      params: [],
+      table: undefined
+    });
+
+    expect(received).toBe(5);
+  });
+
+  it("should parse {float} from pattern", async () => {
+    const world = {} as CustomWorld;
+    let received: number | null = null;
+
+    StepRegistry.register("Preis ist {float}", async function (price: number) {
+      received = price;
+    });
+
+    await StepRegistry.run(world, {
+      keyword: "DANN",
+      text: "Preis ist 9.99",
+      params: [],
+      table: undefined
+    });
+
+    expect(received).toBe(9.99);
+  });
+
+  it("should parse {boolean} from pattern", async () => {
+    const world = {} as CustomWorld;
+    let received: boolean | null = null;
+
+    StepRegistry.register("Feature ist {boolean}", async function (flag: boolean) {
+      received = flag;
+    });
+
+    await StepRegistry.run(world, {
+      keyword: "UND",
+      text: "Feature ist true",
+      params: [],
+      table: undefined
+    });
+
+    expect(received).toBe(true);
+  });
+
+  it("should support custom param type", async () => {
+  const world = {} as CustomWorld;
+  let received: string | null = null;
+
+  StepRegistry.defineParamType("uuid", {
+    regex: "([0-9a-f-]+)",
+    parse: (v) => v
+  });
+
+  StepRegistry.register("User hat ID {uuid}", async function (id: string) {
+    received = id;
+  });
+
+  await StepRegistry.run(world, {
+    keyword: "WENN",
+    text: "User hat ID 123e4567-e89b-12d3",
+    params: [],
+    table: undefined
+  });
+
+  expect(received).toBe("123e4567-e89b-12d3");
+});
 });

@@ -3,7 +3,7 @@ import type { CustomWorld } from "@world/customworld";
 import type { ParsedStep } from "./markdownparser";
 import { Table } from "./table";
 
-export type StepArg = string | Table;
+export type StepArg = string | number | boolean | Table;
 
 export type StepHandler = (this: CustomWorld, ...args: any[]) => Promise<void> | void;
 interface RegisteredStep {
@@ -13,6 +13,38 @@ interface RegisteredStep {
 
 class StepRegistryClass {
   private steps: RegisteredStep[] = [];
+  private paramTypes: Record<
+  string,
+  { regex: string; parse: (v: string) => any }
+> = {
+  string: {
+    regex: '"([^"]+)"',
+    parse: (v) => v
+  },
+  int: {
+    regex: '(-?\\d+)',
+    parse: (v) => parseInt(v, 10)
+  },
+  float: {
+    regex: '(-?\\d+\\.\\d+)',
+    parse: (v) => parseFloat(v)
+  },
+  boolean: {
+    regex: '(true|false)',
+    parse: (v) => v === "true"
+  }
+};
+
+defineParamType(
+  name: string,
+  config: { regex: string; parse: (v: string) => any }
+) {
+  if (this.paramTypes[name]) {
+    throw new Error(`Param type already exists: ${name}`);
+  }
+
+  this.paramTypes[name] = config;
+}
 
   register(pattern: string | RegExp, handler: StepHandler) {
     // 🔒 Duplicate Pattern Protection
@@ -40,21 +72,24 @@ class StepRegistryClass {
         }
 
         // string pattern
-        if (entry.pattern.includes("{string}")) {
-          const regex = this.buildRegex(entry.pattern);
-          console.log("PATTERN:", entry.pattern);
-          console.log("REGEX:", regex);
-          console.log("TEXT:", step.text);
-
-          match = step.text.match(regex);
+        if (typeof entry.pattern === "string" && entry.pattern.includes("{")) {
+          const { regex, parsers } = this.buildRegex(entry.pattern);
+          const match = step.text.match(regex);
 
           if (match) {
-            console.log("MATCH:", match);
+            const rawParams = match.slice(1);
+
+            const typedParams = rawParams.map((val, i) => {
+              const parser = parsers[i];
+              return parser ? parser(val) : val;
+            });
+
             matches.push({
               entry,
-              params: match.slice(1)
+              params: typedParams
             });
-            continue; // 🔥 WICHTIG
+
+            continue;
           }
         }
       }
@@ -86,30 +121,79 @@ class StepRegistryClass {
     }
 
     const { entry, params } = matches[0];
-    const args: StepArg[] = [...(params ?? []), ...(step.table ? [step.table] : [])];
+    // 🔥 HIER IST DER WICHTIGE FIX
+    const finalParams: StepArg[] =
+      step.params && step.params.length > 0
+        ? (step.params as StepArg[]) // 🔥 cast
+        : (params as StepArg[]);
+
+    const args: StepArg[] = [...(finalParams ?? []), ...(step.table ? [step.table] : [])];
 
     await entry.handler.apply(world, args);
 
     return true;
   }
 
-  private buildRegex(pattern: string): RegExp {
-    // 1. Placeholder temporär ersetzen
-    const placeholder = "___STRING___";
+  private buildRegex(pattern: string): { regex: RegExp; parsers: ((v: string) => any)[] } {
+    const parsers: ((v: string) => any)[] = [];
 
-    let temp = pattern.replace(/\{string\}/g, placeholder);
+    // Escape nur normalen Text (ohne unsere placeholders)
+    const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-    // 2. Alles escapen
-    temp = temp.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // Split in Text + {param}
+    const parts = pattern.split(/(\{\w+\})/g);
 
-    // 3. Placeholder durch echten Regex ersetzen
-    temp = temp.replace(new RegExp(placeholder, "g"), '"([^"]+)"');
+    let regexStr = "^";
 
-    return new RegExp("^" + temp + "$");
+    for (const part of parts) {
+      const match = part.match(/^\{(\w+)\}$/);
+
+      if (match) {
+        const type = match[1];
+
+        const def = this.paramTypes[type];
+
+if (!def) {
+  throw new Error(`Unknown placeholder: {${type}}`);
+}
+
+regexStr += def.regex;
+parsers.push(def.parse);
+      } else {
+        regexStr += escapeRegex(part);
+      }
+    }
+
+    regexStr += "$";
+
+    return {
+      regex: new RegExp(regexStr),
+      parsers
+    };
   }
   reset() {
-    this.steps = [];
-  }
+  this.steps = [];
+
+  // optional: default types neu setzen
+  this.paramTypes = {
+    string: {
+      regex: '"([^"]+)"',
+      parse: (v) => v
+    },
+    int: {
+      regex: '(-?\\d+)',
+      parse: (v) => parseInt(v, 10)
+    },
+    float: {
+      regex: '(-?\\d+\\.\\d+)',
+      parse: (v) => parseFloat(v)
+    },
+    boolean: {
+      regex: '(true|false)',
+      parse: (v) => v === "true"
+    }
+  };
+}
 }
 
 export const StepRegistry = new StepRegistryClass();

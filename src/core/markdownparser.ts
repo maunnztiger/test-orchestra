@@ -1,12 +1,11 @@
-// src/core/markdownparser.ts
 import * as fs from "fs";
 import { Table } from "./table";
 
 export interface ParsedStep {
   keyword: string;
   text: string;
-  table?: Table; // <-- Tabelle optional
-  params?: string[]; // <-- optional für {string} etc.
+  table?: Table;
+  params?: unknown[]; // 🔥 jetzt typed params
 }
 
 export interface ParsedScenario {
@@ -14,9 +13,9 @@ export interface ParsedScenario {
   tags: string[];
   steps: ParsedStep[];
 }
+
 const TAG_REGEX = /^(@[\w-]+(\s+@[\w-]+)*)$/;
 const SCENARIO_REGEX = /^##\s*(Szenario|Scenario)\s*:\s*(.+)$/i;
-
 const STEP_REGEX = /^\*\*(GEGEBEN|WENN|DANN|UND)\*\*\s*(.+)$/i;
 
 export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
@@ -36,7 +35,7 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
       currentTags = line
         .split(/\s+/)
         .filter(t => t.startsWith("@"))
-        .map(t => t.substring(1)); // ohne @ speichern
+        .map(t => t.substring(1));
       i++;
       continue;
     }
@@ -52,7 +51,6 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
       while (i < lines.length) {
         const stepLine = lines[i];
 
-        // nächstes Szenario oder neue Tags → abbrechen
         if (SCENARIO_REGEX.test(stepLine) || TAG_REGEX.test(stepLine)) {
           break;
         }
@@ -66,9 +64,13 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
         const keyword = stepMatch[1].toUpperCase();
         const text = stepMatch[2].trim();
 
-        const step: ParsedStep = { keyword, text };
+        const step: ParsedStep = {
+          keyword,
+          text,
+          params: extractParams(text) // 🔥 HIER passiert die Magie
+        };
 
-        // --- Tabellen sammeln (dein bestehender Code) ---
+        // --- Tabellen ---
         const tableLines: string[] = [];
         let j = i + 1;
 
@@ -107,7 +109,7 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
         steps
       });
 
-      currentTags = []; // ⚠️ wichtig: Tags NICHT vererben
+      currentTags = [];
       continue;
     }
 
@@ -118,17 +120,15 @@ export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
 }
 
 function isTableLine(line: string): boolean {
-  // einfache Erkennung: beginnt und endet mit "|"
   return line.startsWith("|") && line.endsWith("|");
 }
 
 function parseTable(lines: string[]): string[][] {
   const rows = lines.map(line => {
-    const inside = line.substring(1, line.length - 1); // äußere Pipes abschneiden
+    const inside = line.substring(1, line.length - 1);
     return inside.split("|").map(cell => cell.trim());
   });
 
-  // zweite Zeile als Separator erkennen und rauswerfen (| --- | ---- |)
   if (rows.length >= 2 && isSeparatorRow(rows[1])) {
     return [rows[0], ...rows.slice(2)];
   }
@@ -137,7 +137,6 @@ function parseTable(lines: string[]): string[][] {
 }
 
 function isSeparatorRow(cells: string[]): boolean {
-  // sehr simple Erkennung: nur - und :
   return cells.every(c => /^:?-+:?$/.test(c) || c === "");
 }
 
@@ -155,4 +154,45 @@ export function matchesTagFilter(
   }
 
   return true;
+}
+
+//
+// 🔥 NEU: PARAM PARSING
+//
+
+function extractParams(text: string): unknown[] {
+  const params: unknown[] = [];
+
+  // Zahlen (int + float)
+  const numberRegex = /-?\d+(?:\.\d+)?/g;
+
+  // Strings in Quotes
+  const stringRegex = /"([^"]*)"/g;
+
+  // Booleans
+  const boolRegex = /\b(true|false)\b/gi;
+
+  // --- Strings zuerst (wichtig wegen Zahlen in Strings!) ---
+  let match;
+  while ((match = stringRegex.exec(text)) !== null) {
+    params.push(match[1]);
+  }
+
+  // --- Zahlen ---
+  while ((match = numberRegex.exec(text)) !== null) {
+    const raw = match[0];
+
+    if (raw.includes(".")) {
+      params.push(parseFloat(raw));
+    } else {
+      params.push(parseInt(raw, 10));
+    }
+  }
+
+  // --- Booleans ---
+  while ((match = boolRegex.exec(text)) !== null) {
+    params.push(match[0].toLowerCase() === "true");
+  }
+
+  return params;
 }
