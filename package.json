@@ -2,19 +2,22 @@
   "name": "test-orchestra",
   "version": "1.0.0",
   "type": "commonjs",
-  "scripts": {
-    "testorchestra": "ts-node -r tsconfig-paths/register src/index.ts",
-    "build": "tsc",
-    "tests": "vitest run --reporter=verbose",
-    "lint": "eslint .",
-    "format:check": "prettier --check .",
-    "format": "prettier --write .",
-    "run": "ts-node -r tsconfig-paths/register src/index.ts",
-    "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters",
-    "login_results_db": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login --report db",
-    "login_results_json": "npm run login -- --report json",
-    "filters_result_json": "npm run filters -- --report json"
-  },
+ "scripts": {
+  "testorchestra": "ts-node -r tsconfig-paths/register src/index.ts",
+
+  "build": "tsc",
+  "tests": "vitest run --reporter=verbose",
+  "lint": "eslint .",
+
+  "format": "prettier --write .",
+  "format:check": "prettier --check .",
+
+  "run": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/",
+
+  "test:login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
+
+  "test:filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters"
+},
   "devDependencies": {
     "@eslint/js": "9.39.4",
     "@playwright/test": "^1.58.1",
