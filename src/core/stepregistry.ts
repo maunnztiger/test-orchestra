@@ -6,6 +6,7 @@ import { Table } from "./table";
 export type StepArg = string | number | boolean | Table;
 
 export type StepHandler = (this: CustomWorld, ...args: any[]) => Promise<void> | void;
+
 interface RegisteredStep {
   pattern: string | RegExp;
   handler: StepHandler;
@@ -128,7 +129,6 @@ defineParamType(
         : (params as StepArg[]);
 
     const args: StepArg[] = [...(finalParams ?? []), ...(step.table ? [step.table] : [])];
-
     await entry.handler.apply(world, args);
 
     return true;

@@ -37,6 +37,7 @@ async function main() {
 
       const hasFailed = printRunSummary(run);
       process.exit(hasFailed ? 1 : 0);
+
     });
   program
     .command("detect-flaky")
@@ -53,7 +54,7 @@ async function main() {
       });
       await client.end();
     });
+ await program.parseAsync(process.argv);
 
-  await program.parseAsync(process.argv);
 }
 main();
