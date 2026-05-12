@@ -6,10 +6,16 @@ on:
     - cron: '0 2 * * *'
 
   workflow_dispatch:
-
+permissions:
+  contents: read
+  actions: read
 jobs:
   nightly-test:
+
     uses: ./.github/workflows/test-run.yaml
     with:
       report: json
     secrets: inherit
+    permissions: 
+      contents: read
+      actions: write
