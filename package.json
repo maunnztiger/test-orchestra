@@ -10,8 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "run": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/",
-    "test:login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
-    "test:filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters"
+    "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
+    "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters"
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",
