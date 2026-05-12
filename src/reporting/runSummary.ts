@@ -1,6 +1,6 @@
 import { TestRun } from "./domain";
 
-export function printRunSummary(run: TestRun) {
+export function printRunSummary(run: TestRun): boolean {
   let featureCount = run.features.length;
   let scenarioCount = 0;
   let stepCount = 0;
@@ -42,9 +42,27 @@ export function printRunSummary(run: TestRun) {
     console.log("\n======================================");
     console.log("❌ TEST RUN FAILED");
     console.log("\n======================================");
+    for (const feature of run.features) {
+      for (const scenario of feature.scenarios) {
+        for (const step of scenario.steps) {
+          if (step.status === "failed") {
+            console.log(`❌ ${step.keyword} ${step.text}`);
+
+            if (step.error) {
+              console.log(`   ↳ ${step.error}`);
+            }
+
+            console.log("");
+          }
+        }
+      }
+
+      console.log("======================================");
+    }
   } else {
     console.log("\n======================================");
     console.log("✅ ALL TESTS PASSED");
     console.log("======================================");
   }
+  return failed > 0;
 }
