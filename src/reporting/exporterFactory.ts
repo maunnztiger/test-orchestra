@@ -11,14 +11,10 @@ export function createExporter(type: string, options: { dbURL?: string }) {
     if (!options.dbURL) {
       throw new Error("DB_URL is required for db exporter");
     }
-  const isLocal =
-  options.dbURL.includes("localhost") ||
-  options.dbURL.includes("127.0.0.1");
+    const isLocal = options.dbURL.includes("localhost") || options.dbURL.includes("127.0.0.1");
     const client = new Client({
       connectionString: options.dbURL,
-      ssl: isLocal
-    ? false
-    : { rejectUnauthorized: false }
+      ssl: isLocal ? false : { rejectUnauthorized: false }
     });
 
     return new PostgresExporter(client);

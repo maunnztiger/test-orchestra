@@ -6,7 +6,6 @@ export interface ParsedStep {
   text: string;
   table?: Table;
   params?: unknown[]; // 🔥 jetzt typed params
-
 }
 
 export interface ParsedScenario {

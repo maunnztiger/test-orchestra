@@ -14,38 +14,32 @@ interface RegisteredStep {
 
 class StepRegistryClass {
   private steps: RegisteredStep[] = [];
-  private paramTypes: Record<
-  string,
-  { regex: string; parse: (v: string) => any }
-> = {
-  string: {
-    regex: '"([^"]+)"',
-    parse: (v) => v
-  },
-  int: {
-    regex: '(-?\\d+)',
-    parse: (v) => parseInt(v, 10)
-  },
-  float: {
-    regex: '(-?\\d+\\.\\d+)',
-    parse: (v) => parseFloat(v)
-  },
-  boolean: {
-    regex: '(true|false)',
-    parse: (v) => v === "true"
-  }
-};
+  private paramTypes: Record<string, { regex: string; parse: (v: string) => any }> = {
+    string: {
+      regex: '"([^"]+)"',
+      parse: v => v
+    },
+    int: {
+      regex: "(-?\\d+)",
+      parse: v => parseInt(v, 10)
+    },
+    float: {
+      regex: "(-?\\d+\\.\\d+)",
+      parse: v => parseFloat(v)
+    },
+    boolean: {
+      regex: "(true|false)",
+      parse: v => v === "true"
+    }
+  };
 
-defineParamType(
-  name: string,
-  config: { regex: string; parse: (v: string) => any }
-) {
-  if (this.paramTypes[name]) {
-    throw new Error(`Param type already exists: ${name}`);
-  }
+  defineParamType(name: string, config: { regex: string; parse: (v: string) => any }) {
+    if (this.paramTypes[name]) {
+      throw new Error(`Param type already exists: ${name}`);
+    }
 
-  this.paramTypes[name] = config;
-}
+    this.paramTypes[name] = config;
+  }
 
   register(pattern: string | RegExp, handler: StepHandler) {
     // 🔒 Duplicate Pattern Protection
@@ -153,12 +147,12 @@ defineParamType(
 
         const def = this.paramTypes[type];
 
-if (!def) {
-  throw new Error(`Unknown placeholder: {${type}}`);
-}
+        if (!def) {
+          throw new Error(`Unknown placeholder: {${type}}`);
+        }
 
-regexStr += def.regex;
-parsers.push(def.parse);
+        regexStr += def.regex;
+        parsers.push(def.parse);
       } else {
         regexStr += escapeRegex(part);
       }
@@ -172,28 +166,28 @@ parsers.push(def.parse);
     };
   }
   reset() {
-  this.steps = [];
+    this.steps = [];
 
-  // optional: default types neu setzen
-  this.paramTypes = {
-    string: {
-      regex: '"([^"]+)"',
-      parse: (v) => v
-    },
-    int: {
-      regex: '(-?\\d+)',
-      parse: (v) => parseInt(v, 10)
-    },
-    float: {
-      regex: '(-?\\d+\\.\\d+)',
-      parse: (v) => parseFloat(v)
-    },
-    boolean: {
-      regex: '(true|false)',
-      parse: (v) => v === "true"
-    }
-  };
-}
+    // optional: default types neu setzen
+    this.paramTypes = {
+      string: {
+        regex: '"([^"]+)"',
+        parse: v => v
+      },
+      int: {
+        regex: "(-?\\d+)",
+        parse: v => parseInt(v, 10)
+      },
+      float: {
+        regex: "(-?\\d+\\.\\d+)",
+        parse: v => parseFloat(v)
+      },
+      boolean: {
+        regex: "(true|false)",
+        parse: v => v === "true"
+      }
+    };
+  }
 }
 
 export const StepRegistry = new StepRegistryClass();

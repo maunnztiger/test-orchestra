@@ -18,7 +18,6 @@ export class PostgresExporter implements ReportExporter {
 
       await this.service.save(run);
 
-
       await this.client.query("COMMIT");
 
       console.log("📄 Report written to `testorchestra_results`-database");

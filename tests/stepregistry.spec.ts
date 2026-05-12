@@ -119,25 +119,25 @@ describe("StepRegistry", () => {
   });
 
   it("should support custom param type", async () => {
-  const world = {} as CustomWorld;
-  let received: string | null = null;
+    const world = {} as CustomWorld;
+    let received: string | null = null;
 
-  StepRegistry.defineParamType("uuid", {
-    regex: "([0-9a-f-]+)",
-    parse: (v) => v
+    StepRegistry.defineParamType("uuid", {
+      regex: "([0-9a-f-]+)",
+      parse: v => v
+    });
+
+    StepRegistry.register("User hat ID {uuid}", async function (id: string) {
+      received = id;
+    });
+
+    await StepRegistry.run(world, {
+      keyword: "WENN",
+      text: "User hat ID 123e4567-e89b-12d3",
+      params: [],
+      table: undefined
+    });
+
+    expect(received).toBe("123e4567-e89b-12d3");
   });
-
-  StepRegistry.register("User hat ID {uuid}", async function (id: string) {
-    received = id;
-  });
-
-  await StepRegistry.run(world, {
-    keyword: "WENN",
-    text: "User hat ID 123e4567-e89b-12d3",
-    params: [],
-    table: undefined
-  });
-
-  expect(received).toBe("123e4567-e89b-12d3");
-});
 });
