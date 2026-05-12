@@ -3,6 +3,9 @@ name: CI
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   lint-and-format:
     runs-on: ubuntu-latest
@@ -25,9 +28,31 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-  test:
+  unit-tests:
     needs: lint-and-format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Vitest
+        run: npm run tests
+
+  e2e-tests:
+    needs: unit-tests
+
     uses: ./.github/workflows/test-run.yaml
+
     with:
       report: json
+
     secrets: inherit
