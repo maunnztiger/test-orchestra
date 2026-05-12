@@ -1,0 +1,15 @@
+name: Nightly Run
+
+on:
+  schedule:
+    # Jeden Tag um 02:00 UTC
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  nightly-test:
+    uses: ./.github/workflows/test-run.yaml
+    with:
+      report: json
+    secrets: inherit
