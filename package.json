@@ -11,6 +11,7 @@
     "format:check": "prettier --check .",
     "run": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/",
     "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
+    "login_result_junit": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login --report junit",
     "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters"
   },
   "devDependencies": {
