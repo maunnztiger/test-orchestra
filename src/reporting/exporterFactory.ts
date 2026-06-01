@@ -1,6 +1,7 @@
 import { Client } from "pg";
 import { PostgresExporter } from "./postgresExporter";
-import { JsonExporter } from "./jsonExporter"; // falls du einen hast
+import { JsonExporter } from "./jsonExporter";
+import { JunitExporter } from "./junitExporter";
 
 export function createExporter(type: string, options: { dbURL?: string }) {
   if (type === "json") {
@@ -18,6 +19,10 @@ export function createExporter(type: string, options: { dbURL?: string }) {
     });
 
     return new PostgresExporter(client);
+  }
+
+  if (type === "junit") {
+    return new JunitExporter();
   }
 
   throw new Error(`Unknown report type: ${type}`);
