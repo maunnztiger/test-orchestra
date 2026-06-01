@@ -32,12 +32,13 @@ export class JunitExporter {
 
     fs.mkdirSync(reportDir, { recursive: true });
 
-    const scenarios = result.features?.flatMap(feature =>
-      (feature.scenarios ?? []).map(scenario => ({
-        featureName: feature.name,
-        ...scenario
-      }))
-    ) ?? [];
+    const scenarios =
+      result.features?.flatMap(feature =>
+        (feature.scenarios ?? []).map(scenario => ({
+          featureName: feature.name,
+          ...scenario
+        }))
+      ) ?? [];
 
     const failures = scenarios.filter(s => s.status === "failed").length;
     const tests = scenarios.length;
@@ -66,17 +67,15 @@ export class JunitExporter {
     const failedStep = scenario.steps?.find(step => step.status === "failed");
     const message = this.sanitize(failedStep?.error ?? "Scenario failed");
     const details = this.sanitize(
-  failedStep
-    ? `${failedStep.keyword} ${failedStep.text}\n\n${failedStep.error ?? ""}`
-    : message
-);
+      failedStep ? `${failedStep.keyword} ${failedStep.text}\n\n${failedStep.error ?? ""}` : message
+    );
 
     return [
       `  <testcase classname="${this.escapeXml(scenario.featureName)}" name="${this.escapeXml(
         scenario.name
       )}" time="${time}">`,
       `<failure message="${this.escapeXml(message)}">`,
-        this.escapeXml(details),
+      this.escapeXml(details),
       `</failure>`,
       `  </testcase>`
     ].join("\n");
@@ -92,6 +91,6 @@ export class JunitExporter {
   }
 
   private sanitize(value: string): string {
-  return value.replace(/\u001b\[[0-9;]*m/g, "");
-}
+    return value.replace(/\u001b\[[0-9;]*m/g, "");
+  }
 }
