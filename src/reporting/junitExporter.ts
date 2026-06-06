@@ -179,7 +179,6 @@ export class JunitExporter {
     return (durationMs / 1000).toFixed(3);
   }
 
-
   private escapeXml(value: string): string {
     return value
       .replace(/&/g, "&amp;")
