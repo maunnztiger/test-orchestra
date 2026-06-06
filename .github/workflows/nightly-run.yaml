@@ -2,19 +2,64 @@ name: Nightly Run
 
 on:
   schedule:
-    # Jeden Tag um 02:00 UTC
     - cron: "0 2 * * *"
 
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read
-jobs:
+
+obs:
   nightly-test:
     uses: ./.github/workflows/test-run.yaml
     with:
-      report: json
+      report: junit
     secrets: inherit
     permissions:
       contents: read
-      actions: write
+      actions: read
+
+  upload-xray:
+    needs: nightly-test
+    runs-on: ubuntu-latest
+
+    env:
+      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+      XRAY_PROJECT_KEY: QTO
+
+    steps:
+      - name: Download JUnit report
+        uses: actions/download-artifact@v4
+        with:
+          name: testorchestra-junit-report
+          path: reports
+
+      - name: Upload JUnit report to Xray
+        run: |
+          TOKEN=$(curl -s \
+            -H "Content-Type: application/json" \
+            -X POST \
+            --data "{\"client_id\":\"$XRAY_CLIENT_ID\",\"client_secret\":\"$XRAY_CLIENT_SECRET\"}" \
+            https://xray.cloud.getxray.app/api/v2/authenticate | tr -d '"')
+
+          if [ -z "$TOKEN" ]; then
+            echo "Xray auth failed: token is empty"
+            exit 1
+          fi
+
+          echo "Found JUnit reports:"
+          find reports -name "*.xml" -type f
+
+          for file in $(find reports -name "*.xml" -type f); do
+            echo "Uploading $file to Xray..."
+
+            curl -s -f \
+              -H "Content-Type: application/xml" \
+              -H "Authorization: Bearer $TOKEN" \
+              --data-binary @"$file" \
+              "https://xray.cloud.getxray.app/api/v2/import/execution/junit?projectKey=$XRAY_PROJECT_KEY"
+
+            echo "Uploaded $file"
+          done

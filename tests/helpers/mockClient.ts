@@ -5,7 +5,7 @@ export function mockClient() {
     query: vi.fn().mockResolvedValue({ rows: [] })
   };
 }
-const client = {
+export const client = {
   connect: vi.fn().mockResolvedValue(undefined),
   query: vi.fn().mockResolvedValue({ rows: [] }),
   end: vi.fn().mockResolvedValue(undefined)
