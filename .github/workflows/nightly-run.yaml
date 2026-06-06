@@ -35,7 +35,7 @@ jobs:
           name: testorchestra-junit-report
           path: reports
 
-            - name: Upload all JUnit reports to Xray
+      - name: Upload all JUnit reports to Xray
         run: |
           TOKEN=$(curl -s \
             -H "Content-Type: application/json" \
