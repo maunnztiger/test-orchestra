@@ -7,6 +7,7 @@ on:
         required: false
         type: string
         default: "json"
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
@@ -35,9 +36,16 @@ jobs:
         run: |
           CI=true npm run login -- --report ${{ inputs.report }}
 
-      - name: Upload report (JSON)
+      - name: Upload report JSON
         if: ${{ inputs.report == 'json' }}
         uses: actions/upload-artifact@v4
         with:
-          name: cucumber-report
+          name: testorchestra-json-report
           path: reports/cucumber-report.json
+
+      - name: Upload report JUnit
+        if: ${{ inputs.report == 'junit' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: testorchestra-junit-report
+          path: reports/**/*.xml
