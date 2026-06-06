@@ -9,8 +9,7 @@ on:
 permissions:
   contents: read
   actions: read
-
-obs:
+jobs:
   nightly-test:
     uses: ./.github/workflows/test-run.yaml
     with:
