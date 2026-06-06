@@ -60,7 +60,6 @@ export class JunitExporter {
 
     console.log(`📄 JUnit report written to ${reportPath}`);
   }
-
   private flattenScenarios(result: TestRunResult): FlattenedScenario[] {
     return (
       result.features?.flatMap(feature =>
@@ -180,6 +179,7 @@ export class JunitExporter {
     return (durationMs / 1000).toFixed(3);
   }
 
+
   private escapeXml(value: string): string {
     return value
       .replace(/&/g, "&amp;")
@@ -192,7 +192,6 @@ export class JunitExporter {
   private sanitize(value: string): string {
     return value.replace(/\u001b\[[0-9;]*m/g, "");
   }
-
   private indent(value: string, spaces: number): string {
     const prefix = " ".repeat(spaces);
     return value
