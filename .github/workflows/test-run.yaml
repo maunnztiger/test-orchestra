@@ -6,7 +6,7 @@ on:
       report:
         required: false
         type: string
-        default: "json"
+        default: "junit"
 
 jobs:
   run-tests:
