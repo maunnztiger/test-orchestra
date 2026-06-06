@@ -10,7 +10,6 @@ permissions:
   contents: read
   actions: read
 jobs:
-
   nightly-test:
     uses: ./.github/workflows/test-run.yaml
     with:
