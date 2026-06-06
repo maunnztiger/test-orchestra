@@ -35,7 +35,7 @@ jobs:
           name: testorchestra-junit-report
           path: reports
 
-      - name: Upload JUnit report to Xray
+      - name: Upload all JUnit reports to Xray
         run: |
           TOKEN=$(curl -s \
             -H "Content-Type: application/json" \
@@ -54,11 +54,22 @@ jobs:
           for file in $(find reports -name "*.xml" -type f); do
             echo "Uploading $file to Xray..."
 
-            curl -s -f \
-              -H "Content-Type: application/xml" \
+            HTTP_STATUS=$(curl -s \
+              -o xray-response.json \
+              -w "%{http_code}" \
+              -H "Content-Type: text/xml" \
               -H "Authorization: Bearer $TOKEN" \
               --data-binary @"$file" \
-              "https://xray.cloud.getxray.app/api/v2/import/execution/junit?projectKey=$XRAY_PROJECT_KEY"
+              "https://xray.cloud.getxray.app/api/v2/import/execution/junit?projectKey=$XRAY_PROJECT_KEY")
+
+            echo "HTTP status: $HTTP_STATUS"
+            echo "Xray response:"
+            cat xray-response.json
+
+            if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+              echo "Xray upload failed"
+              exit 1
+            fi
 
             echo "Uploaded $file"
           done
