@@ -1,0 +1,40 @@
+name: Confluence Sync
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-confluence:
+    runs-on: ubuntu-latest
+
+    env:
+      CONFLUENCE_EMAIL: ${{ secrets.CONFLUENCE_EMAIL }}
+      API_TOKEN: ${{ secrets.API_TOKEN }}
+      CONFLUENCE_BASE_URL: ${{ secrets.CONFLUENCE_BASE_URL }}
+      CONFLUENCE_SPACE_KEY: ${{ secrets.CONFLUENCE_SPACE_KEY }}
+      CONFLUENCE_PARENT_PAGE_ID: ${{ secrets.CONFLUENCE_PARENT_PAGE_ID }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Find markdown scenario files
+        run: |
+          FILES=$(find scenarios -name "*.md" -type f | tr '\n' ' ')
+          echo "FILES=$FILES" >> "$GITHUB_ENV"
+          echo "Found markdown files:"
+          echo "$FILES"
+
+      - name: Sync markdown files to Confluence
+        run: npm run sync:confluence -- $FILES
