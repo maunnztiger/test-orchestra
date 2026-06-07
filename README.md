@@ -1,103 +1,172 @@
-# 🧭 VISION.md
+# 🎭 TestOrchestra
 
-## Testorchestra – The Art of Automated Quality
+**Markdown-first test automation for modern software teams.**
 
-**Ein Open-Source-Projekt für die Zukunft von Testarchitektur und Software-Qualität.**
+TestOrchestra is an open-source testing platform that combines executable specifications, automated test execution, reporting and documentation into a single workflow.
 
----
+Write scenarios in Markdown.
 
-### 🧩 Grundidee
+Execute them automatically.
 
-Testorchestra ist mehr als ein Testframework – es ist ein **Gedanke**.  
-Ein Gedanke, der auf der Überzeugung basiert, dass Qualität kein zufälliges Ergebnis ist,  
-sondern das Produkt aus **Struktur, Wiederholbarkeit und Verantwortung**.
+Publish results to Xray.
 
-Das Projekt versteht Testautomatisierung als **orchestriertes System**,  
-in dem Menschen, Tools und Prozesse nicht nebeneinander arbeiten,  
-sondern miteinander kommunizieren.
+Synchronize documentation to Confluence.
+
+All from a single source of truth.
 
 ---
 
-### 🧠 Philosophie
+## 🚀 Why TestOrchestra?
 
-> „Der Code prüft nicht nur die Software – er prüft uns.“
+Many organizations maintain the same information multiple times:
 
-Testorchestra will zeigen, dass Testautomatisierung ein kreativer,  
-architektonischer Akt sein kann:
+* Requirements in Confluence
+* Test cases in Xray
+* Automation code in Git
+* Results in CI/CD systems
 
-- **Lesbar** wie Markdown
-- **Automatisierbar** wie ein CI-Job
-- **Messbar** wie ein Monitoring-Dashboard
+Over time these artifacts drift apart.
 
-**Die Vision:**  
-Ein Framework, das Testfälle in natürlicher Sprache beschreibt,  
-sie systemisch über REST-APIs ausführt  
-und ihre Ergebnisse in Echtzeit visualisiert.
+TestOrchestra aims to reduce this duplication by treating Markdown scenarios as executable specifications.
 
----
+A single scenario can become:
 
-### ⚙️ Architektur im Überblick
+* Documentation
+* Automated tests
+* Xray test executions
+* Confluence pages
 
-- 🧾 **Markdown-Based BDD Syntax**  
-  → Schreib Szenarien wie Gedanken – in einer Sprache, die jeder versteht.
-
-- 🧠 **Test Runner Backend (Flask / FastAPI)**  
-  → Übersetzt menschliche Szenarien in strukturierte Aktionen.
-
-- 🗄️ **Database Layer (PostgreSQL)**  
-  → Speichert Ergebnisse, Runs und Metadaten reproduzierbar.
-
-- 📊 **Monitoring Frontend (Vue / Grafana)**  
-  → Macht Qualität sichtbar: Trends, Status, Insights.
-
-- 🔁 **CI/CD Integration (GitHub Actions, Jenkins)**  
-  → Vollautomatisierter Flow: _commit → run → report._
+without rewriting the same information multiple times.
 
 ---
 
-### 🌍 Ziel
+## ✨ Features
 
-Testorchestra soll Entwicklern, Testern und Organisationen helfen,  
-Testarchitekturen **nicht nur zu schreiben**,  
-sondern **zu denken**.
+### Markdown-Based Scenarios
 
-Es soll zeigen, dass Qualität nicht aus Kontrolle,  
-sondern aus **Kohärenz** entsteht –  
-aus dem Zusammenspiel von Klarheit, Technik und Intention.
+Write test cases in a readable format:
+
+```markdown
+## Szenario: Login funktioniert
+
+**GEGEBEN** der Benutzer öffnet die Login-Seite
+
+**WENN** er sich anmeldet
+
+**DANN** wird die Produktseite angezeigt
+```
+
+### Test Execution
+
+Execute scenarios through the TestOrchestra runtime and Playwright integration.
+
+### JUnit Reporting
+
+Generate JUnit XML reports for CI/CD pipelines and external integrations.
+
+### Xray Integration
+
+Automatically upload test results to Xray Cloud.
+
+Features include:
+
+* automatic Test Execution creation
+* Nightly Run reporting
+* build-based execution history
+* Jira integration
+
+### Confluence Synchronisation
+
+Publish Markdown scenarios directly to Confluence.
+
+Documentation becomes part of the delivery pipeline.
+
+### GitHub Actions Support
+
+Run tests automatically:
+
+```text
+Commit
+ ↓
+GitHub Actions
+ ↓
+TestOrchestra
+ ↓
+JUnit
+ ↓
+Xray
+ ↓
+Confluence
+```
 
 ---
 
-### 🧑‍💻 Warum Open Source?
+## 🏗 Architecture
 
-Weil Wissen geteilt werden muss.  
-Weil Stabilität erst dann entsteht,  
-wenn viele Augen auf denselben Code schauen.
-
-Testorchestra ist **non-commercial** und dient allein dem  
-Lernen, Wachsen und Verbinden –  
-ein Beitrag an die Testing-Community,  
-entstanden aus intrinsischer Motivation und Neugier.
-
----
-
-### 🔭 Langfristige Vision
-
-> „From framework to philosophy.“
-
-Langfristig soll Testorchestra zeigen,  
-wie sich Testsysteme selbst dokumentieren,  
-wie sie adaptiv mit neuen Technologien wachsen können,  
-und wie sich Qualität als dynamisches, lebendes System versteht.
-
-Ein offenes, lebendes Experiment.  
-Ein Orchester, das nie aufhört zu spielen. 🎶
+```text
+Markdown Scenarios
+        │
+        ▼
+   TestOrchestra
+        │
+ ┌──────┼──────┐
+ ▼      ▼      ▼
+Tests  Xray  Confluence
+        │
+        ▼
+ Monitoring
+```
 
 ---
 
-### lokale Entwicklung
+## ⚡ Local Development
 
-1. Postgres DB starten (z.b. über `docker compose up -d`)
-2. .env Datei mit DB URL hinterlegen `postgresql://postgres:postgres@localhost:5432/test-orchestra`
-3. NPM Libs installieren `npm install`
-4. Tests starten `npm run testorchestra`
-5. Nach Änderungen bitte Code formattieren `npm run format`
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Start PostgreSQL
+
+```bash
+docker compose up -d
+```
+
+### Configure environment
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test-orchestra
+```
+
+### Run TestOrchestra
+
+```bash
+npm run testorchestra
+```
+
+### Run tests
+
+```bash
+npm test
+```
+
+### Format code
+
+```bash
+npm run format
+```
+
+---
+
+## 🌍 Open Source
+
+TestOrchestra is an open-source project built to explore new approaches to test architecture, quality engineering and executable documentation.
+
+The goal is not only to automate tests, but to create systems that make quality visible, reproducible and understandable.
+
+---
+
+## 🔭 Vision
+
+See `VISION.md` for the long-term philosophy and roadmap behind the project.
