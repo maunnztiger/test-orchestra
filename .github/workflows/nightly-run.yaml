@@ -52,15 +52,18 @@ jobs:
 
           cat > test-execution.json <<EOF
           {
-          "fields": {
-            "project": {
-              "key": "${XRAY_PROJECT_KEY}"
-            },
-            "summary": "Nightly Test #${GITHUB_RUN_NUMBER} - ${DATE}",
-            "description": "Automatically created by TestOrchestra Nightly Run",
-            "labels": [
-              "nightly",
-              "testorchestra"
+            "fields": {
+              "project": {
+                "key": "${XRAY_PROJECT_KEY}"
+              },
+              "summary": "Nightly Test #${GITHUB_RUN_NUMBER} - ${DATE}",
+              "description": "Automatically created by TestOrchestra Nightly Run",
+              "issuetype": {
+                "name": "Test Execution"
+              },
+              "labels": [
+                "nightly",
+                "testorchestra"
               ]
             }
           }
