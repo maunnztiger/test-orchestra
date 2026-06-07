@@ -20,10 +20,10 @@ All from a single source of truth.
 
 Many organizations maintain the same information multiple times:
 
-* Requirements in Confluence
-* Test cases in Xray
-* Automation code in Git
-* Results in CI/CD systems
+- Requirements in Confluence
+- Test cases in Xray
+- Automation code in Git
+- Results in CI/CD systems
 
 Over time these artifacts drift apart.
 
@@ -31,10 +31,10 @@ TestOrchestra aims to reduce this duplication by treating Markdown scenarios as 
 
 A single scenario can become:
 
-* Documentation
-* Automated tests
-* Xray test executions
-* Confluence pages
+- Documentation
+- Automated tests
+- Xray test executions
+- Confluence pages
 
 without rewriting the same information multiple times.
 
@@ -70,10 +70,10 @@ Automatically upload test results to Xray Cloud.
 
 Features include:
 
-* automatic Test Execution creation
-* Nightly Run reporting
-* build-based execution history
-* Jira integration
+- automatic Test Execution creation
+- Nightly Run reporting
+- build-based execution history
+- Jira integration
 
 ### Confluence Synchronisation
 
