@@ -13,7 +13,7 @@ jobs:
   nightly-test:
     uses: ./.github/workflows/test-run.yaml
     with:
-      report: junit
+      report: xray
     secrets: inherit
     permissions:
       contents: read
