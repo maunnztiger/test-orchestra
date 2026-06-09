@@ -54,5 +54,4 @@ jobs:
 
     with:
       report: xray
-
     secrets: inherit
