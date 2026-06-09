@@ -27,8 +27,8 @@ export function createExporter(type: string, options: { dbURL?: string }) {
   }
 
   if (type === "xray") {
-  return new XrayJsonExporter();
-}
+    return new XrayJsonExporter();
+  }
 
   throw new Error(`Unknown report type: ${type}`);
 }
