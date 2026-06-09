@@ -2,6 +2,7 @@ import { Client } from "pg";
 import { PostgresExporter } from "./postgresExporter";
 import { JsonExporter } from "./jsonExporter";
 import { JunitExporter } from "./junitExporter";
+import { XrayJsonExporter } from "./xrayJsonExporter";
 
 export function createExporter(type: string, options: { dbURL?: string }) {
   if (type === "json") {
@@ -24,6 +25,10 @@ export function createExporter(type: string, options: { dbURL?: string }) {
   if (type === "junit") {
     return new JunitExporter();
   }
+
+  if (type === "xray") {
+  return new XrayJsonExporter();
+}
 
   throw new Error(`Unknown report type: ${type}`);
 }

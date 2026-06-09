@@ -6,7 +6,7 @@ on:
       report:
         required: false
         type: string
-        default: "junit"
+        default: "json"
 
 jobs:
   run-tests:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: testorchestra-json-report
-          path: reports/cucumber-report.json
+          path: reports/**/*.json
 
       - name: Upload report JUnit
         if: ${{ inputs.report == 'junit' }}
@@ -49,3 +49,10 @@ jobs:
         with:
           name: testorchestra-junit-report
           path: reports/**/*.xml
+
+      - name: Upload report Xray JSON
+        if: ${{ inputs.report == 'xray' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: testorchestra-xray-report
+          path: reports/xray-report.json
