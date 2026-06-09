@@ -29,13 +29,13 @@ jobs:
       XRAY_PROJECT_KEY: QTO
 
     steps:
-      - name: Download JUnit report
+      - name: Download Xray JSON report
         uses: actions/download-artifact@v4
         with:
-          name: testorchestra-junit-report
+          name: testorchestra-xray-report
           path: reports
 
-      - name: Upload all JUnit reports to Xray
+      - name: Upload Xray JSON report to Xray
         run: |
           TOKEN=$(curl -s \
           -H "Content-Type: application/json" \
