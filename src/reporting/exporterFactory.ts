@@ -3,11 +3,9 @@ import { PostgresExporter } from "./postgresExporter";
 import { JsonExporter } from "./jsonExporter";
 import { JunitExporter } from "./junitExporter";
 import { XrayJsonExporter } from "./xrayJsonExporter";
+import { RobotXmlExporter } from "./robotXmlExporter";
 
 export function createExporter(type: string, options: { dbURL?: string }) {
-  if (type === "json") {
-    return new JsonExporter();
-  }
   console.log("CREATE EXPORTER:", type);
   if (type === "db") {
     if (!options.dbURL) {
@@ -28,6 +26,14 @@ export function createExporter(type: string, options: { dbURL?: string }) {
 
   if (type === "xray") {
     return new XrayJsonExporter();
+  }
+
+  if (type === "json") {
+    return new JsonExporter();
+  }
+
+  if (type === "robot") {
+    return new RobotXmlExporter();
   }
 
   throw new Error(`Unknown report type: ${type}`);

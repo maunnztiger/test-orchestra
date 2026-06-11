@@ -56,3 +56,10 @@ jobs:
         with:
           name: testorchestra-xray-report
           path: reports/xray-report.json
+
+      - name: Upload report Robot XML
+        if: ${{ inputs.report == 'robot' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: testorchestra-robot-report
+          path: reports/robot-output.xml

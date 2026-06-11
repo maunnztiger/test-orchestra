@@ -53,5 +53,5 @@ jobs:
     uses: ./.github/workflows/test-run.yaml
 
     with:
-      report: xray
+      report: robot
     secrets: inherit
