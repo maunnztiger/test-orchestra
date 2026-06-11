@@ -14,6 +14,7 @@ jobs:
     uses: ./.github/workflows/test-run.yaml
     with:
       report: robot
+
     secrets: inherit
     permissions:
       contents: read
