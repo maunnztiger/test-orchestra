@@ -16,10 +16,10 @@ They know that reports are generated.
 
 But they often struggle to answer simple questions:
 
-* What behavior has already been validated?
-* Which functionality is covered by automated tests?
-* How can new team members understand existing system behavior?
-* How can quality become visible across teams?
+- What behavior has already been validated?
+- Which functionality is covered by automated tests?
+- How can new team members understand existing system behavior?
+- How can quality become visible across teams?
 
 TestOrchestra exists to make validated software behavior transparent.
 
@@ -53,10 +53,10 @@ TestOrchestra is a testing framework.
 
 It enables teams to:
 
-* describe behavior
-* automate validation
-* document validated functionality
-* publish transparent results
+- describe behavior
+- automate validation
+- document validated functionality
+- publish transparent results
 
 through a single workflow.
 

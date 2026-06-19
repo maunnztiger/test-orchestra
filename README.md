@@ -22,10 +22,10 @@ Software teams often struggle with uncertainty.
 
 Questions like:
 
-* Which behavior is already covered by automated tests?
-* Which functionality has been validated?
-* What exactly failed during a regression run?
-* How can developers, testers and product owners understand existing test coverage?
+- Which behavior is already covered by automated tests?
+- Which functionality has been validated?
+- What exactly failed during a regression run?
+- How can developers, testers and product owners understand existing test coverage?
 
 are often difficult to answer.
 
@@ -53,10 +53,10 @@ Describe automated test scenarios in a readable Markdown format.
 
 The same scenario can be used for:
 
-* automated execution
-* documentation
-* reporting
-* knowledge sharing
+- automated execution
+- documentation
+- reporting
+- knowledge sharing
 
 ---
 
@@ -74,11 +74,11 @@ Publish automated test results directly to Xray Cloud.
 
 Features include:
 
-* automatic Test Execution creation
-* test step reporting
-* build history
-* Jira integration
-* CI/CD support
+- automatic Test Execution creation
+- test step reporting
+- build history
+- Jira integration
+- CI/CD support
 
 ---
 
@@ -88,9 +88,9 @@ Synchronize validated test scenarios directly to Confluence.
 
 This helps teams understand:
 
-* what has already been automated
-* which behavior is covered
-* how systems are currently validated
+- what has already been automated
+- which behavior is covered
+- how systems are currently validated
 
 without manually maintaining additional documentation.
 
@@ -140,12 +140,12 @@ This reduces coupling and allows integrations to evolve independently.
 
 TestOrchestra is built around a few core ideas:
 
-* Human-readable test scenarios
-* Clear separation of execution and reporting
-* Extensible adapter architecture
-* CI/CD first
-* Open standards
-* Transparency of validated behavior
+- Human-readable test scenarios
+- Clear separation of execution and reporting
+- Extensible adapter architecture
+- CI/CD first
+- Open standards
+- Transparency of validated behavior
 
 The framework is intentionally focused on testing and quality engineering rather than enforcing a specific development process.
 
@@ -203,11 +203,11 @@ The goal is not only to automate tests, but to make software quality visible, un
 
 Current focus areas include:
 
-* improved reporting adapters
-* XRAY integrations
-* Confluence synchronisation
-* CI/CD workflows
-* quality engineering tooling
-* documentation of validated system behavior
+- improved reporting adapters
+- XRAY integrations
+- Confluence synchronisation
+- CI/CD workflows
+- quality engineering tooling
+- documentation of validated system behavior
 
 See `VISION.md` for long-term ideas and project philosophy.
