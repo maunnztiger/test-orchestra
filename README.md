@@ -1,50 +1,45 @@
 # 🎭 TestOrchestra
 
-**Markdown-first test automation for modern software teams.**
+**Behavior-Driven Testing for modern software teams.**
 
-TestOrchestra is an open-source testing platform that combines executable specifications, automated test execution, reporting and documentation into a single workflow.
+TestOrchestra is an open-source testing framework that combines automated test execution, reporting and documentation into a single workflow.
 
-Write scenarios in Markdown.
+Write executable test scenarios in Markdown.
 
-Execute them automatically.
+Run them with Playwright.
 
 Publish results to Xray.
 
-Synchronize documentation to Confluence.
+Synchronize validated behavior to Confluence.
 
-All from a single source of truth.
+All through a clean and extensible architecture.
 
 ---
 
 ## 🚀 Why TestOrchestra?
 
-Many organizations maintain the same information multiple times:
+Software teams often struggle with uncertainty.
 
-- Requirements in Confluence
-- Test cases in Xray
-- Automation code in Git
-- Results in CI/CD systems
+Questions like:
 
-Over time these artifacts drift apart.
+* Which behavior is already covered by automated tests?
+* Which functionality has been validated?
+* What exactly failed during a regression run?
+* How can developers, testers and product owners understand existing test coverage?
 
-TestOrchestra aims to reduce this duplication by treating Markdown scenarios as executable specifications.
+are often difficult to answer.
 
-A single scenario can become:
+TestOrchestra helps make automated testing visible and transparent.
 
-- Documentation
-- Automated tests
-- Xray test executions
-- Confluence pages
-
-without rewriting the same information multiple times.
+It enables teams to document validated behavior, execute tests automatically and provide clear reporting across the entire delivery pipeline.
 
 ---
 
-## ✨ Features
+## ✨ Core Features
 
-### Markdown-Based Scenarios
+### Markdown-Based Test Scenarios
 
-Write test cases in a readable format:
+Describe automated test scenarios in a readable Markdown format.
 
 ```markdown
 ## Szenario: Login funktioniert
@@ -56,34 +51,54 @@ Write test cases in a readable format:
 **DANN** wird die Produktseite angezeigt
 ```
 
-### Test Execution
+The same scenario can be used for:
 
-Execute scenarios through the TestOrchestra runtime and Playwright integration.
+* automated execution
+* documentation
+* reporting
+* knowledge sharing
 
-### JUnit Reporting
+---
 
-Generate JUnit XML reports for CI/CD pipelines and external integrations.
+### Playwright Integration
 
-### Xray Integration
+Execute browser-based UI tests using Playwright.
 
-Automatically upload test results to Xray Cloud.
+TestOrchestra provides the orchestration layer while Playwright performs the actual browser automation.
+
+---
+
+### XRAY Reporting
+
+Publish automated test results directly to Xray Cloud.
 
 Features include:
 
-- automatic Test Execution creation
-- Nightly Run reporting
-- build-based execution history
-- Jira integration
+* automatic Test Execution creation
+* test step reporting
+* build history
+* Jira integration
+* CI/CD support
+
+---
 
 ### Confluence Synchronisation
 
-Publish Markdown scenarios directly to Confluence.
+Synchronize validated test scenarios directly to Confluence.
 
-Documentation becomes part of the delivery pipeline.
+This helps teams understand:
 
-### GitHub Actions Support
+* what has already been automated
+* which behavior is covered
+* how systems are currently validated
 
-Run tests automatically:
+without manually maintaining additional documentation.
+
+---
+
+### CI/CD Integration
+
+Integrate TestOrchestra into existing delivery pipelines.
 
 ```text
 Commit
@@ -92,9 +107,7 @@ GitHub Actions
  ↓
 TestOrchestra
  ↓
-JUnit
- ↓
-Xray
+XRAY
  ↓
 Confluence
 ```
@@ -109,13 +122,32 @@ Markdown Scenarios
         ▼
    TestOrchestra
         │
- ┌──────┼──────┐
- ▼      ▼      ▼
-Tests  Xray  Confluence
+ ┌──────┼─────────────┐
+ ▼      ▼             ▼
+Tests  Reporting   Documentation
         │
         ▼
- Monitoring
+      XRAY
 ```
+
+Test execution, reporting and documentation are intentionally separated.
+
+This reduces coupling and allows integrations to evolve independently.
+
+---
+
+## 🎯 Design Principles
+
+TestOrchestra is built around a few core ideas:
+
+* Human-readable test scenarios
+* Clear separation of execution and reporting
+* Extensible adapter architecture
+* CI/CD first
+* Open standards
+* Transparency of validated behavior
+
+The framework is intentionally focused on testing and quality engineering rather than enforcing a specific development process.
 
 ---
 
@@ -161,12 +193,21 @@ npm run format
 
 ## 🌍 Open Source
 
-TestOrchestra is an open-source project built to explore new approaches to test architecture, quality engineering and executable documentation.
+TestOrchestra is an open-source project focused on test automation, quality engineering and transparent reporting.
 
-The goal is not only to automate tests, but to create systems that make quality visible, reproducible and understandable.
+The goal is not only to automate tests, but to make software quality visible, understandable and reproducible.
 
 ---
 
-## 🔭 Vision
+## 🔭 Roadmap
 
-See `VISION.md` for the long-term philosophy and roadmap behind the project.
+Current focus areas include:
+
+* improved reporting adapters
+* XRAY integrations
+* Confluence synchronisation
+* CI/CD workflows
+* quality engineering tooling
+* documentation of validated system behavior
+
+See `VISION.md` for long-term ideas and project philosophy.
