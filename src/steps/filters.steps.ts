@@ -22,7 +22,9 @@ DANN("öffnet sich ein Menü mit Filtern", async function (this: CustomWorld) {
   await this.pm.makeFiltersAction().validateFilterMenu();
 });
 
-WENN("der User den Filter {string} anklickt", async function (this: CustomWorld) {});
+WENN("der User den Filter {string} anklickt", async function (this: CustomWorld, filterName: string) {
+  await this.pm.makeFiltersAction().clickFilterZ_A(filterName)
+});
 DANN(
   "erscheint der folgende Artikel {string} an der Spitze der Liste",
   async function (this: CustomWorld, article: string) {

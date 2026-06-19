@@ -8,7 +8,7 @@ export class HelperBase {
   }
 
   async waitForNumberOfSeconds(seconds: number) {
-    await this.page.waitForTimeout(seconds);
+     await this.page.waitForTimeout(seconds * 1000);
   }
 
   async loginAsGeneralUser(): Promise<void> {
