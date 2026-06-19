@@ -21,22 +21,18 @@ export class FiltersActionPage extends HelperBase {
   }
 
   async validateFilterMenu() {
-    
     try {
       const menuSelect = this.page.locator(".product_sort_container");
       await this.waitForAppearance(menuSelect, 5000);
-      await expect(menuSelect).toContainText('Name (A to Z)');
+      await expect(menuSelect).toContainText("Name (A to Z)");
     } catch (err) {
-      console.error('Elemente sind nicht sichtbar', err);
+      console.error("Elemente sind nicht sichtbar", err);
     }
-    
   }
 
-  async clickFilterZ_A(filterName: string){
+  async clickFilterZ_A(filterName: string) {
     const menuSelect = this.page.locator(".product_sort_container");
-        await expect(menuSelect).toContainText(filterName);
-    await menuSelect.selectOption({label: filterName});   
+    await expect(menuSelect).toContainText(filterName);
+    await menuSelect.selectOption({ label: filterName });
   }
-  
-  
 }
