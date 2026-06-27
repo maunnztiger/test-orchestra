@@ -10,7 +10,6 @@ import { detectFlakyScenarios } from "analytics/flakyDetector";
 async function main() {
   await loadStepDefinitions();
   const program = new Command();
-  console.log("ARGV RAW:", process.argv);
   program.name("testorchestra").description("BDD-style test runner").version("0.1.0");
 
   program
@@ -21,7 +20,6 @@ async function main() {
     .option("--report <type>", "report type (json|db)", "json")
     .action(async (inputPath, options) => {
       const includeTags = options.tags ? options.tags.split(",").map((t: string) => t.trim()) : [];
-      console.log("OPTIONS:", options);
       const excludeTags = options.exclude
         ? options.exclude.split(",").map((t: string) => t.trim())
         : [];
