@@ -42,7 +42,7 @@ jobs:
         with:
           name: testorchestra-robot-report
           path: reports/robot-output.xml
-      
+
       - name: Run TestOrchestra - Sauce Labs Filters
         run: |
           CI=true npm run filters -- --report ${{ inputs.report }}
