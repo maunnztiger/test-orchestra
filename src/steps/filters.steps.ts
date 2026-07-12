@@ -1,5 +1,6 @@
 import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
 import { CustomWorld } from "../world/customworld";
+import { expect } from "playwright/test";
 
 GEGEBEN("der Nutzer öffnet die Startseite Saucedemo", async function (this: CustomWorld) {
   await this.pm.navigateTo().sauceLabsStartPage();
@@ -31,11 +32,22 @@ WENN(
 DANN(
   "erscheint der folgende Artikel {string} an der Spitze der Liste",
   async function (this: CustomWorld, article: string) {
-    console.log(article);
+    await this.pm.makeFiltersAction().verifyViceVersaElementsName(article);
   }
 );
-UND("der Artikel {string} am Fuß der Liste", async function (this: CustomWorld) {});
+UND("der Artikel {string} am Fuß der Liste", async function (this: CustomWorld, article: string) {
+  await this.pm.makeFiltersAction().verifyViceVersaElementsLastName(article);
+});
 
-WENN("der User den Filter dann auf {string} setzt", async function (this: CustomWorld) {});
-DANN("tauschen sich die Artikel Rucksack an der Spitze", async function (this: CustomWorld) {});
-UND("das Tester-T-Shirt steht am Fuß der Liste", async function (this: CustomWorld) {});
+WENN(
+  "der User den Filter dann auf {string} setzt",
+  async function (this: CustomWorld, filterName: string) {
+    await this.pm.makeFiltersAction().clickFilterA_Z(filterName);
+  }
+);
+DANN("tauschen sich die Artikel Rucksack an der Spitze", async function (this: CustomWorld) {
+  await this.pm.makeFiltersAction().verifyResetedElementsName();
+});
+UND("das Tester-T-Shirt steht am Fuß der Liste", async function (this: CustomWorld) {
+  await this.pm.makeFiltersAction().verifyResetedElementsLastName();
+});
