@@ -35,6 +35,5 @@ export class FiltersActionPage extends HelperBase {
     await expect(menuSelect).toContainText(filterName);
     await menuSelect.selectOption({ label: filterName });
     await this.waitForNumberOfSeconds(5);
-
   }
 }

@@ -76,11 +76,7 @@ If this happens, launch Chromium with the following arguments:
 chromium.launch({
   headless: false,
   slowMo: 500,
-  args: [
-    "--ozone-platform=x11",
-    "--disable-gpu",
-    "--disable-gpu-compositing",
-  ],
+  args: ["--ozone-platform=x11", "--disable-gpu", "--disable-gpu-compositing"]
 });
 ```
 
