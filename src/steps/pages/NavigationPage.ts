@@ -9,7 +9,10 @@ export class NavigationPage extends HelperBase {
   }
 
   async sauceLabsStartPage() {
-    const url = process.env.APP_URL;
-    await this.page.goto(url!);
+    if (!this.page) {
+      throw new Error("Page wurde nicht initialisiert");
+    }
+
+    await this.page.goto(process.env.APP_URL!);
   }
 }
