@@ -211,3 +211,12 @@ Current focus areas include:
 - documentation of validated system behavior
 
 See `VISION.md` for long-term ideas and project philosophy.
+<<<<<<< HEAD
+
+### Zur Implementierung auf deiner persönlichen Plattform schaue in docs/, um wichtige Hinweise zu entdecken,
+
+### die euch Stunden der Fehlersuche ersparen
+
+=======
+
+> > > > > > > origin/main
