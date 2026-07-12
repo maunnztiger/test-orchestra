@@ -28,6 +28,7 @@ export class FiltersActionPage extends HelperBase {
     const menuSelect = this.page.locator(".product_sort_container");
     await expect(menuSelect).toContainText(filterName);
     await menuSelect.selectOption({ label: filterName });
+    await this.waitForNumberOfSeconds(5);
   }
 
   async verifyViceVersaElementsName(article: string) {
