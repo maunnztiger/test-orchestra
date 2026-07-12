@@ -1,6 +1,5 @@
 import { expect, Page } from "@playwright/test";
 import { HelperBase } from "@steps/pages/HelperBase";
-import { error } from "console";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -21,13 +20,8 @@ export class FiltersActionPage extends HelperBase {
   }
 
   async validateFilterMenu() {
-    try {
-      const menuSelect = this.page.locator(".product_sort_container");
-      await this.waitForAppearance(menuSelect, 5000);
-      await expect(menuSelect).toContainText("Name (A to Z)");
-    } catch (err) {
-      console.error("Elemente sind nicht sichtbar", err);
-    }
+    const menuSelect = this.page.locator(".product_sort_container");
+    await this.waitForAppearance(menuSelect, 5000);
   }
 
   async clickFilterZ_A(filterName: string) {
@@ -35,5 +29,60 @@ export class FiltersActionPage extends HelperBase {
     await expect(menuSelect).toContainText(filterName);
     await menuSelect.selectOption({ label: filterName });
     await this.waitForNumberOfSeconds(5);
+  }
+
+  async verifyViceVersaElementsName(article: string) {
+    await expect(
+      this.page
+        .getByRole("link", {
+          name: article,
+          exact: true
+        })
+        .last()
+    ).toHaveText(article);
+  }
+
+  async verifyViceVersaElementsLastName(article: string) {
+    await expect(
+      this.page
+        .getByRole("link", {
+          name: article,
+          exact: true
+        })
+        .last()
+    ).toHaveText(article);
+  }
+
+  async clickFilterA_Z(filterName: string) {
+    const menuSelect = this.page.locator(".product_sort_container");
+    await expect(menuSelect).toContainText(filterName);
+    await menuSelect.selectOption({ label: filterName });
+  }
+
+  async validateAlteredFilterMenu() {
+    const menuSelect = this.page.locator(".product_sort_container");
+    await this.waitForAppearance(menuSelect, 5000);
+  }
+
+  async verifyResetedElementsName() {
+    await expect(
+      this.page
+        .getByRole("link", {
+          name: "Sauce Labs Backpack",
+          exact: true
+        })
+        .last()
+    ).toHaveText("Sauce Labs Backpack");
+  }
+
+  async verifyResetedElementsLastName() {
+    await expect(
+      this.page
+        .getByRole("link", {
+          name: "Test.allTheThings() T-Shirt (Red)",
+          exact: true
+        })
+        .last()
+    ).toHaveText("Test.allTheThings() T-Shirt (Red)");
   }
 }
