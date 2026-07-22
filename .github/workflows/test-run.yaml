@@ -34,8 +34,8 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run TestOrchestra - Sauce Labs Login
-        run: CI=true npm run login -- --report "${{ inputs.report }}"
 
+        run: CI=true npm run login -- --report "${{ inputs.report }}"
       - name: Upload Login Robot XML
         if: ${{ inputs.report == 'robot' }}
         uses: actions/upload-artifact@v6
@@ -51,8 +51,10 @@ jobs:
       - name: Upload Filters Robot XML
         if: ${{ inputs.report == 'robot' }}
         uses: actions/upload-artifact@v6
+
         with:
           name: testorchestra-filters-robot-report
           path: reports/robot-output.xml
           if-no-files-found: error
+
           retention-days: 14

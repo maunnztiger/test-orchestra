@@ -30,8 +30,8 @@ jobs:
       XRAY_PROJECT_KEY: QTO
 
     steps:
-     - name: Download Robot reports
-       uses: actions/download-artifact@v8
-       with:
-        pattern: testorchestra-*-robot-report
-        path: reports
+      - name: Download Robot reports
+        uses: actions/download-artifact@v8
+        with:
+          pattern: testorchestra-*-robot-report
+          path: reports
