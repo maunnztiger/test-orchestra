@@ -18,11 +18,11 @@ jobs:
       USER_PASSWD: ${{ secrets.USER_PASSWD }}
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -34,23 +34,25 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run TestOrchestra - Sauce Labs Login
-        run: CI=true npm run login -- --report ${{ inputs.report }}
+        run: CI=true npm run login -- --report "${{ inputs.report }}"
 
       - name: Upload Login Robot XML
         if: ${{ inputs.report == 'robot' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: testorchestra-login-robot-report
           path: reports/robot-output.xml
           if-no-files-found: error
+          retention-days: 14
 
       - name: Run TestOrchestra - Sauce Labs Filters
-        run: CI=true npm run filters -- --report ${{ inputs.report }}
+        run: CI=true npm run filters -- --report "${{ inputs.report }}"
 
       - name: Upload Filters Robot XML
         if: ${{ inputs.report == 'robot' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: testorchestra-filters-robot-report
           path: reports/robot-output.xml
           if-no-files-found: error
+          retention-days: 14
