@@ -34,7 +34,6 @@ jobs:
       XRAY_PROJECT_KEY: QTO
       XRAY_API_BASE: https://eu.xray.cloud.getxray.app
 
-
     steps:
       - name: Download Robot reports
         uses: actions/download-artifact@v8
