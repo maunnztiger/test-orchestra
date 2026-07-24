@@ -93,7 +93,6 @@ jobs:
             --arg project "$XRAY_PROJECT_KEY" \
             --arg summary "TestOrchestra Nightly Run #${{ github.run_number }}" \
             --arg description "Automatischer TestOrchestra Nightly Run. GitHub Actions: $RUN_URL" \
-            --arg revision "${{ github.sha }}" \
             '{
               fields: {
                 project: {
@@ -114,8 +113,7 @@ jobs:
               xrayFields: {
                 environments: [
                   "SauceDemo"
-                ],
-                revision: $revision
+                ]
               }
             }' > xray-info.json
 
