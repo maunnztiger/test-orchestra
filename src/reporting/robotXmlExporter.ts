@@ -182,7 +182,6 @@ export class RobotXmlExporter {
   private renderStatistics(scenarios: FlattenedScenario[]): string {
     const passed = scenarios.filter(scenario => scenario.status === "passed").length;
     const failed = scenarios.filter(scenario => scenario.status === "failed").length;
-    const total = scenarios.length;
 
     return [
       `    <statistics>`,
