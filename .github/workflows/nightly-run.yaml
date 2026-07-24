@@ -29,11 +29,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      env:
-        XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-        XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
-        XRAY_PROJECT_KEY: QTO
-        XRAY_API_BASE: https://eu.xray.cloud.getxray.app
+      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+      XRAY_PROJECT_KEY: QTO
+      XRAY_API_BASE: https://eu.xray.cloud.getxray.app
 
     steps:
       - name: Download Robot reports
