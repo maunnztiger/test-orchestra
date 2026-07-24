@@ -43,9 +43,18 @@ export class RobotXmlExporter {
       `<?xml version="1.0" encoding="UTF-8"?>`,
       `<robot generator="TestOrchestra" generated="${generated}" rpa="false" schemaversion="5">`,
       `  <suite id="s1" name="TestOrchestra" source="test-orchestra">`,
+
       ...this.renderFeatureSuites(scenarios),
-      this.renderStatistics(scenarios),
+
+      // Status der äußeren Root-Suite
+      this.renderSuiteStatus(scenarios, 4),
+
+      // Äußere Suite schließen
       `  </suite>`,
+
+      // Statistics und Errors liegen direkt unter <robot>
+      this.renderStatistics(scenarios),
+
       `</robot>`
     ].join("\n");
 
