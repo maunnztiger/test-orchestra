@@ -144,6 +144,7 @@ jobs:
                   }'
               )" \
               "${XRAY_API_BASE}/api/v2/authenticate"
+
           )"
 
           TOKEN="$(printf '%s' "$AUTH_RESPONSE" | jq -r '.')"
@@ -177,6 +178,7 @@ jobs:
               --form "results=@combined-robot-output.xml;type=application/xml" \
               --form "info=@xray-info.json;type=application/json" \
               "${XRAY_API_BASE}/api/v2/import/execution/robot/multipart"
+
           )"
 
           echo "Xray returned HTTP status: $HTTP_STATUS"
