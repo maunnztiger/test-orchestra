@@ -39,7 +39,6 @@ jobs:
         with:
           pattern: testorchestra-*-robot-report
           path: reports
-
       - name: Show downloaded Robot reports
         shell: bash
         run: |
