@@ -85,7 +85,7 @@ jobs:
 
           echo "Combined Robot report created successfully."
 
-            - name: Create Xray metadata
+      - name: Create Xray metadata
         shell: bash
         env:
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
