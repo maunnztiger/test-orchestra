@@ -33,6 +33,7 @@ jobs:
       XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
       XRAY_PROJECT_KEY: QTO
       XRAY_API_BASE: https://eu.xray.cloud.getxray.app
+      TZ: Europe/Berlin
 
     steps:
       - name: Download Robot reports
@@ -84,15 +85,18 @@ jobs:
 
           echo "Combined Robot report created successfully."
 
-      - name: Create Xray metadata
+            - name: Create Xray metadata
         shell: bash
         env:
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          RUN_DATE="$(date '+%d.%m.%Y')"
+          RUN_TIME="$(date '+%H:%M:%S %Z')"
+
           jq -n \
             --arg project "$XRAY_PROJECT_KEY" \
-            --arg summary "TestOrchestra Nightly Run #${{ github.run_number }}" \
-            --arg description "Automatischer TestOrchestra Nightly Run. GitHub Actions: $RUN_URL" \
+            --arg summary "TestOrchestra Nightly – ${RUN_DATE} – Run #${{ github.run_number }}" \
+            --arg description "Automatischer TestOrchestra Nightly Run vom ${RUN_DATE} um ${RUN_TIME}. GitHub Actions: $RUN_URL" \
             '{
               fields: {
                 project: {
