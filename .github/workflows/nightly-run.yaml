@@ -9,12 +9,12 @@ on:
 permissions:
   contents: read
   actions: read
+
 jobs:
   nightly-test:
     uses: ./.github/workflows/test-run.yaml
     with:
       report: robot
-
     secrets: inherit
     permissions:
       contents: read
@@ -22,6 +22,10 @@ jobs:
 
   upload-xray:
     needs: nightly-test
+
+    # Auch fehlgeschlagene Testergebnisse sollen nach Xray übertragen werden.
+    if: ${{ always() && needs.nightly-test.result != 'cancelled' }}
+
     runs-on: ubuntu-latest
 
     env:
@@ -35,3 +39,188 @@ jobs:
         with:
           pattern: testorchestra-*-robot-report
           path: reports
+
+      - name: Show downloaded Robot reports
+        shell: bash
+        run: |
+          echo "Downloaded Robot reports:"
+          find reports -type f -name "*.xml" -print
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install Robot Framework
+        run: python -m pip install robotframework
+
+      - name: Combine Robot reports
+        shell: bash
+        run: |
+          mapfile -t REPORT_FILES < <(
+            find reports -type f -name "*.xml" -print | sort
+          )
+
+          if [ "${#REPORT_FILES[@]}" -eq 0 ]; then
+            echo "::error::No Robot XML reports were downloaded."
+            exit 1
+          fi
+
+          echo "Combining ${#REPORT_FILES[@]} Robot report(s):"
+          printf '  %s\n' "${REPORT_FILES[@]}"
+
+          rebot \
+            --name "TestOrchestra Nightly Run" \
+            --output combined-robot-output.xml \
+            --log NONE \
+            --report NONE \
+            --nostatusrc \
+            "${REPORT_FILES[@]}"
+
+          if [ ! -f combined-robot-output.xml ]; then
+            echo "::error::Combined Robot XML was not created."
+            exit 1
+          fi
+
+          echo "Combined Robot report created successfully."
+
+      - name: Create Xray metadata
+        shell: bash
+        env:
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          jq -n \
+            --arg project "$XRAY_PROJECT_KEY" \
+            --arg summary "TestOrchestra Nightly Run #${{ github.run_number }}" \
+            --arg description "Automatischer TestOrchestra Nightly Run. GitHub Actions: $RUN_URL" \
+            --arg revision "${{ github.sha }}" \
+            '{
+              fields: {
+                project: {
+                  key: $project
+                },
+                summary: $summary,
+                description: $description,
+                issuetype: {
+                  name: "Test Execution"
+                },
+                labels: [
+                  "testorchestra",
+                  "nightly",
+                  "robot-framework",
+                  "github-actions"
+                ]
+              },
+              xrayFields: {
+                environments: [
+                  "SauceDemo"
+                ],
+                revision: $revision
+              }
+            }' > xray-info.json
+
+          echo "Created Xray metadata:"
+          jq . xray-info.json
+
+      - name: Authenticate with Xray Cloud
+        id: xray-auth
+        shell: bash
+        run: |
+          AUTH_RESPONSE="$(
+            curl \
+              --silent \
+              --show-error \
+              --fail-with-body \
+              --request POST \
+              --header "Content-Type: application/json" \
+              --data "$(
+                jq -n \
+                  --arg client_id "$XRAY_CLIENT_ID" \
+                  --arg client_secret "$XRAY_CLIENT_SECRET" \
+                  '{
+                    client_id: $client_id,
+                    client_secret: $client_secret
+                  }'
+              )" \
+              "https://xray.cloud.getxray.app/api/v2/authenticate"
+          )"
+
+          TOKEN="$(printf '%s' "$AUTH_RESPONSE" | jq -r '.')"
+
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "::error::Xray authentication returned no token."
+            exit 1
+          fi
+
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+          echo "Xray authentication successful."
+
+      - name: Upload Robot results to Xray
+        id: xray-upload
+        shell: bash
+        env:
+          XRAY_TOKEN: ${{ steps.xray-auth.outputs.token }}
+        run: |
+          RESPONSE_FILE="$(mktemp)"
+
+          HTTP_STATUS="$(
+            curl \
+              --silent \
+              --show-error \
+              --output "$RESPONSE_FILE" \
+              --write-out "%{http_code}" \
+              --request POST \
+              --header "Authorization: Bearer $XRAY_TOKEN" \
+              --form "results=@combined-robot-output.xml;type=application/xml" \
+              --form "info=@xray-info.json;type=application/json" \
+              "https://xray.cloud.getxray.app/api/v2/import/execution/robot/multipart"
+          )"
+
+          echo "Xray returned HTTP status: $HTTP_STATUS"
+          echo "Xray response:"
+
+          jq . "$RESPONSE_FILE" 2>/dev/null || cat "$RESPONSE_FILE"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::error::Xray upload failed with HTTP status $HTTP_STATUS."
+            exit 1
+          fi
+
+          TEST_EXECUTION_KEY="$(
+            jq -r '.key // .testExecIssue.key // empty' "$RESPONSE_FILE"
+          )"
+
+          if [ -z "$TEST_EXECUTION_KEY" ]; then
+            echo "::error::Xray returned no Test Execution key."
+            exit 1
+          fi
+
+          echo "test-execution-key=$TEST_EXECUTION_KEY" >> "$GITHUB_OUTPUT"
+
+          echo "Created Xray Test Execution: $TEST_EXECUTION_KEY"
+
+      - name: Add Xray Test Execution to workflow summary
+        shell: bash
+        env:
+          TEST_EXECUTION_KEY: ${{ steps.xray-upload.outputs.test-execution-key }}
+        run: |
+          {
+            echo "## Xray Test Execution"
+            echo
+            echo "Robot results successfully imported into Xray."
+            echo
+            echo "[$TEST_EXECUTION_KEY](https://westphaligor2.atlassian.net/browse/$TEST_EXECUTION_KEY)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload combined Robot report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: testorchestra-combined-robot-report
+          path: |
+            combined-robot-output.xml
+            xray-info.json
+          if-no-files-found: warn
+          retention-days: 14
