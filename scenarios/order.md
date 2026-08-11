@@ -10,7 +10,7 @@
 **WENN** der User auf ein Produkt klickt
 **DANN** öffnet sich eine Detailansicht des Produkts
 
-**WENN** der User auf den Button "Add to Card" klickt
+**WENN** der User auf den Button "Add to Cart" klickt
 **DANN** landet das Produkt in seinem Warenkorb
 **UND** an dem Symbol für seinen Warenkorb ist eine kleine 1 angezeigt
 
@@ -24,6 +24,6 @@
 **DANN** verschwindet das vorher angezeigte Objekt der Bestellung aus der Anzeige
 **UND** die kleine 1 am Warenkorb-Symbol rechts oben verschwindet
 
-**WENN** der User mit dme Button "Continue Shopping" zur Produktliste zurückkehrt
+**WENN** der User mit dem Button "Continue Shopping" zur Produktliste zurückkehrt
 **DANN** erscheint die Liste der Produkte wie oben im Filter eingestellt
 **UND** der Warenkorb ist wieder leer

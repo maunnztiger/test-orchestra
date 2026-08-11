@@ -1,7 +1,7 @@
 import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
 import { CustomWorld } from "@world/customworld";
 
-GEGEBEN("der Nutzer öffnet die Swag-Labs-Login-Page ", async function (this: CustomWorld) {});
+GEGEBEN("der Nutzer öffnet die Swag-Labs-Login-Page", async function (this: CustomWorld) {});
 UND("loggt sich als Standard User ein", async function (this: CustomWorld) {});
 
 WENN("der User auf ein Produkt klickt", async function (this: CustomWorld) {});
@@ -46,7 +46,7 @@ UND(
 );
 
 WENN(
-  'der User mit dme Button "Continue Shopping" zur Produktliste zurückkehrt',
+  'der User mit dem Button "Continue Shopping" zur Produktliste zurückkehrt',
   async function (this: CustomWorld) {}
 );
 DANN(

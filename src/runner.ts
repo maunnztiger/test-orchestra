@@ -48,8 +48,6 @@ export async function runScenariosFromPath(
       const runner = new StepRunner(world, collector);
       await runner.run(scenario.steps);
 
-      await world.afterAll();
-
       collector.finishScenario();
     }
 
