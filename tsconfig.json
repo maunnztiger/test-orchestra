@@ -1,21 +1,43 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "CommonJS",
+    "module": "node16",
+    "moduleResolution": "node16",
+
     "rootDir": "src",
     "outDir": "dist",
-    "esModuleInterop": true,
+
     "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "baseUrl": "src",
-    "ignoreDeprecations": "5.0",
+
     "paths": {
-      "@core/*": ["core/*"],
-      "@scenarios/*": ["scenarios/*"],
-      "@steps/*": ["steps/*"],
-      "@world/*": ["world/*"],
-      "@pages/*": ["pages/*"]
+      "runner": ["./src/runner"],
+      "runner/*": ["./src/runner/*"],
+
+      "core/*": ["./src/core/*"],
+      "@core/*": ["./src/core/*"],
+
+      "reporting/*": ["./src/reporting/*"],
+      "analytics/*": ["./src/analytics/*"],
+      "db/*": ["./src/db/*"],
+
+      "scenarios/*": ["./src/scenarios/*"],
+      "@scenarios/*": ["./src/scenarios/*"],
+
+      "steps/*": ["./src/steps/*"],
+      "@steps/*": ["./src/steps/*"],
+
+      "world/*": ["./src/world/*"],
+      "@world/*": ["./src/world/*"],
+
+      "pages/*": ["./src/pages/*"],
+      "@pages/*": ["./src/pages/*"]
     }
   },
-  "include": ["src/**/*"]
+
+  "include": ["src/**/*.ts"],
+
+  "exclude": ["node_modules", "dist", "tests", "scripts", "playwright.config.ts"]
 }

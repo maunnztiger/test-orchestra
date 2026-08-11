@@ -4,14 +4,18 @@ import { JsonExporter } from "./jsonExporter";
 import { JunitExporter } from "./junitExporter";
 import { XrayJsonExporter } from "./xrayJsonExporter";
 import { RobotXmlExporter } from "./robotXmlExporter";
+import { ReportExporter } from "./exporter";
 
-export function createExporter(type: string, options: { dbURL?: string }) {
+export function createExporter(type: string, options: { dbURL?: string }): ReportExporter {
   console.log("CREATE EXPORTER:", type);
+
   if (type === "db") {
     if (!options.dbURL) {
       throw new Error("DB_URL is required for db exporter");
     }
+
     const isLocal = options.dbURL.includes("localhost") || options.dbURL.includes("127.0.0.1");
+
     const client = new Client({
       connectionString: options.dbURL,
       ssl: isLocal ? false : { rejectUnauthorized: false }

@@ -1,36 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
-
-type StepResult = {
-  keyword: string;
-  text: string;
-  status?: string;
-  duration_ms?: number;
-  error?: string;
-};
-
-type ScenarioResult = {
-  name: string;
-  status?: string;
-  duration_ms?: number;
-  steps?: StepResult[];
-};
-
-type FeatureResult = {
-  name: string;
-  scenarios?: ScenarioResult[];
-};
-
-type TestRunResult = {
-  features?: FeatureResult[];
-};
+import { TestRun, StepResult, ScenarioResult } from "./domain";
+import { ReportExporter } from "./exporter";
 
 type FlattenedScenario = ScenarioResult & {
   featureName: string;
 };
 
-export class JunitExporter {
-  async export(result: TestRunResult): Promise<void> {
+export class JunitExporter implements ReportExporter {
+  async export(result: TestRun): Promise<void> {
     const reportDir = "reports";
     const reportPath = path.join(reportDir, "junit-report.xml");
 
@@ -43,7 +21,7 @@ export class JunitExporter {
     const skipped = scenarios.filter(s => s.status === "skipped").length;
     const errors = 0;
     const totalTime = this.toSeconds(
-      scenarios.reduce((sum, scenario) => sum + (scenario.duration_ms ?? 0), 0)
+      scenarios.reduce((sum, scenario) => sum + (scenario.durationMs ?? 0), 0)
     );
 
     const xml = [
@@ -60,7 +38,7 @@ export class JunitExporter {
 
     console.log(`📄 JUnit report written to ${reportPath}`);
   }
-  private flattenScenarios(result: TestRunResult): FlattenedScenario[] {
+  private flattenScenarios(result: TestRun): FlattenedScenario[] {
     return (
       result.features?.flatMap(feature =>
         (feature.scenarios ?? []).map(scenario => ({
@@ -91,7 +69,7 @@ export class JunitExporter {
   }
 
   private renderTestCase(scenario: FlattenedScenario): string {
-    const time = this.toSeconds(scenario.duration_ms ?? 0);
+    const time = this.toSeconds(scenario.durationMs ?? 0);
 
     if (scenario.status === "skipped") {
       return [
@@ -151,12 +129,12 @@ export class JunitExporter {
         `FEATURE: ${scenario.featureName}`,
         `SCENARIO: ${scenario.name}`,
         `STATUS: ${scenario.status ?? "unknown"}`,
-        `DURATION_MS: ${scenario.duration_ms ?? 0}`,
+        `DURATION_MS: ${scenario.durationMs ?? 0}`,
         ``,
         `STEPS:`,
         ...steps.map(step => {
           const status = (step.status ?? "unknown").toUpperCase();
-          const duration = step.duration_ms ?? 0;
+          const duration = step.durationMs ?? 0;
           const base = `[${status}] ${step.keyword} ${step.text} (${duration} ms)`;
 
           if (step.error) {

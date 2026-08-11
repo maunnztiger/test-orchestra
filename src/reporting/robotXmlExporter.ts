@@ -1,36 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
-
-type StepResult = {
-  keyword: string;
-  text: string;
-  status?: string;
-  duration_ms?: number;
-  error?: string;
-};
-
-type ScenarioResult = {
-  name: string;
-  status?: string;
-  duration_ms?: number;
-  steps?: StepResult[];
-};
-
-type FeatureResult = {
-  name: string;
-  scenarios?: ScenarioResult[];
-};
-
-type TestRunResult = {
-  features?: FeatureResult[];
-};
+import { TestRun, StepResult, ScenarioResult } from "./domain";
+import { ReportExporter } from "./exporter";
 
 type FlattenedScenario = ScenarioResult & {
   featureName: string;
 };
 
-export class RobotXmlExporter {
-  async export(result: TestRunResult): Promise<void> {
+export class RobotXmlExporter implements ReportExporter {
+  async export(result: TestRun): Promise<void> {
     const reportDir = "reports";
     const reportPath = path.join(reportDir, "robot-output.xml");
 
@@ -63,7 +41,7 @@ export class RobotXmlExporter {
     console.log(`🤖 Robot XML report written to ${reportPath}`);
   }
 
-  private flattenScenarios(result: TestRunResult): FlattenedScenario[] {
+  private flattenScenarios(result: TestRun): FlattenedScenario[] {
     return (
       result.features?.flatMap(feature =>
         (feature.scenarios ?? []).map(scenario => ({
@@ -125,7 +103,7 @@ export class RobotXmlExporter {
     }
 
     lines.push(
-      `        <status status="${status}" elapsed="${this.toSeconds(scenario.duration_ms ?? 0)}">`
+      `        <status status="${status}" elapsed="${this.toSeconds(scenario.durationMs ?? 0)}">`
     );
 
     if (scenario.status === "failed") {
@@ -143,7 +121,7 @@ export class RobotXmlExporter {
   private renderKeyword(step: StepResult): string[] {
     const status = this.mapStatus(step.status);
     const keywordName = `${step.keyword} ${step.text}`;
-    const elapsed = this.toSeconds(step.duration_ms ?? 0);
+    const elapsed = this.toSeconds(step.durationMs ?? 0);
 
     const lines = [
       `        <kw name="${this.escapeXml(keywordName)}" owner="TestOrchestra">`,
@@ -200,7 +178,7 @@ export class RobotXmlExporter {
   }
 
   private sumDuration(scenarios: FlattenedScenario[]): number {
-    return scenarios.reduce((sum, scenario) => sum + (scenario.duration_ms ?? 0), 0);
+    return scenarios.reduce((sum, scenario) => sum + (scenario.durationMs ?? 0), 0);
   }
 
   private mapStatus(status?: string): "PASS" | "FAIL" | "SKIP" {
