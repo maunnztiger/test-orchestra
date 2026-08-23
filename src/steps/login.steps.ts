@@ -1,6 +1,6 @@
 import { GEGEBEN, WENN, DANN, UND } from "./utils/stepApi";
 import type { CustomWorld } from "../world/customworld";
-import { Table } from "@core/table";
+import { Table } from "../parser/table";
 GEGEBEN("der Nutzer öffnet die Startseite von Saucedemo", async function (this: CustomWorld) {
   await this.pm.navigateTo().sauceLabsStartPage();
 });

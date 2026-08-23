@@ -1,4 +1,4 @@
-import { Table } from "@core/table";
+import { Table } from "../../parser/table";
 import { Page, expect } from "@playwright/test";
 
 import { HelperBase } from "@steps/pages/HelperBase";

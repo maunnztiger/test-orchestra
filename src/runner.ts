@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { parseMarkdownScenarios, matchesTagFilter } from "@core/markdownparser";
+import { parseMarkdownScenarios, matchesTagFilter } from "./parser/markdownparser";
 import { StepRunner } from "@core/steprunner";
 import { CustomWorld } from "@world/customworld";
 import { ReportCollector } from "./reporting/collector";

@@ -1,5 +1,5 @@
 import { StepRegistry, StepHandler } from "@core/stepregistry";
-import { Table } from "@core/table";
+import { Table } from "../../parser/table";
 import type { CustomWorld } from "@world/customworld";
 
 type ExtractParams<

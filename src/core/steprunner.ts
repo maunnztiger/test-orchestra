@@ -1,7 +1,7 @@
 // src/core/steprunner.ts
 import { StepRegistry } from "./stepregistry";
 import type { CustomWorld } from "@world/customworld";
-import type { ParsedStep } from "./markdownparser";
+import type { ParsedStep } from "../parser/markdownparser";
 import { ReportCollector } from "reporting/collector";
 export class StepRunner {
   constructor(

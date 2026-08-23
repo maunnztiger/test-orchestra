@@ -1,11 +1,24 @@
 import * as fs from "fs";
 import { Table } from "./table";
 
+export type StepKeyword = "GEGEBEN" | "WENN" | "DANN" | "UND";
+
+export type ParsedParamType =
+| "string"
+| "int"
+| "float"
+| "boolean";
+
+export interface ParsedParam {
+  type: ParsedParamType;
+  value: string | number | boolean
+}
+
 export interface ParsedStep {
   keyword: string;
   text: string;
   table?: Table;
-  params?: unknown[]; // 🔥 jetzt typed params
+  params?: ParsedParam[]; 
 }
 
 export interface ParsedScenario {
@@ -13,6 +26,7 @@ export interface ParsedScenario {
   tags: string[];
   steps: ParsedStep[];
 }
+
 
 const TAG_REGEX = /^(@[\w-]+(\s+@[\w-]+)*)$/;
 const SCENARIO_REGEX = /^##\s*(Szenario|Scenario)\s*:\s*(.+)$/i;
@@ -160,8 +174,8 @@ export function matchesTagFilter(
 // 🔥 NEU: PARAM PARSING
 //
 
-function extractParams(text: string): unknown[] {
-  const params: unknown[] = [];
+function extractParams(text: string): ParsedParam[] {
+  const params: ParsedParam[] = [];
 
   // Zahlen (int + float)
   const numberRegex = /-?\d+(?:\.\d+)?/g;
@@ -173,9 +187,13 @@ function extractParams(text: string): unknown[] {
   const boolRegex = /\b(true|false)\b/gi;
 
   // --- Strings zuerst (wichtig wegen Zahlen in Strings!) ---
-  let match;
+  let match : RegExpExecArray | null;
+  
   while ((match = stringRegex.exec(text)) !== null) {
-    params.push(match[1]);
+    params.push({
+      type: "string",
+      value: match[1]
+    });
   }
 
   // --- Zahlen ---
@@ -183,15 +201,26 @@ function extractParams(text: string): unknown[] {
     const raw = match[0];
 
     if (raw.includes(".")) {
-      params.push(parseFloat(raw));
+      params.push({
+        type: "float",
+        value: parseFloat(raw)
+      });
     } else {
-      params.push(parseInt(raw, 10));
+      params.push({
+        type: "int",
+        value: parseInt(raw, 10),
+      })
+        
     }
   }
 
   // --- Booleans ---
   while ((match = boolRegex.exec(text)) !== null) {
-    params.push(match[0].toLowerCase() === "true");
+    params.push({
+        type: "boolean",
+        value: match[0].toLowerCase() === "true",
+    })
+      
   }
 
   return params;

@@ -1,7 +1,7 @@
 // src/core/stepregistry.ts
 import type { CustomWorld } from "@world/customworld";
-import type { ParsedStep } from "./markdownparser";
-import { Table } from "./table";
+import type { ParsedStep } from "../parser/markdownparser";
+import { Table } from "../parser/table";
 
 export type StepArg = string | number | boolean | Table;
 
