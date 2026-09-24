@@ -116,13 +116,12 @@ class StepRegistryClass {
     }
 
     const { entry, params } = matches[0];
-    // 🔥 HIER IST DER WICHTIGE FIX
-    const finalParams: StepArg[] =
-      step.params && step.params.length > 0
-        ? (step.params as StepArg[]) // 🔥 cast
-        : (params as StepArg[]);
 
-    const args: StepArg[] = [...(finalParams ?? []), ...(step.table ? [step.table] : [])];
+    const finalParams: StepArg[] =
+      step.params && step.params.length > 0 ? step.params.map(param => param.value) : params;
+
+    const args: StepArg[] = [...finalParams, ...(step.table ? [step.table] : [])];
+
     await entry.handler.apply(world, args);
 
     return true;

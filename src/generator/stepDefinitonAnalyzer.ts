@@ -1,14 +1,6 @@
-import type {
-  ParsedParam,
-  ParsedScenario,
-  ParsedStep,
-} from "../core/markdownparser";
+import type { ParsedParam, ParsedScenario, ParsedStep } from "../core/markdownparser";
 
-export type StepFunction =
-  | "GEGEBEN"
-  | "WENN"
-  | "DANN"
-  | "UND";
+export type StepFunction = "GEGEBEN" | "WENN" | "DANN" | "UND";
 
 export interface GeneratedParameter {
   name: string;
@@ -21,31 +13,19 @@ export interface GeneratedStepDefinition {
   parameters: GeneratedParameter[];
 }
 
-export function analyzeScenario(
-  scenario: ParsedScenario
-): GeneratedStepDefinition[] {
-  return scenario.steps.map(
-    step => analyzeStep(step)
-  );
+export function analyzeScenario(scenario: ParsedScenario): GeneratedStepDefinition[] {
+  return scenario.steps.map(step => analyzeStep(step));
 }
 
-function analyzeStep(
-  step: ParsedStep
-): GeneratedStepDefinition {
+function analyzeStep(step: ParsedStep): GeneratedStepDefinition {
   return {
-    stepFunction: resolveStepFunction(
-      step.keyword
-    ),
+    stepFunction: resolveStepFunction(step.keyword),
     pattern: createPattern(step),
-    parameters: createParameters(
-      step.params ?? []
-    ),
+    parameters: createParameters(step.params ?? [])
   };
 }
 
-function resolveStepFunction(
-  keyword: string
-): StepFunction {
+function resolveStepFunction(keyword: string): StepFunction {
   switch (keyword.toUpperCase()) {
     case "GEGEBEN":
       return "GEGEBEN";
@@ -60,45 +40,29 @@ function resolveStepFunction(
       return "UND";
 
     default:
-      throw new Error(
-        `Unbekanntes Step-Keyword: ${keyword}`
-      );
+      throw new Error(`Unbekanntes Step-Keyword: ${keyword}`);
   }
 }
 
-function createPattern(
-  step: ParsedStep
-): string {
+function createPattern(step: ParsedStep): string {
   let pattern = step.text;
 
   for (const param of step.params ?? []) {
     switch (param.type) {
       case "string":
-        pattern = pattern.replace(
-          `"${String(param.value)}"`,
-          "{string}"
-        );
+        pattern = pattern.replace(`"${String(param.value)}"`, "{string}");
         break;
 
       case "int":
-        pattern = pattern.replace(
-          String(param.value),
-          "{int}"
-        );
+        pattern = pattern.replace(String(param.value), "{int}");
         break;
 
       case "float":
-        pattern = pattern.replace(
-          String(param.value),
-          "{float}"
-        );
+        pattern = pattern.replace(String(param.value), "{float}");
         break;
 
       case "boolean":
-        pattern = pattern.replace(
-          String(param.value),
-          "{boolean}"
-        );
+        pattern = pattern.replace(String(param.value), "{boolean}");
         break;
     }
   }
@@ -106,28 +70,26 @@ function createPattern(
   return pattern;
 }
 
-function createParameters(
-  params: ParsedParam[]
-): GeneratedParameter[] {
+function createParameters(params: ParsedParam[]): GeneratedParameter[] {
   return params.map((param, index) => {
     switch (param.type) {
       case "string":
         return {
           name: `param${index + 1}`,
-          type: "string",
+          type: "string"
         };
 
       case "int":
       case "float":
         return {
           name: `param${index + 1}`,
-          type: "number",
+          type: "number"
         };
 
       case "boolean":
         return {
           name: `param${index + 1}`,
-          type: "boolean",
+          type: "boolean"
         };
     }
   });

@@ -1,11 +1,7 @@
 import * as fs from "fs";
 import { Table } from "./table";
 
-export type ParsedParamType =
-  | "string"
-  | "int"
-  | "float"
-  | "boolean";
+export type ParsedParamType = "string" | "int" | "float" | "boolean";
 
 export interface ParsedParam {
   type: ParsedParamType;
@@ -29,13 +25,9 @@ const TAG_REGEX = /^(@[\w-]+(\s+@[\w-]+)*)$/;
 const SCENARIO_REGEX = /^##\s*(Szenario|Scenario)\s*:\s*(.+)$/i;
 const STEP_REGEX = /^\*\*(GEGEBEN|WENN|DANN|UND)\*\*\s*(.+)$/i;
 
-export function parseMarkdownScenarios(
-  filePath: string
-): ParsedScenario[] {
+export function parseMarkdownScenarios(filePath: string): ParsedScenario[] {
   const content = fs.readFileSync(filePath, "utf8");
-  const lines = content
-    .split("\n")
-    .map(line => line.trim());
+  const lines = content.split("\n").map(line => line.trim());
 
   const scenarios: ParsedScenario[] = [];
 
@@ -68,10 +60,7 @@ export function parseMarkdownScenarios(
       while (i < lines.length) {
         const stepLine = lines[i];
 
-        if (
-          SCENARIO_REGEX.test(stepLine) ||
-          TAG_REGEX.test(stepLine)
-        ) {
+        if (SCENARIO_REGEX.test(stepLine) || TAG_REGEX.test(stepLine)) {
           break;
         }
 
@@ -88,7 +77,7 @@ export function parseMarkdownScenarios(
         const step: ParsedStep = {
           keyword,
           text,
-          params: extractParams(text),
+          params: extractParams(text)
         };
 
         // --- TABLES ---
@@ -116,9 +105,7 @@ export function parseMarkdownScenarios(
         }
 
         if (tableLines.length > 0) {
-          step.table = new Table(
-            parseTable(tableLines)
-          );
+          step.table = new Table(parseTable(tableLines));
 
           i = j - 1;
         }
@@ -130,7 +117,7 @@ export function parseMarkdownScenarios(
       scenarios.push({
         name: scenarioName,
         tags: currentTags,
-        steps,
+        steps
       });
 
       currentTags = [];
@@ -149,37 +136,20 @@ function isTableLine(line: string): boolean {
 
 function parseTable(lines: string[]): string[][] {
   const rows = lines.map(line => {
-    const inside = line.substring(
-      1,
-      line.length - 1
-    );
+    const inside = line.substring(1, line.length - 1);
 
-    return inside
-      .split("|")
-      .map(cell => cell.trim());
+    return inside.split("|").map(cell => cell.trim());
   });
 
-  if (
-    rows.length >= 2 &&
-    isSeparatorRow(rows[1])
-  ) {
-    return [
-      rows[0],
-      ...rows.slice(2),
-    ];
+  if (rows.length >= 2 && isSeparatorRow(rows[1])) {
+    return [rows[0], ...rows.slice(2)];
   }
 
   return rows;
 }
 
-function isSeparatorRow(
-  cells: string[]
-): boolean {
-  return cells.every(
-    cell =>
-      /^:?-+:?$/.test(cell) ||
-      cell === ""
-  );
+function isSeparatorRow(cells: string[]): boolean {
+  return cells.every(cell => /^:?-+:?$/.test(cell) || cell === "");
 }
 
 export function matchesTagFilter(
@@ -187,29 +157,18 @@ export function matchesTagFilter(
   include: string[] = [],
   exclude: string[] = []
 ): boolean {
-  if (
-    include.length &&
-    !include.some(tag =>
-      scenarioTags.includes(tag)
-    )
-  ) {
+  if (include.length && !include.some(tag => scenarioTags.includes(tag))) {
     return false;
   }
 
-  if (
-    exclude.some(tag =>
-      scenarioTags.includes(tag)
-    )
-  ) {
+  if (exclude.some(tag => scenarioTags.includes(tag))) {
     return false;
   }
 
   return true;
 }
 
-function extractParams(
-  text: string
-): ParsedParam[] {
+function extractParams(text: string): ParsedParam[] {
   const params: ParsedParam[] = [];
 
   const stringRegex = /"([^"]*)"/g;
@@ -219,42 +178,35 @@ function extractParams(
   let match: RegExpExecArray | null;
 
   // Strings
-  while (
-    (match = stringRegex.exec(text)) !== null
-  ) {
+  while ((match = stringRegex.exec(text)) !== null) {
     params.push({
       type: "string",
-      value: match[1],
+      value: match[1]
     });
   }
 
   // Numbers
-  while (
-    (match = numberRegex.exec(text)) !== null
-  ) {
+  while ((match = numberRegex.exec(text)) !== null) {
     const raw = match[0];
 
     if (raw.includes(".")) {
       params.push({
         type: "float",
-        value: parseFloat(raw),
+        value: parseFloat(raw)
       });
     } else {
       params.push({
         type: "int",
-        value: parseInt(raw, 10),
+        value: parseInt(raw, 10)
       });
     }
   }
 
   // Booleans
-  while (
-    (match = boolRegex.exec(text)) !== null
-  ) {
+  while ((match = boolRegex.exec(text)) !== null) {
     params.push({
       type: "boolean",
-      value:
-        match[0].toLowerCase() === "true",
+      value: match[0].toLowerCase() === "true"
     });
   }
 
