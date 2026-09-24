@@ -12,7 +12,8 @@
     "run": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/",
     "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
     "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters",
-    "sync:confluence": "ts-node -r tsconfig-paths/register scripts/syncMarkdownToConfluence.ts"
+    "sync:confluence": "ts-node -r tsconfig-paths/register scripts/syncMarkdownToConfluence.ts",
+    "generate-steps": "ts-node -r tsconfig-paths/register src/generator/generateSteps.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",

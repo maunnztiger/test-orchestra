@@ -21,7 +21,7 @@ function analyzeStep(step: ParsedStep): GeneratedStepDefinition {
   return {
     stepFunction: resolveStepFunction(step.keyword),
     pattern: createPattern(step),
-    parameters: createParameters(step.params ?? [])
+    parameters: createParameters(step.params ?? [], step.text)
   };
 }
 
@@ -70,27 +70,59 @@ function createPattern(step: ParsedStep): string {
   return pattern;
 }
 
-function createParameters(params: ParsedParam[]): GeneratedParameter[] {
+function createParameters(
+  params: ParsedParam[],
+  stepText: string
+): GeneratedParameter[] {
   return params.map((param, index) => {
+    const name = inferParameterName(
+      stepText,
+      index
+    );
+
     switch (param.type) {
       case "string":
         return {
-          name: `param${index + 1}`,
-          type: "string"
+          name,
+          type: "string",
         };
 
       case "int":
       case "float":
         return {
-          name: `param${index + 1}`,
-          type: "number"
+          name,
+          type: "number",
         };
 
       case "boolean":
         return {
-          name: `param${index + 1}`,
-          type: "boolean"
+          name,
+          type: "boolean",
         };
     }
   });
+}
+
+function inferParameterName(
+  stepText: string,
+  index: number
+): string {
+  const text = stepText.toLowerCase();
+
+  if (text.includes("filter")) {
+    return "filterName";
+  }
+
+  if (text.includes("artikel")) {
+    return "article";
+  }
+
+  if (
+    text.includes("produktseite") ||
+    text.includes("produkt")
+  ) {
+    return "productName";
+  }
+
+  return `param${index + 1}`;
 }
