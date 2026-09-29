@@ -70,43 +70,34 @@ function createPattern(step: ParsedStep): string {
   return pattern;
 }
 
-function createParameters(
-  params: ParsedParam[],
-  stepText: string
-): GeneratedParameter[] {
+function createParameters(params: ParsedParam[], stepText: string): GeneratedParameter[] {
   return params.map((param, index) => {
-    const name = inferParameterName(
-      stepText,
-      index
-    );
+    const name = inferParameterName(stepText, index);
 
     switch (param.type) {
       case "string":
         return {
           name,
-          type: "string",
+          type: "string"
         };
 
       case "int":
       case "float":
         return {
           name,
-          type: "number",
+          type: "number"
         };
 
       case "boolean":
         return {
           name,
-          type: "boolean",
+          type: "boolean"
         };
     }
   });
 }
 
-function inferParameterName(
-  stepText: string,
-  index: number
-): string {
+function inferParameterName(stepText: string, index: number): string {
   const text = stepText.toLowerCase();
 
   if (text.includes("filter")) {
@@ -117,10 +108,7 @@ function inferParameterName(
     return "article";
   }
 
-  if (
-    text.includes("produktseite") ||
-    text.includes("produkt")
-  ) {
+  if (text.includes("produktseite") || text.includes("produkt")) {
     return "productName";
   }
 

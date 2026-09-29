@@ -1,12 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  findMissingStepDefinitions,
-} from "../../src/generator/stepDefinitionMerger";
+import { findMissingStepDefinitions } from "../../src/generator/stepDefinitionMerger";
 
-import type {
-  GeneratedStepDefinition,
-} from "../../src/generator/stepDefinitionAnalyzer";
+import type { GeneratedStepDefinition } from "../../src/generator/stepDefinitionAnalyzer";
 
 describe("StepDefinitionMerger", () => {
   it("erkennt bereits vorhandene Step Definitions", () => {
@@ -22,22 +18,17 @@ describe("StepDefinitionMerger", () => {
     const definitions: GeneratedStepDefinition[] = [
       {
         stepFunction: "WENN",
-        pattern:
-          "der User den Filter {string} anklickt",
+        pattern: "der User den Filter {string} anklickt",
         parameters: [
           {
             name: "filterName",
-            type: "string",
-          },
-        ],
-      },
+            type: "string"
+          }
+        ]
+      }
     ];
 
-    const result =
-      findMissingStepDefinitions(
-        existingContent,
-        definitions
-      );
+    const result = findMissingStepDefinitions(existingContent, definitions);
 
     expect(result).toHaveLength(0);
   });
@@ -53,23 +44,16 @@ describe("StepDefinitionMerger", () => {
     const definitions: GeneratedStepDefinition[] = [
       {
         stepFunction: "DANN",
-        pattern:
-          "wird die Filterung erfolgreich abgeschlossen",
-        parameters: [],
-      },
+        pattern: "wird die Filterung erfolgreich abgeschlossen",
+        parameters: []
+      }
     ];
 
-    const result =
-      findMissingStepDefinitions(
-        existingContent,
-        definitions
-      );
+    const result = findMissingStepDefinitions(existingContent, definitions);
 
     expect(result).toHaveLength(1);
 
-    expect(result[0].pattern).toBe(
-      "wird die Filterung erfolgreich abgeschlossen"
-    );
+    expect(result[0].pattern).toBe("wird die Filterung erfolgreich abgeschlossen");
   });
 
   it("liefert nur die tatsächlich fehlenden Steps zurück", () => {
@@ -88,43 +72,32 @@ describe("StepDefinitionMerger", () => {
     const definitions: GeneratedStepDefinition[] = [
       {
         stepFunction: "GEGEBEN",
-        pattern:
-          "der Nutzer öffnet die Startseite Saucedemo",
-        parameters: [],
+        pattern: "der Nutzer öffnet die Startseite Saucedemo",
+        parameters: []
       },
       {
         stepFunction: "WENN",
-        pattern:
-          "der User den Filter {string} anklickt",
+        pattern: "der User den Filter {string} anklickt",
         parameters: [
           {
             name: "filterName",
-            type: "string",
-          },
-        ],
+            type: "string"
+          }
+        ]
       },
       {
         stepFunction: "DANN",
-        pattern:
-          "wird die Filterung erfolgreich abgeschlossen",
-        parameters: [],
-      },
+        pattern: "wird die Filterung erfolgreich abgeschlossen",
+        parameters: []
+      }
     ];
 
-    const result =
-      findMissingStepDefinitions(
-        existingContent,
-        definitions
-      );
+    const result = findMissingStepDefinitions(existingContent, definitions);
 
     expect(result).toHaveLength(1);
 
-    expect(result[0].stepFunction).toBe(
-      "DANN"
-    );
+    expect(result[0].stepFunction).toBe("DANN");
 
-    expect(result[0].pattern).toBe(
-      "wird die Filterung erfolgreich abgeschlossen"
-    );
+    expect(result[0].pattern).toBe("wird die Filterung erfolgreich abgeschlossen");
   });
 });

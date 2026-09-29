@@ -10,19 +10,10 @@ ${steps}
 `;
 }
 
-export function generateStepDefinition(
-  definition: GeneratedStepDefinition
-): string {
-  const params = definition.parameters
-    .map(
-      param =>
-        `${param.name}: ${param.type}`
-    )
-    .join(", ");
+export function generateStepDefinition(definition: GeneratedStepDefinition): string {
+  const params = definition.parameters.map(param => `${param.name}: ${param.type}`).join(", ");
 
-  const functionParams = params
-    ? `this: CustomWorld, ${params}`
-    : "this: CustomWorld";
+  const functionParams = params ? `this: CustomWorld, ${params}` : "this: CustomWorld";
 
   return `${definition.stepFunction}(
   ${JSON.stringify(definition.pattern)},

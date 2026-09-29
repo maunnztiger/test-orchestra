@@ -1,12 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  analyzeScenario,
-} from "../../src/generator/stepDefinitionAnalyzer";
+import { analyzeScenario } from "../../src/generator/stepDefinitionAnalyzer";
 
-import type {
-  ParsedScenario,
-} from "../../src/core/markdownparser";
+import type { ParsedScenario } from "../../src/core/markdownparser";
 
 describe("StepDefinitionAnalyzer", () => {
   it("erzeugt einen Step ohne Parameter", () => {
@@ -17,9 +13,9 @@ describe("StepDefinitionAnalyzer", () => {
         {
           keyword: "GEGEBEN",
           text: "der Nutzer öffnet die Startseite",
-          params: [],
-        },
-      ],
+          params: []
+        }
+      ]
     };
 
     const result = analyzeScenario(scenario);
@@ -28,8 +24,8 @@ describe("StepDefinitionAnalyzer", () => {
       {
         stepFunction: "GEGEBEN",
         pattern: "der Nutzer öffnet die Startseite",
-        parameters: [],
-      },
+        parameters: []
+      }
     ]);
   });
 
@@ -44,24 +40,22 @@ describe("StepDefinitionAnalyzer", () => {
           params: [
             {
               type: "string",
-              value: "Name (Z to A)",
-            },
-          ],
-        },
-      ],
+              value: "Name (Z to A)"
+            }
+          ]
+        }
+      ]
     };
 
     const result = analyzeScenario(scenario);
 
-    expect(result[0].pattern).toBe(
-      "der Nutzer wählt den Filter {string}"
-    );
+    expect(result[0].pattern).toBe("der Nutzer wählt den Filter {string}");
 
     expect(result[0].parameters).toEqual([
       {
         name: "filterName",
-        type: "string",
-      },
+        type: "string"
+      }
     ]);
   });
 
@@ -76,22 +70,18 @@ describe("StepDefinitionAnalyzer", () => {
           params: [
             {
               type: "int",
-              value: 3,
-            },
-          ],
-        },
-      ],
+              value: 3
+            }
+          ]
+        }
+      ]
     };
 
     const result = analyzeScenario(scenario);
 
-    expect(result[0].pattern).toBe(
-      "der Nutzer bestellt {int} Artikel"
-    );
+    expect(result[0].pattern).toBe("der Nutzer bestellt {int} Artikel");
 
-    expect(result[0].parameters[0].type).toBe(
-      "number"
-    );
+    expect(result[0].parameters[0].type).toBe("number");
   });
 
   it("erkennt Float-Parameter", () => {
@@ -105,22 +95,18 @@ describe("StepDefinitionAnalyzer", () => {
           params: [
             {
               type: "float",
-              value: 19.99,
-            },
-          ],
-        },
-      ],
+              value: 19.99
+            }
+          ]
+        }
+      ]
     };
 
     const result = analyzeScenario(scenario);
 
-    expect(result[0].pattern).toBe(
-      "beträgt der Preis {float} Euro"
-    );
+    expect(result[0].pattern).toBe("beträgt der Preis {float} Euro");
 
-    expect(result[0].parameters[0].type).toBe(
-      "number"
-    );
+    expect(result[0].parameters[0].type).toBe("number");
   });
 
   it("erkennt Boolean-Parameter", () => {
@@ -134,22 +120,18 @@ describe("StepDefinitionAnalyzer", () => {
           params: [
             {
               type: "boolean",
-              value: true,
-            },
-          ],
-        },
-      ],
+              value: true
+            }
+          ]
+        }
+      ]
     };
 
     const result = analyzeScenario(scenario);
 
-    expect(result[0].pattern).toBe(
-      "ist der Artikel verfügbar {boolean}"
-    );
+    expect(result[0].pattern).toBe("ist der Artikel verfügbar {boolean}");
 
-    expect(result[0].parameters[0].type).toBe(
-      "boolean"
-    );
+    expect(result[0].parameters[0].type).toBe("boolean");
   });
 
   it("behält UND als UND", () => {
@@ -160,9 +142,9 @@ describe("StepDefinitionAnalyzer", () => {
         {
           keyword: "UND",
           text: "der Nutzer sieht die Produktseite",
-          params: [],
-        },
-      ],
+          params: []
+        }
+      ]
     };
 
     const result = analyzeScenario(scenario);

@@ -52,10 +52,6 @@ UND("das Tester-T-Shirt steht am Fuß der Liste", async function (this: CustomWo
   await this.pm.makeFiltersAction().verifyResetedElementsLastName();
 });
 
-
-DANN(
-  "wird die Filterung erfolgreich abgeschlossen",
-  async function (this: CustomWorld) {
-    throw new Error("Not implemented");
-  }
-);
+DANN("wird die Filterung erfolgreich abgeschlossen", async function (this: CustomWorld) {
+  throw new Error("Not implemented");
+});
