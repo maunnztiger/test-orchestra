@@ -10,17 +10,6 @@ export class FiltersActionPage extends HelperBase {
 
   async verifyProductPageHeader(headerName: string) {
     const header = this.page.locator(".app_logo");
-    console.log("🌍 Aktuelle URL:", this.page.url());
-
-    console.log("📄 Seitentitel:", await this.page.title());
-
-    console.log("🔎 Logo vorhanden:", await this.page.locator(".app_logo").count());
-
-    console.log(
-      "⚠️ Fehlermeldung:",
-      await this.page.locator("[data-test='error']").allTextContents()
-    );
-
     await this.waitForAppearance(header, 5000);
     await this.checkTextContent(header, headerName);
   }
