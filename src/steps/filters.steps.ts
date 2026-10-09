@@ -32,8 +32,7 @@ WENN(
 DANN(
   "erscheint der folgende Artikel {string} an der Spitze der Liste",
   async function (this: CustomWorld, article: string) {
-
-     console.log("🔎 DEBUG article:", article);
+    console.log("🔎 DEBUG article:", article);
     console.log("🔎 DEBUG type:", typeof article);
     await this.pm.makeFiltersAction().verifyViceVersaElementsName(article);
   }
