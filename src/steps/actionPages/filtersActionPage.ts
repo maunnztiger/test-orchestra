@@ -10,6 +10,23 @@ export class FiltersActionPage extends HelperBase {
 
   async verifyProductPageHeader(headerName: string) {
     const header = this.page.locator(".app_logo");
+    console.log("🌍 Aktuelle URL:", this.page.url());
+
+console.log(
+  "📄 Seitentitel:",
+  await this.page.title()
+);
+
+console.log(
+  "🔎 Logo vorhanden:",
+  await this.page.locator(".app_logo").count()
+);
+
+console.log(
+  "⚠️ Fehlermeldung:",
+  await this.page.locator("[data-test='error']").allTextContents()
+);
+    
     await this.waitForAppearance(header, 5000);
     await this.checkTextContent(header, headerName);
   }
@@ -32,26 +49,20 @@ export class FiltersActionPage extends HelperBase {
   }
 
   async verifyViceVersaElementsName(article: string) {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: article,
-          exact: true
-        })
-        .last()
-    ).toHaveText(article);
-  }
+  const productNames = this.page.locator(
+    ".inventory_item_name"
+  );
+
+  await expect(productNames.first()).toHaveText(article);
+}
 
   async verifyViceVersaElementsLastName(article: string) {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: article,
-          exact: true
-        })
-        .last()
-    ).toHaveText(article);
-  }
+  const productNames = this.page.locator(
+    ".inventory_item_name"
+  );
+
+  await expect(productNames.last()).toHaveText(article);
+}
 
   async clickFilterA_Z(filterName: string) {
     const menuSelect = this.page.locator(".product_sort_container");
@@ -64,25 +75,23 @@ export class FiltersActionPage extends HelperBase {
     await this.waitForAppearance(menuSelect, 5000);
   }
 
-  async verifyResetedElementsName() {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: "Sauce Labs Backpack",
-          exact: true
-        })
-        .last()
-    ).toHaveText("Sauce Labs Backpack");
-  }
+ async verifyResetedElementsName() {
+  const productNames = this.page.locator(
+    ".inventory_item_name"
+  );
+
+  await expect(productNames.first()).toHaveText(
+    "Sauce Labs Backpack"
+  );
+}
 
   async verifyResetedElementsLastName() {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: "Test.allTheThings() T-Shirt (Red)",
-          exact: true
-        })
-        .last()
-    ).toHaveText("Test.allTheThings() T-Shirt (Red)");
-  }
+  const productNames = this.page.locator(
+    ".inventory_item_name"
+  );
+
+  await expect(productNames.last()).toHaveText(
+    "Test.allTheThings() T-Shirt (Red)"
+  );
+}
 }
