@@ -16,4 +16,3 @@
 **WENN** der User den Filter dann auf "Name (A to Z)" setzt
 **DANN** tauschen sich die Artikel Rucksack an der Spitze
 **UND** das Tester-T-Shirt steht am Fuß der Liste
-
