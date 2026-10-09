@@ -32,25 +32,15 @@ export class FiltersActionPage extends HelperBase {
   }
 
   async verifyViceVersaElementsName(article: string) {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: article,
-          exact: true
-        })
-        .last()
-    ).toHaveText(article);
+    const productNames = this.page.locator(".inventory_item_name");
+
+    await expect(productNames.first()).toHaveText(article);
   }
 
   async verifyViceVersaElementsLastName(article: string) {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: article,
-          exact: true
-        })
-        .last()
-    ).toHaveText(article);
+    const productNames = this.page.locator(".inventory_item_name");
+
+    await expect(productNames.last()).toHaveText(article);
   }
 
   async clickFilterA_Z(filterName: string) {
@@ -65,24 +55,14 @@ export class FiltersActionPage extends HelperBase {
   }
 
   async verifyResetedElementsName() {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: "Sauce Labs Backpack",
-          exact: true
-        })
-        .last()
-    ).toHaveText("Sauce Labs Backpack");
+    const productNames = this.page.locator(".inventory_item_name");
+
+    await expect(productNames.first()).toHaveText("Sauce Labs Backpack");
   }
 
   async verifyResetedElementsLastName() {
-    await expect(
-      this.page
-        .getByRole("link", {
-          name: "Test.allTheThings() T-Shirt (Red)",
-          exact: true
-        })
-        .last()
-    ).toHaveText("Test.allTheThings() T-Shirt (Red)");
+    const productNames = this.page.locator(".inventory_item_name");
+
+    await expect(productNames.last()).toHaveText("Test.allTheThings() T-Shirt (Red)");
   }
 }
