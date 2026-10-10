@@ -1,3 +1,5 @@
+name: Nightly Run
+
 on:
   schedule:
     - cron: "0 2 * * *"
@@ -12,7 +14,7 @@ jobs:
   nightly-test:
     uses: ./.github/workflows/test-run.yaml
     with:
-      report: robot
+      report: db
     secrets: inherit
     permissions:
       contents: read
