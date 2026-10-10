@@ -22,27 +22,17 @@ export class TestRunService {
     this.steps = new StepRepository(client, db);
   }
 
- async save(run: TestRun): Promise<void> {
-  const runId = await this.runs.createRun(run);
+  async save(run: TestRun): Promise<void> {
+    const runId = await this.runs.createRun(run);
 
-  for (const feature of run.features) {
-    const featureId = await this.features.createFeature(
-      runId,
-      feature
-    );
+    for (const feature of run.features) {
+      const featureId = await this.features.createFeature(runId, feature);
 
-    for (const scenario of feature.scenarios) {
-      const scenarioId =
-        await this.scenarios.createScenario(
-          featureId,
-          scenario
-        );
+      for (const scenario of feature.scenarios) {
+        const scenarioId = await this.scenarios.createScenario(featureId, scenario);
 
-      await this.steps.insertBulk(
-        scenarioId,
-        scenario.steps
-      );
+        await this.steps.insertBulk(scenarioId, scenario.steps);
+      }
     }
   }
-}
 }
