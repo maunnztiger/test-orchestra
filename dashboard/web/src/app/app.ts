@@ -1,16 +1,15 @@
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
-import { Component, inject, OnInit, signal } from "@angular/core";
-import { DatePipe, DecimalPipe } from "@angular/common";
-
-import { TestRuns } from "./services/test-runs";
-import { TestRun } from "./models/test-run.model";
+import { TestRuns } from './services/test-runs';
+import { TestRun } from './models/test-run.model';
 
 @Component({
-  selector: "app-root",
+  selector: 'app-root',
   standalone: true,
   imports: [DatePipe, DecimalPipe],
-  templateUrl: "./app.html",
-  styleUrl: "./app.scss"
+  templateUrl: './app.html',
+  styleUrl: './app.scss',
 })
 export class App implements OnInit {
   private readonly testRunsService = inject(TestRuns);
@@ -26,10 +25,10 @@ export class App implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error("Failed to load runs:", err);
-        this.error.set("Testläufe konnten nicht geladen werden.");
+        console.error('Failed to load runs:', err);
+        this.error.set('Testläufe konnten nicht geladen werden.');
         this.loading.set(false);
-      }
+      },
     });
   }
 }

@@ -1,4 +1,3 @@
-
 export interface TestRun {
   id: number;
   started_at: string;
