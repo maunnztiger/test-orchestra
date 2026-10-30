@@ -1,0 +1,56 @@
+<main class="dashboard">
+  <header>
+    <h1>TestOrchestra</h1>
+    <p>Test Monitoring Dashboard</p>
+  </header>
+
+  <section class="content">
+    <h2>Testläufe</h2>
+
+    @if (loading()) {
+      <p>Lade Testergebnisse...</p>
+    } @else if (error()) {
+      <p class="error">{{ error() }}</p>
+    } @else if (runs().length === 0) {
+      <p>Keine Testläufe vorhanden.</p>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Datum</th>
+              <th>Feature</th>
+              <th>Szenario</th>
+              <th>Status</th>
+              <th>Steps</th>
+              <th>Laufzeit</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (run of runs(); track run.id) {
+              <tr>
+                <td>#{{ run.id }}</td>
+                <td>{{ run.started_at | date: 'dd.MM.yyyy HH:mm' }}</td>
+                <td>{{ run.feature }}</td>
+                <td>{{ run.scenario }}</td>
+                <td>
+                  <span
+                    class="status"
+                    [class.passed]="run.status === 'passed'"
+                    [class.failed]="run.status === 'failed'"
+                  >
+                    {{ run.status }}
+                  </span>
+                </td>
+                <td>{{ run.step_count }}</td>
+                <td>{{ run.duration_ms / 1000 | number: '1.2-2' }} s</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</main>
