@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "run": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/",
-    "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login",
+    "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login --report db",
     "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters",
     "sync:confluence": "ts-node -r tsconfig-paths/register scripts/syncMarkdownToConfluence.ts",
     "generate-steps": "ts-node -r tsconfig-paths/register src/generator/generateSteps.ts",
