@@ -11,7 +11,7 @@
     "format:check": "prettier --check .",
     "run": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/",
     "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login --report db",
-    "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters",
+    "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters --report db",
     "sync:confluence": "ts-node -r tsconfig-paths/register scripts/syncMarkdownToConfluence.ts",
     "generate-steps": "ts-node -r tsconfig-paths/register src/generator/generateSteps.ts",
     "dev:dashboard": "concurrently -k -n API,WEB -c cyan,green \"npm run dev --prefix dashboard/api\" \"npm start --prefix dashboard/web\""
