@@ -57,7 +57,6 @@ jobs:
       - name: Run Vitest
         run: npm run tests
 
-
   e2e-tests:
     needs: unit-tests
 
