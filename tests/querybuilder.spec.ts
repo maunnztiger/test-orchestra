@@ -1,7 +1,14 @@
-import { describe, it, expect, vi } from "vitest";
-import { QueryBuilder } from "../src/db/postgres_querybuilder";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { QueryBuilder } from "@testorchestra/database";
 import { mockClient } from "./helpers/mockClient";
 
+let client: ReturnType<typeof mockClient>;
+let qb: QueryBuilder;
+
+beforeEach(() => {
+  client = mockClient();
+  qb = new QueryBuilder(client as any);
+});
 describe("QueryBuilder", () => {
   it("should build INSERT query", async () => {
     const client = mockClient();
@@ -77,12 +84,75 @@ describe("QueryBuilder", () => {
   });
 
   it("should throw if returning but no rows", async () => {
-    const client = {
-      query: vi.fn().mockResolvedValue({ rows: [] })
-    };
-
-    const qb = new QueryBuilder(client as any);
-
     await expect(qb.insert("test_runs").values({ duration_ms: 1 }).execute("id")).rejects.toThrow();
+  });
+
+  it("should build INNER JOIN query", async () => {
+    await qb.select("*").from("test_runs tr").join("features f", "f.run_id = tr.id").execute();
+
+    expect(client.query).toHaveBeenCalledWith(
+      "SELECT * FROM test_runs tr INNER JOIN features f ON f.run_id = tr.id",
+      []
+    );
+  });
+
+  it("should build LEFT JOIN query", async () => {
+    await qb.select("*").from("test_runs tr").leftJoin("features f", "f.run_id = tr.id").execute();
+
+    expect(client.query).toHaveBeenCalledWith(
+      "SELECT * FROM test_runs tr LEFT JOIN features f ON f.run_id = tr.id",
+      []
+    );
+  });
+
+  it("should build GROUP BY query", async () => {
+    await qb.select(["status", "COUNT(*) AS total"]).from("test_runs").groupBy("status").execute();
+
+    expect(client.query).toHaveBeenCalledWith(
+      "SELECT status, COUNT(*) AS total FROM test_runs GROUP BY status",
+      []
+    );
+  });
+
+  it("should build ORDER BY query", async () => {
+    await qb.select("*").from("test_runs").orderBy("started_at", "DESC").execute();
+
+    expect(client.query).toHaveBeenCalledWith(
+      "SELECT * FROM test_runs ORDER BY started_at DESC",
+      []
+    );
+  });
+
+  it("should build LIMIT query", async () => {
+    await qb.select("*").from("test_runs").limit(10).execute();
+
+    expect(client.query).toHaveBeenCalledWith("SELECT * FROM test_runs LIMIT $1", [10]);
+  });
+
+  it("should reject a negative LIMIT", () => {
+    expect(() => qb.select("*").from("test_runs").limit(-1)).toThrow(
+      "LIMIT must be a non-negative safe integer"
+    );
+  });
+
+  it("should not duplicate LIMIT parameters on repeated execution", async () => {
+    const query = qb.select("*").from("test_runs").where("status", "passed").limit(10);
+
+    await query.execute();
+    await query.execute();
+
+    expect(client.query).toHaveBeenCalledTimes(2);
+
+    expect(client.query).toHaveBeenNthCalledWith(
+      1,
+      "SELECT * FROM test_runs WHERE status = $1 LIMIT $2",
+      ["passed", 10]
+    );
+
+    expect(client.query).toHaveBeenNthCalledWith(
+      2,
+      "SELECT * FROM test_runs WHERE status = $1 LIMIT $2",
+      ["passed", 10]
+    );
   });
 });

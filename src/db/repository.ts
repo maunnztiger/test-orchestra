@@ -1,6 +1,6 @@
 // src/db/repository.ts
 import { QueryResultRow } from "pg";
-import { QueryBuilder } from "./postgres_querybuilder";
+import { QueryBuilder } from "@testorchestra/database";
 
 export abstract class Repository<T> {
   constructor(protected db: QueryBuilder) {}

@@ -2,19 +2,26 @@
   "name": "test-orchestra",
   "version": "1.0.0",
   "type": "commonjs",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "dashboard/api",
+    "dashboard/web"
+  ],
   "scripts": {
     "testorchestra": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "tsc",
-    "tests": "vitest run --reporter=verbose",
+    "tests": "vitest run --configLoader runner --reporter=verbose",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "run": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/",
     "login": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Login --report db",
-    "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters",
+    "filters": "ts-node -r tsconfig-paths/register src/index.ts run scenarios/ --tags Filters --report db",
     "sync:confluence": "ts-node -r tsconfig-paths/register scripts/syncMarkdownToConfluence.ts",
     "generate-steps": "ts-node -r tsconfig-paths/register src/generator/generateSteps.ts",
-    "dev:dashboard": "concurrently -k -n API,WEB -c cyan,green \"npm run dev --prefix dashboard/api\" \"npm start --prefix dashboard/web\""
+    "build:database": "npm run build --workspace=@testorchestra/database",
+    "dev:dashboard": "npm run build:database && concurrently -k -n API,WEB -c cyan,green \"npm run dev --prefix dashboard/api\" \"npm start --prefix dashboard/web\""
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",

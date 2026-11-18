@@ -1,5 +1,5 @@
 // src/db/repositories/stepRepository.ts
-import { QueryBuilder } from "../postgres_querybuilder";
+import { QueryBuilder } from "@testorchestra/database";
 import { StepResult } from "../../reporting/domain";
 import { Client } from "pg";
 

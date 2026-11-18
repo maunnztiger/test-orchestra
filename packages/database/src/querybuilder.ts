@@ -1,7 +1,9 @@
-import { Client, QueryResult, QueryResultRow } from "pg";
+import { Client, Pool, QueryResult, QueryResultRow } from "pg";
+
+type DataBaseClient = Client | Pool;
 
 export class QueryBuilder {
-  constructor(private client: Client) {}
+  constructor(private client: DataBaseClient) {}
 
   insert<T extends Record<string, unknown>>(table: string) {
     return new InsertQuery<T>(this.client, table);
@@ -16,7 +18,7 @@ class InsertQuery<T extends Record<string, unknown>> {
   private data!: T;
 
   constructor(
-    private client: Client,
+    private client: DataBaseClient,
     private table: string
   ) {}
 
@@ -54,13 +56,19 @@ class InsertQuery<T extends Record<string, unknown>> {
   }
 }
 
+type SortDirection = "ASC" | "DESC";
+
 class SelectQuery<T extends QueryResultRow> {
   private table!: string;
   private conditions: string[] = [];
   private params: unknown[] = [];
+  private joins: string[] = [];
+  private groupByColumns: string[] = [];
+  private orderByClause?: string;
+  private limitValue?: number;
 
   constructor(
-    private client: Client,
+    private client: DataBaseClient,
     private columns: string | string[]
   ) {}
 
@@ -78,15 +86,60 @@ class SelectQuery<T extends QueryResultRow> {
     return this;
   }
 
+  join(table: string, condition: string) {
+    this.joins.push(`INNER JOIN ${table} ON ${condition}`);
+
+    return this;
+  }
+
+  leftJoin(table: string, condition: string) {
+    this.joins.push(`LEFT JOIN ${table} ON ${condition}`);
+    return this;
+  }
+
+  groupBy(columns: string | string[]) {
+    const values = Array.isArray(columns) ? columns : [columns];
+    this.groupByColumns.push(...values);
+    return this;
+  }
+
+  orderBy(column: string, direction: SortDirection = "ASC") {
+    this.orderByClause = `ORDER BY ${column} ${direction}`;
+    return this;
+  }
+
+  limit(value: number) {
+    if (!Number.isSafeInteger(value) || value < 0) {
+      throw new Error("LIMIT must be a non-negative safe integer");
+    }
+    this.limitValue = value;
+    return this;
+  }
+
   async execute(): Promise<QueryResult<T>> {
     const cols = typeof this.columns === "string" ? this.columns : this.columns.join(", ");
 
     let sql = `SELECT ${cols} FROM ${this.table}`;
+    const params = [...this.params];
 
+    if (this.joins.length) {
+      sql += ` ${this.joins.join(" ")}`;
+    }
     if (this.conditions.length) {
       sql += ` WHERE ${this.conditions.join(" AND ")}`;
     }
+    if (this.groupByColumns.length) {
+      sql += ` GROUP BY ${this.groupByColumns.join(", ")}`;
+    }
+    if (this.orderByClause) {
+      sql += ` ${this.orderByClause}`;
+    }
+    if (this.limitValue != undefined) {
+      const index = this.params.length + 1;
+      sql += ` LIMIT $${index}`;
+      params.push(this.limitValue);
+    }
 
-    return this.client.query<T>(sql, this.params);
+    return this.client.query<T>(sql, params);
   }
 }
