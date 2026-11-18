@@ -1,5 +1,5 @@
 // src/db/services/testRunService.ts
-import { QueryBuilder } from "../postgres_querybuilder";
+import { QueryBuilder } from "@testorchestra/database";
 import { Client } from "pg";
 import { TestRun } from "../../reporting/domain";
 import { TestRunRepository } from "../repositories/testRunRepository";
